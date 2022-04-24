@@ -15,7 +15,7 @@ The minimum Go version is go1.18.
 
 ### Influence
 
-This library was made after a ~decade of using [testify](github.com/stretchr/testify),
+This library was made after a ~decade of using [testify](https://github.com/stretchr/testify),
 quite possibly the most used library in the whole Go ecosystem. All credit of
 inspiration belongs to those maintainers.
 
