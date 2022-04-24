@@ -9,11 +9,11 @@ type T interface {
 }
 
 // EqualsFunc represents a type implementing the Equals method.
-type EqualsFunc[T any] interface {
-	Equals(T) bool
+type EqualsFunc[A any] interface {
+	Equals(A) bool
 }
 
 // LessFunc represents any type implementing the Less method.
-type LessFunc[T any] interface {
-	Less(T) bool
+type LessFunc[A any] interface {
+	Less(A) bool
 }

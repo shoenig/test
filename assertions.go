@@ -148,7 +148,7 @@ func NotEqf[C comparable](t T, a, b C, msg string, args ...any) {
 func EqJSON(t T, a, b string) {
 	t.Helper()
 
-	var expA, expB interface{}
+	var expA, expB any
 
 	if err := json.Unmarshal([]byte(a), &expA); err != nil {
 		t.Fatalf("failed to unmarshal first argument as json: %v", err)
@@ -162,6 +162,22 @@ func EqJSON(t T, a, b string) {
 		jsonA, _ := json.Marshal(expA)
 		jsonB, _ := json.Marshal(expB)
 		t.Fatalf("json strings are not the same; %s vs. %s", jsonA, jsonB)
+	}
+}
+
+func EqSlice[A any](t T, a, b []A) {
+	t.Helper()
+
+	lenA, lenB := len(a), len(b)
+
+	if lenA != lenB {
+		t.Fatalf("expected slices of same length; %d != %d", lenA, lenB)
+	}
+
+	for i := 0; i < lenA; i++ {
+		if !reflect.DeepEqual(a[i], b[i]) {
+			t.Fatalf("expected elements[%d] to match; %v vs. %v", i, a[i], b[i])
+		}
 	}
 }
 
@@ -198,6 +214,22 @@ func NotEqualsf[E EqualsFunc[E]](t T, a, b E, msg string, args ...any) {
 
 	if a.Equals(b) {
 		t.Fatalf(msg, args...)
+	}
+}
+
+// EqualsSlice asserts a[n].Equals(b[n]) for each element in slices a and b.
+func EqualsSlice[E EqualsFunc[E]](t T, a, b []E) {
+	t.Helper()
+
+	lenA, lenB := len(a), len(b)
+	if lenA != lenB {
+		t.Fatalf("expected slices to be same length; %d vs. %d", lenA, lenB)
+	}
+
+	for i := 0; i < lenA; i++ {
+		if !a[i].Equals(b[i]) {
+			t.Fatalf("expected elements[%d] to match; %v vs. %v", i, a[i], b[i])
+		}
 	}
 }
 

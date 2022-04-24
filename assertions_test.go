@@ -193,6 +193,15 @@ func TestEqJSON(t *testing.T) {
 	EqJSON(tc, `{"a":1, "b":2}`, `{"b":2, "a":9}`)
 }
 
+func TestEqSlice(t *testing.T) {
+	tc := newCase(t, `expected elements[1] to match; 2 vs. 0`)
+	t.Cleanup(tc.assert)
+
+	a := []int{1, 2, 3}
+	b := []int{1, 0, 3}
+	EqSlice(tc, a, b)
+}
+
 // Person implements the Equals and Less functions.
 type Person struct {
 	ID   int
@@ -245,6 +254,24 @@ func TestNotEqualsf(t *testing.T) {
 	b := &Person{ID: 100, Name: "Alice"}
 
 	NotEqualsf(tc, a, b, "a number: %d", 42)
+}
+
+func TestEqualsSlice(t *testing.T) {
+	tc := newCase(t, `expected elements[2] to match; &{102 Carl} vs. &{103 Dian}`)
+	t.Cleanup(tc.assert)
+
+	a := []*Person{
+		{ID: 100, Name: "Alice"},
+		{ID: 101, Name: "Bob"},
+		{ID: 102, Name: "Carl"},
+	}
+	b := []*Person{
+		{ID: 100, Name: "Alice"},
+		{ID: 101, Name: "Bob"},
+		{ID: 103, Name: "Dian"},
+	}
+
+	EqualsSlice(tc, a, b)
 }
 
 func TestLesser(t *testing.T) {
