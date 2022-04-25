@@ -9,7 +9,7 @@ A modern, generics based testing assertions library for Go.
 Package `test` provides an opinionated, lightweight library for writing
 test case assertions in Go.
 
-There are no dependencies.
+There are no external dependencies.
 
 The minimum Go version is go1.18.
 

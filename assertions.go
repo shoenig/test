@@ -434,37 +434,81 @@ func InDeltaSlice[N Number](t T, a, b []N, delta N) {
 	}
 }
 
-// MapEq asserts a contains the same key:value pairs as b.
-func MapEq[K comparable, V any](t T, a, b map[K]V) {
+// MapEq asserts maps a and b contain the same key/value pairs, using
+// reflect.DeepEqual to compare values.
+func MapEq[M1, M2 ~map[K]V, K comparable, V any](t T, a M1, b M2) {
 	t.Helper()
 
 	if len(a) != len(b) {
-		t.Fatalf("maps are different size; %d vs %d; %v != %v", len(a), len(b), a, b)
+		t.Fatalf("maps are different size; %d vs. %d", len(a), len(b))
 	}
+
 	for key, valueA := range a {
 		valueB, exists := b[key]
 		if !exists {
-			t.Fatalf("map keys are different; %v != %v", a, b)
+			t.Fatalf("map keys are different; %v in a but not in b", key)
 		}
 
 		if !reflect.DeepEqual(valueA, valueB) {
-			t.Fatalf("value for key %v different; %v != %v", key, a, b)
+			t.Fatalf("value for key %v different; %v vs. %v", key, valueA, valueB)
+		}
+	}
+}
+
+// MapEqFunc asserts maps a and b contain the same key/value pairs, using eq to
+// compare values.
+func MapEqFunc[M1 ~map[K]V1, M2 ~map[K]V2, K comparable, V1, V2 any](t T, a M1, b M2, eq func(V1, V2) bool) {
+	t.Helper()
+
+	if len(a) != len(b) {
+		t.Fatalf("maps are different size; %d vs. %d", len(a), len(b))
+	}
+
+	for key, valueA := range a {
+		valueB, exists := b[key]
+		if !exists {
+			t.Fatalf("map keys are different; %v in a but not in b", key)
+		}
+
+		if !eq(valueA, valueB) {
+			t.Fatalf("value for key %v different; %v != %v", key, valueA, valueB)
+		}
+	}
+}
+
+// MapEquals asserts maps a and b contain the same key/value pairs, using Equals
+// method to compare values
+func MapEquals[M ~map[K]V, K comparable, V EqualsFunc[V]](t T, a, b M) {
+	t.Helper()
+
+	if len(a) != len(b) {
+		t.Fatalf("maps are different size; %d vs. %d", len(a), len(b), a, b)
+	}
+
+	for key, valueA := range a {
+		valueB, exists := b[key]
+		if !exists {
+			t.Fatalf("map keys are different; %v in a but not in b", key)
+		}
+
+		if !valueB.Equals(valueA) {
+			t.Fatalf("value for key %v different; %#v vs. %#v", key, valueA, valueB)
 		}
 	}
 }
 
 // MapLen asserts map is of size n.
-func MapLen[K comparable, V any](t T, n int, m map[K]V) {
+func MapLen[M ~map[K]V, K comparable, V any](t T, n int, m M) {
 	t.Helper()
 
 	s := len(m)
 	if s != n {
-		t.Fatalf("expected map to be size %d; is %d", n, s)
+		t.Fatalf("expected map to be length %d; is %d", n, s)
 	}
 }
 
 // MapLenf asserts map is of size n, using a custom error message.
-func MapLenf[K comparable, V any](t T, n int, m map[K]V, msg string, args ...any) {
+func MapLenf[M ~map[K]V, K comparable, V any](t T, n int, m M, msg string, args ...any) {
 	t.Helper()
 
 	s := len(m)
@@ -474,10 +518,10 @@ func MapLenf[K comparable, V any](t T, n int, m map[K]V, msg string, args ...any
 }
 
 // MapEmpty asserts map is empty.
-func MapEmpty[K comparable, V any](t T, m map[K]V) {
+func MapEmpty[M ~map[K]V, K comparable, V any](t T, m M) {
 	t.Helper()
 
 	if l := len(m); l > 0 {
-		t.Fatalf("expected map to be empty; is size %d", l)
+		t.Fatalf("expected map to be empty; is length %d", l)
 	}
 }

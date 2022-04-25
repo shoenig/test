@@ -480,7 +480,7 @@ func TestInDeltaSlice(t *testing.T) {
 
 func TestMapEq(t *testing.T) {
 	t.Run("different length", func(t *testing.T) {
-		tc := newCase(t, `maps are different size; 1 vs 2; map[a:1] != map[a:1 b:2]`)
+		tc := newCase(t, `maps are different size; 1 vs. 2`)
 		t.Cleanup(tc.assert)
 		a := map[string]int{"a": 1}
 		b := map[string]int{"a": 1, "b": 2}
@@ -488,7 +488,7 @@ func TestMapEq(t *testing.T) {
 	})
 
 	t.Run("different keys", func(t *testing.T) {
-		tc := newCase(t, `map keys are different; map[1:a 2:b] != map[1:a 3:c]`)
+		tc := newCase(t, `map keys are different; 2 in a but not in b`)
 		t.Cleanup(tc.assert)
 		a := map[int]string{1: "a", 2: "b"}
 		b := map[int]string{1: "a", 3: "c"}
@@ -496,7 +496,7 @@ func TestMapEq(t *testing.T) {
 	})
 
 	t.Run("different values", func(t *testing.T) {
-		tc := newCase(t, `value for key b different; map[a:amp b:bar] != map[a:amp b:foo]`)
+		tc := newCase(t, `value for key b different; bar vs. foo`)
 		t.Cleanup(tc.assert)
 		a := map[string]string{"a": "amp", "b": "bar"}
 		b := map[string]string{"a": "amp", "b": "foo"}
@@ -504,15 +504,55 @@ func TestMapEq(t *testing.T) {
 	})
 }
 
+func TestMapEqFunc(t *testing.T) {
+	t.Run("different value", func(t *testing.T) {
+		tc := newCase(t, `value for key 1 different; {101 Bob} != {101 Bob B.}`)
+		t.Cleanup(tc.assert)
+
+		a := map[int]Person{
+			0: {ID: 100, Name: "Alice"},
+			1: {ID: 101, Name: "Bob"},
+		}
+
+		b := map[int]Person{
+			0: {ID: 100, Name: "Alice"},
+			1: {ID: 101, Name: "Bob B."},
+		}
+
+		MapEqFunc(tc, a, b, func(p1, p2 Person) bool {
+			return p1.ID == p2.ID && p1.Name == p2.Name
+		})
+	})
+}
+
+func TestMapEquals(t *testing.T) {
+	t.Run("different value", func(t *testing.T) {
+		tc := newCase(t, `value for key 1 different; &test.Person{ID:101, Name:"Bob"} vs. &test.Person{ID:200, Name:"Bob"}`)
+		t.Cleanup(tc.assert)
+
+		a := map[int]*Person{
+			0: {ID: 100, Name: "Alice"},
+			1: {ID: 101, Name: "Bob"},
+		}
+
+		b := map[int]*Person{
+			0: {ID: 100, Name: "Alice"},
+			1: {ID: 200, Name: "Bob"},
+		}
+
+		MapEquals(tc, a, b)
+	})
+}
+
 func TestMapEmpty(t *testing.T) {
-	tc := newCase(t, `expected map to be empty; is size 2`)
+	tc := newCase(t, `expected map to be empty; is length 2`)
 	t.Cleanup(tc.assert)
 	m := map[string]int{"a": 1, "b": 2}
 	MapEmpty(tc, m)
 }
 
 func TestMapLen(t *testing.T) {
-	tc := newCase(t, `expected map to be size 2; is 3`)
+	tc := newCase(t, `expected map to be length 2; is 3`)
 	t.Cleanup(tc.assert)
 
 	m := map[string]int{"a": 1, "b": 2, "c": 3}
