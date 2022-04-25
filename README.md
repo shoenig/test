@@ -24,7 +24,7 @@ inspiration belongs to those maintainers.
 Use `go get` to grab the latest version of `test`.
 
 ```shell
-go get -u github.com/hashicorp/test@latest
+go get -u github.com/shoenig/test@latest
 ```
 
 ### Examples

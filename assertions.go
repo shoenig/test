@@ -6,7 +6,7 @@ import (
 	"math"
 	"reflect"
 
-	"github.com/hashicorp/test/internal/constraints"
+	"github.com/shoenig/test/internal/constraints"
 )
 
 // Nil asserts a is nil.
