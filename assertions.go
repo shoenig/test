@@ -18,30 +18,12 @@ func Nil(t T, a any) {
 	}
 }
 
-// Nilf asserts a is nil, using a custom error message.
-func Nilf(t T, a any, msg string, args ...any) {
-	t.Helper()
-
-	if a != nil {
-		t.Fatalf(msg, args...)
-	}
-}
-
 // NotNil asserts a is not nil.
 func NotNil(t T, a any) {
 	t.Helper()
 
 	if a == nil {
 		t.Fatalf("expected to not be nil; is nil")
-	}
-}
-
-// NotNilf asserts a is not nil, using a custom error message.
-func NotNilf(t T, a any, msg string, args ...any) {
-	t.Helper()
-
-	if a == nil {
-		t.Fatalf(msg, args...)
 	}
 }
 
@@ -54,30 +36,12 @@ func True(t T, condition bool) {
 	}
 }
 
-// Truef asserts condition is true, using a custom error message.
-func Truef(t T, condition bool, msg string, args ...any) {
-	t.Helper()
-
-	if !condition {
-		t.Fatalf(msg, args...)
-	}
-}
-
 // False asserts condition is false.
 func False(t T, condition bool) {
 	t.Helper()
 
 	if condition {
 		t.Fatalf("expected condition to be false; is true")
-	}
-}
-
-// Falsef asserts condition is false, using a custom error message.
-func Falsef(t T, condition bool, msg string, args ...any) {
-	t.Helper()
-
-	if condition {
-		t.Fatalf(msg, args...)
 	}
 }
 
@@ -117,30 +81,12 @@ func Eq[C comparable](t T, a, b C) {
 	}
 }
 
-// Eqf asserts a == b, using a custom error message.
-func Eqf[C comparable](t T, a, b C, msg string, args ...any) {
-	t.Helper()
-
-	if a != b {
-		t.Fatalf(msg, args...)
-	}
-}
-
 // NotEq asserts a != b.
 func NotEq[C comparable](t T, a, b C) {
 	t.Helper()
 
 	if a == b {
 		t.Fatalf("expected %v != %v", a, b)
-	}
-}
-
-// NotEqf asserts a != b, using a custom error message.
-func NotEqf[C comparable](t T, a, b C, msg string, args ...any) {
-	t.Helper()
-
-	if a == b {
-		t.Fatalf(msg, args...)
 	}
 }
 
@@ -190,30 +136,12 @@ func Equals[E EqualsFunc[E]](t T, a, b E) {
 	}
 }
 
-// Equalsf asserts a.Equal(b), using a custom error message.
-func Equalsf[E EqualsFunc[E]](t T, a, b E, msg string, args ...any) {
-	t.Helper()
-
-	if !a.Equals(b) {
-		t.Fatalf(msg, args...)
-	}
-}
-
 // NotEquals asserts !a.Equals(b).
 func NotEquals[E EqualsFunc[E]](t T, a, b E) {
 	t.Helper()
 
 	if a.Equals(b) {
 		t.Fatalf("expected to be not equal: %v, %v", a, b)
-	}
-}
-
-// NotEqualsf asserts !a.Equals(b), using a custom error message.
-func NotEqualsf[E EqualsFunc[E]](t T, a, b E, msg string, args ...any) {
-	t.Helper()
-
-	if a.Equals(b) {
-		t.Fatalf(msg, args...)
 	}
 }
 
@@ -261,16 +189,6 @@ func Len[A any](t T, n int, slice []A) {
 	}
 }
 
-// Lenf asserts slice is of length n, using a custom error message.
-func Lenf[A any](t T, n int, slice []A, msg string, args ...any) {
-	t.Helper()
-
-	l := len(slice)
-	if l != n {
-		t.Fatalf(msg, args...)
-	}
-}
-
 func contains[C comparable](slice []C, item C) bool {
 	found := false
 	for i := 0; i < len(slice); i++ {
@@ -302,15 +220,6 @@ func Contains[C comparable](t T, slice []C, item C) {
 	}
 }
 
-// Containsf asserts item exists in slice, using a custom error message.
-func Containsf[C comparable](t T, slice []C, item C, msg string, args ...any) {
-	t.Helper()
-
-	if !contains(slice, item) {
-		t.Fatalf(msg, args...)
-	}
-}
-
 // ContainsFunc asserts item exists in slice, using eq to compare elements.
 func ContainsFunc[A any](t T, slice []A, item A, eq func(a, b A) bool) {
 	t.Helper()
@@ -338,30 +247,12 @@ func Less[O constraints.Ordered](t T, a, b O) {
 	}
 }
 
-// Lessf asserts a < b, using a custom error message.
-func Lessf[O constraints.Ordered](t T, a, b O, msg string, args ...any) {
-	t.Helper()
-
-	if !(a < b) {
-		t.Fatalf(msg, args...)
-	}
-}
-
 // LessEq asserts a <= b.
 func LessEq[O constraints.Ordered](t T, a, b O) {
 	t.Helper()
 
 	if !(a <= b) {
 		t.Fatalf("expected %v <= %v", a, b)
-	}
-}
-
-// LessEqf asserts a <= b, using a custom error message.
-func LessEqf[O constraints.Ordered](t T, a, b O, msg string, args ...any) {
-	t.Helper()
-
-	if !(a <= b) {
-		t.Fatalf(msg, args...)
 	}
 }
 
@@ -374,30 +265,12 @@ func Greater[O constraints.Ordered](t T, a, b O) {
 	}
 }
 
-// Greaterf asserts a > b, using a custom error message.
-func Greaterf[O constraints.Ordered](t T, a, b O, msg string, args ...any) {
-	t.Helper()
-
-	if !(a > b) {
-		t.Fatalf(msg, args...)
-	}
-}
-
 // GreaterEq asserts a >= b.
 func GreaterEq[O constraints.Ordered](t T, a, b O) {
 	t.Helper()
 
 	if !(a >= b) {
 		t.Fatalf("expected %v >= %v", a, b)
-	}
-}
-
-// GreaterEqf asserts a >= b, using a custom error message.
-func GreaterEqf[O constraints.Ordered](t T, a, b O, msg string, args ...any) {
-	t.Helper()
-
-	if !(a >= b) {
-		t.Fatalf(msg, args...)
 	}
 }
 

@@ -55,25 +55,11 @@ func TestNil(t *testing.T) {
 	Nil(tc, time.UTC)
 }
 
-func TestNilf(t *testing.T) {
-	tc := newCase(t, `a message: 42`)
-	t.Cleanup(tc.assert)
-
-	Nilf(tc, 0, "a message: %d", 42)
-}
-
 func TestNotNil(t *testing.T) {
 	tc := newCase(t, `expected to not be nil; is nil`)
 	t.Cleanup(tc.assert)
 
 	NotNil(tc, nil)
-}
-
-func TestNotNilf(t *testing.T) {
-	tc := newCase(t, `a message: 42`)
-	t.Cleanup(tc.assert)
-
-	NotNilf(tc, nil, "a message: %d", 42)
 }
 
 func TestTrue(t *testing.T) {
@@ -83,25 +69,11 @@ func TestTrue(t *testing.T) {
 	True(tc, false)
 }
 
-func TestTruef(t *testing.T) {
-	tc := newCase(t, `a message: 42`)
-	t.Cleanup(tc.assert)
-
-	Truef(tc, false, "a message: %d", 42)
-}
-
 func TestFalse(t *testing.T) {
 	tc := newCase(t, `expected condition to be false; is true`)
 	t.Cleanup(tc.assert)
 
 	False(tc, true)
-}
-
-func TestFalsef(t *testing.T) {
-	tc := newCase(t, `a message: 42`)
-	t.Cleanup(tc.assert)
-
-	Falsef(tc, true, "a message: %d", 42)
 }
 
 func TestError(t *testing.T) {
@@ -152,13 +124,6 @@ func TestEq(t *testing.T) {
 	})
 }
 
-func TestEqf(t *testing.T) {
-	tc := newCase(t, `a number: 42`)
-	t.Cleanup(tc.assert)
-
-	Eqf(tc, 1, 2, "a number: %d", 42)
-}
-
 func TestNotEq(t *testing.T) {
 	t.Run("number", func(t *testing.T) {
 		tc := newCase(t, `expected 42 != 42`)
@@ -177,13 +142,6 @@ func TestNotEq(t *testing.T) {
 		t.Cleanup(tc.assert)
 		NotEq(tc, 3*time.Second, 3*time.Second)
 	})
-}
-
-func TestNotEqf(t *testing.T) {
-	tc := newCase(t, `a number: 42`)
-	t.Cleanup(tc.assert)
-
-	NotEqf(tc, 42, 42, "a number: %d", 42)
 }
 
 func TestEqJSON(t *testing.T) {
@@ -226,16 +184,6 @@ func TestEquals(t *testing.T) {
 	Equals(tc, a, b)
 }
 
-func TestEqualsf(t *testing.T) {
-	tc := newCase(t, `a number: 42`)
-	t.Cleanup(tc.assert)
-
-	a := &Person{ID: 100, Name: "Alice"}
-	b := &Person{ID: 150, Name: "Alice"}
-
-	Equalsf(tc, a, b, "a number: %d", 42)
-}
-
 func TestNotEquals(t *testing.T) {
 	tc := newCase(t, `expected to be not equal: &{100 Alice}, &{100 Alice}`)
 	t.Cleanup(tc.assert)
@@ -244,16 +192,6 @@ func TestNotEquals(t *testing.T) {
 	b := &Person{ID: 100, Name: "Alice"}
 
 	NotEquals(tc, a, b)
-}
-
-func TestNotEqualsf(t *testing.T) {
-	tc := newCase(t, `a number: 42`)
-	t.Cleanup(tc.assert)
-
-	a := &Person{ID: 100, Name: "Alice"}
-	b := &Person{ID: 100, Name: "Alice"}
-
-	NotEqualsf(tc, a, b, "a number: %d", 42)
 }
 
 func TestEqualsSlice(t *testing.T) {
@@ -305,13 +243,6 @@ func TestLen(t *testing.T) {
 	})
 }
 
-func TestLenf(t *testing.T) {
-	tc := newCase(t, `a number: 42`)
-	t.Cleanup(tc.assert)
-
-	Lenf(tc, 3, []int{1, 2}, "a number: %d", 42)
-}
-
 func TestContains(t *testing.T) {
 	t.Run("numbers", func(t *testing.T) {
 		tc := newCase(t, `expected slice to contain 7 but does not`)
@@ -324,12 +255,6 @@ func TestContains(t *testing.T) {
 		t.Cleanup(tc.assert)
 		Contains(tc, []string{"alice", "carl"}, "bob")
 	})
-}
-
-func TestContainsf(t *testing.T) {
-	tc := newCase(t, `a number: 42`)
-	t.Cleanup(tc.assert)
-	Containsf(tc, []int{1, 2, 3}, 4, "a number: %d", 42)
 }
 
 func TestContainsFunc(t *testing.T) {
@@ -384,22 +309,10 @@ func TestLess(t *testing.T) {
 	})
 }
 
-func TestLessf(t *testing.T) {
-	tc := newCase(t, `a number: 42`)
-	t.Cleanup(tc.assert)
-	Lessf(tc, 7, 5, "a number: %d", 42)
-}
-
 func TestLessEq(t *testing.T) {
 	tc := newCase(t, `expected 7 <= 5`)
 	t.Cleanup(tc.assert)
 	LessEq(tc, 7, 5)
-}
-
-func TestLessEqf(t *testing.T) {
-	tc := newCase(t, `a number: 42`)
-	t.Cleanup(tc.assert)
-	LessEqf(tc, 7, 5, "a number: %d", 42)
 }
 
 func TestGreater(t *testing.T) {
@@ -428,22 +341,10 @@ func TestGreater(t *testing.T) {
 	})
 }
 
-func TestGreaterf(t *testing.T) {
-	tc := newCase(t, `a number: 42`)
-	t.Cleanup(tc.assert)
-	Greaterf(tc, 5, 7, "a number: %d", 42)
-}
-
 func TestGreaterEq(t *testing.T) {
 	tc := newCase(t, `expected 5 >= 7`)
 	t.Cleanup(tc.assert)
 	GreaterEq(tc, 5, 7)
-}
-
-func TestGreaterEqf(t *testing.T) {
-	tc := newCase(t, `a number: 42`)
-	t.Cleanup(tc.assert)
-	GreaterEqf(tc, 5, 7, "a number: %d", 42)
 }
 
 func TestInDelta(t *testing.T) {
