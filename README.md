@@ -1,10 +1,12 @@
 # test
 
+[![Run CI Tests](https://github.com/shoenig/test/actions/workflows/ci.yaml/badge.svg)](https://github.com/shoenig/test/actions/workflows/ci.yaml)
+
 A modern, generics based testing assertions library for Go.
 
 ### Overview
 
-!! This package is experimental !!
+!! Consider this package is experimental
 
 Package `test` provides an opinionated, lightweight library for writing
 test case assertions in Go.
