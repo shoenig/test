@@ -314,13 +314,13 @@ func TestLenf(t *testing.T) {
 
 func TestContains(t *testing.T) {
 	t.Run("numbers", func(t *testing.T) {
-		tc := newCase(t, `expected slice to contain 7 but does not: [3 4 5]`)
+		tc := newCase(t, `expected slice to contain 7 but does not`)
 		t.Cleanup(tc.assert)
 		Contains(tc, []int{3, 4, 5}, 7)
 	})
 
 	t.Run("strings", func(t *testing.T) {
-		tc := newCase(t, `expected slice to contain bob but does not: [alice carl]`)
+		tc := newCase(t, `expected slice to contain "bob" but does not`)
 		t.Cleanup(tc.assert)
 		Contains(tc, []string{"alice", "carl"}, "bob")
 	})
@@ -330,6 +330,32 @@ func TestContainsf(t *testing.T) {
 	tc := newCase(t, `a number: 42`)
 	t.Cleanup(tc.assert)
 	Containsf(tc, []int{1, 2, 3}, 4, "a number: %d", 42)
+}
+
+func TestContainsFunc(t *testing.T) {
+	tc := newCase(t, `expected slice to contain &test.Person{ID:102, Name:"Carl"} but does not`)
+	t.Cleanup(tc.assert)
+
+	s := []*Person{
+		{ID: 100, Name: "Alice"},
+		{ID: 101, Name: "Bob"},
+	}
+
+	ContainsFunc(tc, s, &Person{ID: 102, Name: "Carl"}, func(a, b *Person) bool {
+		return a.ID == b.ID && a.Name == b.Name
+	})
+}
+
+func TestContainsEquals(t *testing.T) {
+	tc := newCase(t, `expected slice to contain &test.Person{ID:102, Name:"Carl"} but does not`)
+	t.Cleanup(tc.assert)
+
+	s := []*Person{
+		{ID: 100, Name: "Alice"},
+		{ID: 101, Name: "Bob"},
+	}
+
+	ContainsEquals(tc, s, &Person{ID: 102, Name: "Carl"})
 }
 
 func TestLess(t *testing.T) {

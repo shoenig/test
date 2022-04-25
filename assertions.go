@@ -282,12 +282,23 @@ func contains[C comparable](slice []C, item C) bool {
 	return found
 }
 
+func containsFunc[A any](slice []A, item A, eq func(a, b A) bool) bool {
+	found := false
+	for i := 0; i < len(slice); i++ {
+		if eq(slice[i], item) {
+			found = true
+			break
+		}
+	}
+	return found
+}
+
 // Contains asserts item exists in slice.
 func Contains[C comparable](t T, slice []C, item C) {
 	t.Helper()
 
 	if !contains(slice, item) {
-		t.Fatalf("expected slice to contain %v but does not: %v", item, slice)
+		t.Fatalf("expected slice to contain %#v but does not", item)
 	}
 }
 
@@ -297,6 +308,24 @@ func Containsf[C comparable](t T, slice []C, item C, msg string, args ...any) {
 
 	if !contains(slice, item) {
 		t.Fatalf(msg, args...)
+	}
+}
+
+// ContainsFunc asserts item exists in slice, using eq to compare elements.
+func ContainsFunc[A any](t T, slice []A, item A, eq func(a, b A) bool) {
+	t.Helper()
+
+	if !containsFunc(slice, item, eq) {
+		t.Fatalf("expected slice to contain %#v but does not", item)
+	}
+}
+
+// ContainsEquals asserts item exists in slice, using Equals to compare elements.
+func ContainsEquals[E EqualsFunc[E]](t T, slice []E, item E) {
+	t.Helper()
+
+	if !containsFunc(slice, item, E.Equals) {
+		t.Fatalf("expected slice to contain %#v but does not", item)
 	}
 }
 
