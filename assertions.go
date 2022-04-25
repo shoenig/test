@@ -81,12 +81,30 @@ func Eq[C comparable](t T, a, b C) {
 	}
 }
 
+// EqFunc asserts a and b are equal using eq.
+func EqFunc[A any](t T, a, b A, eq func(a, b A) bool) {
+	t.Helper()
+
+	if !eq(a, b) {
+		t.Fatalf("expected %v to be equal to %v", a, b)
+	}
+}
+
 // NotEq asserts a != b.
 func NotEq[C comparable](t T, a, b C) {
 	t.Helper()
 
 	if a == b {
 		t.Fatalf("expected %v != %v", a, b)
+	}
+}
+
+// NotEqFunc asserts a and b are not equal using eq.
+func NotEqFunc[A any](t T, a, b A, eq func(a, b A) bool) {
+	t.Helper()
+
+	if eq(a, b) {
+		t.Fatalf("expected %v to be not equal to %v", a, b)
 	}
 }
 
@@ -111,6 +129,7 @@ func EqJSON(t T, a, b string) {
 	}
 }
 
+// EqSlice asserts elements of a and b are the same using reflect.DeepEqual.
 func EqSlice[A any](t T, a, b []A) {
 	t.Helper()
 
@@ -123,6 +142,23 @@ func EqSlice[A any](t T, a, b []A) {
 	for i := 0; i < lenA; i++ {
 		if !reflect.DeepEqual(a[i], b[i]) {
 			t.Fatalf("expected elements[%d] to match; %v vs. %v", i, a[i], b[i])
+		}
+	}
+}
+
+// EqSliceFunc asserts elements of a and b are the same using eq.
+func EqSliceFunc[A any](t T, a, b []A, eq func(a, b A) bool) {
+	t.Helper()
+
+	lenA, lenB := len(a), len(b)
+
+	if lenA != lenB {
+		t.Fatalf("expected slices of same length; %d != %d", lenA, lenB)
+	}
+
+	for i := 0; i < lenA; i++ {
+		if !eq(a[i], b[i]) {
+			t.Fatalf("expected elements[%d] to match %#v vs. %#v", i, a[i], b[i])
 		}
 	}
 }

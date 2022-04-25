@@ -124,6 +124,30 @@ func TestEq(t *testing.T) {
 	})
 }
 
+func TestEqFunc(t *testing.T) {
+	tc := newCase(t, `expected &{100 Alice} to be equal to &{101 Bob}`)
+	t.Cleanup(tc.assert)
+
+	a := &Person{ID: 100, Name: "Alice"}
+	b := &Person{ID: 101, Name: "Bob"}
+
+	EqFunc(tc, a, b, func(a, b *Person) bool {
+		return a.ID == b.ID && a.Name == b.Name
+	})
+}
+
+func TestNotEqFunc(t *testing.T) {
+	tc := newCase(t, `expected &{100 Alice} to be not equal to &{100 Alice}`)
+	t.Cleanup(tc.assert)
+
+	a := &Person{ID: 100, Name: "Alice"}
+	b := &Person{ID: 100, Name: "Alice"}
+
+	NotEqFunc(tc, a, b, func(a, b *Person) bool {
+		return a.ID == b.ID && a.Name == b.Name
+	})
+}
+
 func TestNotEq(t *testing.T) {
 	t.Run("number", func(t *testing.T) {
 		tc := newCase(t, `expected 42 != 42`)
@@ -158,6 +182,26 @@ func TestEqSlice(t *testing.T) {
 	a := []int{1, 2, 3}
 	b := []int{1, 0, 3}
 	EqSlice(tc, a, b)
+}
+
+func TestEqSliceFunc(t *testing.T) {
+	tc := newCase(t, `expected elements[2] to match &test.Person{ID:102, Name:"Carl"} vs. &test.Person{ID:103, Name:"Dian"}`)
+	t.Cleanup(tc.assert)
+
+	a := []*Person{
+		{ID: 100, Name: "Alice"},
+		{ID: 101, Name: "Bob"},
+		{ID: 102, Name: "Carl"},
+	}
+	b := []*Person{
+		{ID: 100, Name: "Alice"},
+		{ID: 101, Name: "Bob"},
+		{ID: 103, Name: "Dian"},
+	}
+
+	EqSliceFunc(tc, a, b, func(a, b *Person) bool {
+		return a.ID == b.ID && a.Name == b.Name
+	})
 }
 
 // Person implements the Equals and Less functions.
