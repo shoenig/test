@@ -6,6 +6,7 @@ package test
 type T interface {
 	Helper()
 	Fatalf(string, ...any)
+	Logf(string, ...any)
 }
 
 // EqualsFunc represents a type implementing the Equals method.
