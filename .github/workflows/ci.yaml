@@ -1,7 +1,6 @@
 name: Run CI Tests
 on: [push]
 env:
-  GOBIN: /opt/bin
   GO_VERSION: 1.18.1
 jobs:
   run-tests:

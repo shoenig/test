@@ -5,7 +5,7 @@ package test
 // compatible with the test package.
 type T interface {
 	Helper()
-	Fatalf(string, ...any)
+	Fail()
 	Logf(string, ...any)
 }
 
@@ -17,4 +17,14 @@ type EqualsFunc[A any] interface {
 // LessFunc represents any type implementing the Less method.
 type LessFunc[A any] interface {
 	Less(A) bool
+}
+
+// Map represents any map type where keys are comparable.
+type Map[K comparable, V any] interface {
+	~map[K]V
+}
+
+// MapEqualsFunc represents any map type where keys are comparable and values implement .Equals method.
+type MapEqualsFunc[K comparable, V EqualsFunc[V]] interface {
+	~map[K]V
 }
