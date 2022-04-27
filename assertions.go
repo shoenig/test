@@ -3,19 +3,51 @@ package test
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"math"
 	"reflect"
+	"strings"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/shoenig/test/internal/constraints"
 )
+
+func fail(t T, msg string, args ...any) {
+	s := fmt.Sprintf(msg, args...)
+	t.Logf(strings.TrimSpace(s) + "\n")
+	t.Fail()
+}
+
+// diff creates a diff of a and b using cmp.Diff if possible, falling back to printing
+// the Go string values of both types (e.g. contains unexported fields).
+func diff[A, B any](a A, b B) (s string) {
+	defer func() {
+		if r := recover(); r != nil {
+			s = fmt.Sprintf("difference!\na: %#v\nb: %#v\n", a, b)
+		}
+	}()
+	s = "difference!\n" + cmp.Diff(a, b)
+	return
+}
+
+// equal compares a and b using cmp.Equal if possible, falling back to reflect.DeepEqual
+// (e.g. contains unexported fields).
+func equal[A, B any](a A, b B) (result bool) {
+	defer func() {
+		if r := recover(); r != nil {
+			result = reflect.DeepEqual(a, b)
+		}
+	}()
+	result = cmp.Equal(a, b)
+	return
+}
 
 // Nil asserts a is nil.
 func Nil(t T, a any) {
 	t.Helper()
 
 	if a != nil {
-		t.Fatalf(";; expected to be nil; is not nil")
+		fail(t, ";; expected to be nil; is not nil")
 	}
 }
 
@@ -24,7 +56,7 @@ func NotNil(t T, a any) {
 	t.Helper()
 
 	if a == nil {
-		t.Fatalf(";; expected to not be nil; is nil")
+		fail(t, ";; expected to not be nil; is nil")
 	}
 }
 
@@ -33,7 +65,7 @@ func True(t T, condition bool) {
 	t.Helper()
 
 	if !condition {
-		t.Fatalf(";; expected condition to be true; is false")
+		fail(t, ";; expected condition to be true; is false")
 	}
 }
 
@@ -42,7 +74,7 @@ func False(t T, condition bool) {
 	t.Helper()
 
 	if condition {
-		t.Fatalf(";; expected condition to be false; is true")
+		fail(t, ";; expected condition to be false; is true")
 	}
 }
 
@@ -51,7 +83,7 @@ func Error(t T, err error) {
 	t.Helper()
 
 	if err == nil {
-		t.Fatalf(";; expected non-nil error; is nil")
+		fail(t, ";; expected non-nil error; is nil")
 	}
 }
 
@@ -60,9 +92,9 @@ func ErrorIs(t T, err error, target error) {
 	t.Helper()
 
 	if !errors.Is(err, target) {
-		t.Logf("error: %v\n", err)
-		t.Logf("target: %v\n", target)
-		t.Fatalf(";; expected errors.Is match")
+		t.Logf("error: %v", err)
+		t.Logf("target: %v", target)
+		fail(t, ";; expected errors.Is match")
 	}
 }
 
@@ -72,7 +104,7 @@ func NoError(t T, err error) {
 
 	if err != nil {
 		t.Logf("error: %v", err)
-		t.Fatalf(";; expected nil error")
+		fail(t, ";; expected nil error")
 	}
 }
 
@@ -80,9 +112,9 @@ func NoError(t T, err error) {
 func Eq[A any](t T, a, b A) {
 	t.Helper()
 
-	if !cmp.Equal(a, b) {
-		t.Logf(cmp.Diff(a, b))
-		t.Fatalf(";; expected equality via cmp.Equal function")
+	if !equal(a, b) {
+		t.Logf(diff(a, b))
+		fail(t, ";; expected equality via cmp.Equal function")
 	}
 }
 
@@ -91,8 +123,8 @@ func EqCmp[C comparable](t T, a, b C) {
 	t.Helper()
 
 	if a != b {
-		t.Logf(cmp.Diff(a, b))
-		t.Fatalf(";; expected equality via ==")
+		t.Logf(diff(a, b))
+		fail(t, ";; expected equality via ==")
 	}
 }
 
@@ -101,8 +133,8 @@ func EqFunc[A any](t T, a, b A, eq func(a, b A) bool) {
 	t.Helper()
 
 	if !eq(a, b) {
-		t.Logf(cmp.Diff(a, b))
-		t.Fatalf(";; expected equality via 'eq' function")
+		t.Logf(diff(a, b))
+		fail(t, ";; expected equality via 'eq' function")
 	}
 }
 
@@ -111,7 +143,7 @@ func NotEq[C comparable](t T, a, b C) {
 	t.Helper()
 
 	if a == b {
-		t.Fatalf(";; expected inequality via !=")
+		fail(t, ";; expected inequality via !=")
 	}
 }
 
@@ -120,7 +152,7 @@ func NotEqFunc[A any](t T, a, b A, eq func(a, b A) bool) {
 	t.Helper()
 
 	if eq(a, b) {
-		t.Fatalf(";; expected inequality via 'eq' function")
+		fail(t, ";; expected inequality via 'eq' function")
 	}
 }
 
@@ -131,18 +163,21 @@ func EqJSON(t T, a, b string) {
 	var expA, expB any
 
 	if err := json.Unmarshal([]byte(a), &expA); err != nil {
-		t.Fatalf("failed to unmarshal first argument as json: %v", err)
+		fail(t, "failed to unmarshal first argument as json: %v", err)
+		return
 	}
 
 	if err := json.Unmarshal([]byte(b), &expB); err != nil {
-		t.Fatalf("failed to unmarshal second argument as json: %v", err)
+		fail(t, "failed to unmarshal second argument as json: %v", err)
+		return
 	}
 
 	if !reflect.DeepEqual(expA, expB) {
 		jsonA, _ := json.Marshal(expA)
 		jsonB, _ := json.Marshal(expB)
-		t.Logf(cmp.Diff(string(jsonA), string(jsonB)))
-		t.Fatalf(";; expected equality via json marshalling")
+		t.Logf(diff(string(jsonA), string(jsonB)))
+		fail(t, ";; expected equality via json marshalling")
+		return
 	}
 }
 
@@ -155,8 +190,8 @@ func EqSliceFunc[A any](t T, a, b []A, eq func(a, b A) bool) {
 	if lenA != lenB {
 		t.Logf("len(slice a): %d\n", lenA)
 		t.Logf("len(slice b): %d\n", lenB)
-		t.Logf(cmp.Diff(a, b))
-		t.Fatalf(";; expected slices of same length")
+		t.Logf(diff(a, b))
+		fail(t, ";; expected slices of same length")
 		return
 	}
 
@@ -169,8 +204,8 @@ func EqSliceFunc[A any](t T, a, b []A, eq func(a, b A) bool) {
 	}
 
 	if miss {
-		t.Logf(cmp.Diff(a, b))
-		t.Fatalf(";; expected slice equality via 'eq' function")
+		t.Logf(diff(a, b))
+		fail(t, ";; expected slice equality via 'eq' function")
 		return
 	}
 }
@@ -180,8 +215,8 @@ func Equals[E EqualsFunc[E]](t T, a, b E) {
 	t.Helper()
 
 	if !a.Equals(b) {
-		t.Logf(cmp.Diff(a, b))
-		t.Fatalf(";; expected equality via .Equals method")
+		t.Logf(diff(a, b))
+		fail(t, ";; expected equality via .Equals method")
 	}
 }
 
@@ -190,7 +225,8 @@ func NotEquals[E EqualsFunc[E]](t T, a, b E) {
 	t.Helper()
 
 	if a.Equals(b) {
-		t.Fatalf(";; expected inequality via .Equals method")
+		t.Logf(diff(a, b))
+		fail(t, ";; expected inequality via .Equals method")
 	}
 }
 
@@ -203,15 +239,16 @@ func EqualsSlice[E EqualsFunc[E]](t T, a, b []E) {
 	if lenA != lenB {
 		t.Logf("len(slice a): %d\n", lenA)
 		t.Logf("len(slice b): %d\n", lenB)
-		t.Logf(cmp.Diff(a, b))
-		t.Fatalf(";; expected slices of same length")
+		t.Logf(diff(a, b))
+		fail(t, ";; expected slices of same length")
 		return
 	}
 
 	for i := 0; i < lenA; i++ {
 		if !a[i].Equals(b[i]) {
-			t.Logf(cmp.Diff(a, b))
-			t.Fatalf(";; expected slice equality via .Equals method")
+			t.Logf(diff(a[i], b[i]))
+			fail(t, ";; expected slice equality via .Equals method")
+			return
 		}
 	}
 }
@@ -221,8 +258,8 @@ func Lesser[L LessFunc[L]](t T, a, b L) {
 	t.Helper()
 
 	if !a.Less(b) {
-		t.Logf(cmp.Diff(a, b))
-		t.Fatalf(";; expected to be less via .Less method")
+		t.Logf(diff(a, b))
+		fail(t, ";; expected to be less via .Less method")
 	}
 }
 
@@ -232,7 +269,7 @@ func EmptySlice[A any](t T, slice []A) {
 
 	if len(slice) != 0 {
 		t.Logf("len(slice): %d\n", len(slice))
-		t.Fatalf(";; expected slice to be empty")
+		fail(t, ";; expected slice to be empty")
 	}
 }
 
@@ -240,10 +277,9 @@ func EmptySlice[A any](t T, slice []A) {
 func LenSlice[A any](t T, n int, slice []A) {
 	t.Helper()
 
-	l := len(slice)
-	if l != n {
+	if l := len(slice); l != n {
 		t.Logf("len(slice): %d, expected: %d\n", l, n)
-		t.Fatalf(";; expected slice to be different length")
+		fail(t, ";; expected slice to be different length")
 	}
 }
 
@@ -274,10 +310,10 @@ func Contains[A any](t T, slice []A, item A) {
 	t.Helper()
 
 	if !containsFunc(slice, item, func(a, b A) bool {
-		return cmp.Equal(a, b)
+		return equal(a, b)
 	}) {
 		t.Logf("slice is missing %#v\n", item)
-		t.Fatalf(";; expected slice to contain missing item via cmp.Equal function")
+		fail(t, ";; expected slice to contain missing item via cmp.Equal function")
 	}
 }
 
@@ -287,7 +323,7 @@ func ContainsCmp[C comparable](t T, slice []C, item C) {
 
 	if !contains(slice, item) {
 		t.Logf("slice is missing %#v\n", item)
-		t.Fatalf(";; expected slice to contain missing item via == operator")
+		fail(t, ";; expected slice to contain missing item via == operator")
 	}
 }
 
@@ -297,7 +333,7 @@ func ContainsFunc[A any](t T, slice []A, item A, eq func(a, b A) bool) {
 
 	if !containsFunc(slice, item, eq) {
 		t.Logf("slice is missing %#v\n", item)
-		t.Fatalf(";; expected slice to contain missing item via 'eq' function")
+		fail(t, ";; expected slice to contain missing item via 'eq' function")
 	}
 }
 
@@ -307,7 +343,7 @@ func ContainsEquals[E EqualsFunc[E]](t T, slice []E, item E) {
 
 	if !containsFunc(slice, item, E.Equals) {
 		t.Logf("slice is missing %#v\n", item)
-		t.Fatalf(";; expected slice to contain missing item via .Equals method")
+		fail(t, ";; expected slice to contain missing item via .Equals method")
 	}
 }
 
@@ -316,7 +352,7 @@ func Less[O constraints.Ordered](t T, a, b O) {
 	t.Helper()
 
 	if !(a < b) {
-		t.Fatalf(";; expected %v < %v", a, b)
+		fail(t, ";; expected %v < %v", a, b)
 	}
 }
 
@@ -325,7 +361,7 @@ func LessEq[O constraints.Ordered](t T, a, b O) {
 	t.Helper()
 
 	if !(a <= b) {
-		t.Fatalf(";; expected %v <= %v", a, b)
+		fail(t, ";; expected %v <= %v", a, b)
 	}
 }
 
@@ -334,7 +370,7 @@ func Greater[O constraints.Ordered](t T, a, b O) {
 	t.Helper()
 
 	if !(a > b) {
-		t.Fatalf(";; expected %v > %v", a, b)
+		fail(t, ";; expected %v > %v", a, b)
 	}
 }
 
@@ -343,7 +379,7 @@ func GreaterEq[O constraints.Ordered](t T, a, b O) {
 	t.Helper()
 
 	if !(a >= b) {
-		t.Fatalf(";; expected %v >= %v", a, b)
+		fail(t, ";; expected %v >= %v", a, b)
 	}
 }
 
@@ -375,24 +411,29 @@ func InDelta[N Number](t T, a, b, delta N) {
 	var zero N
 
 	if !Numeric(delta) {
-		t.Fatalf(";; delta must be numeric; got %v", delta)
+		fail(t, ";; delta must be numeric; got %v", delta)
+		return
 	}
 
 	if delta <= zero {
-		t.Fatalf(";; delta must be positive; got %v", delta)
+		fail(t, ";; delta must be positive; got %v", delta)
+		return
 	}
 
 	if !Numeric(a) {
-		t.Fatalf(";; first argument must be numeric; got %v", a)
+		fail(t, ";; first argument must be numeric; got %v", a)
+		return
 	}
 
 	if !Numeric(b) {
-		t.Fatalf(";; second argument must be numeric; got %v", b)
+		fail(t, ";; second argument must be numeric; got %v", b)
+		return
 	}
 
 	difference := a - b
 	if difference < -delta || difference > delta {
-		t.Fatalf(";; %v and %v not within %v", a, b, delta)
+		fail(t, ";; %v and %v not within %v", a, b, delta)
+		return
 	}
 }
 
@@ -403,7 +444,8 @@ func InDeltaSlice[N Number](t T, a, b []N, delta N) {
 	if len(a) != len(b) {
 		t.Logf("len(slice a): %d\n", len(a))
 		t.Logf("len(slice b): %d\n", len(b))
-		t.Fatalf(";; expected slices of same length")
+		fail(t, ";; expected slices of same length")
+		return
 	}
 
 	for i := 0; i < len(a); i++ {
@@ -413,7 +455,7 @@ func InDeltaSlice[N Number](t T, a, b []N, delta N) {
 
 // MapEq asserts maps a and b contain the same key/value pairs, using
 // cmp.Equal function to compare values.
-func MapEq[M1, M2 ~map[K]V, K comparable, V any](t T, a M1, b M2) {
+func MapEq[M1, M2 Map[K, V], K comparable, V any](t T, a M1, b M2) {
 	t.Helper()
 
 	lenA, lenB := len(a), len(b)
@@ -421,21 +463,21 @@ func MapEq[M1, M2 ~map[K]V, K comparable, V any](t T, a M1, b M2) {
 	if lenA != lenB {
 		t.Logf("len(map a): %d\n", lenA)
 		t.Logf("len(map b): %d\n", lenB)
-		t.Fatalf(";; expected maps of same length")
+		fail(t, ";; expected maps of same length")
 		return
 	}
 
 	for key, valueA := range a {
 		valueB, exists := b[key]
 		if !exists {
-			t.Logf(cmp.Diff(a, b))
-			t.Fatalf(";; expected maps of same keys")
+			t.Logf(diff(a, b))
+			fail(t, ";; expected maps of same keys")
 			return
 		}
 
 		if !cmp.Equal(valueA, valueB) {
-			t.Logf(cmp.Diff(a, b))
-			t.Fatalf(";; expected maps of same values via cmp.Diff function")
+			t.Logf(diff(a, b))
+			fail(t, ";; expected maps of same values via cmp.Diff function")
 			return
 		}
 	}
@@ -443,7 +485,7 @@ func MapEq[M1, M2 ~map[K]V, K comparable, V any](t T, a M1, b M2) {
 
 // MapEqFunc asserts maps a and b contain the same key/value pairs, using eq to
 // compare values.
-func MapEqFunc[M1 ~map[K]V1, M2 ~map[K]V2, K comparable, V1, V2 any](t T, a M1, b M2, eq func(V1, V2) bool) {
+func MapEqFunc[M Map[K, V], K comparable, V any](t T, a, b M, eq func(V, V) bool) {
 	t.Helper()
 
 	lenA, lenB := len(a), len(b)
@@ -451,21 +493,21 @@ func MapEqFunc[M1 ~map[K]V1, M2 ~map[K]V2, K comparable, V1, V2 any](t T, a M1, 
 	if lenA != lenB {
 		t.Logf("len(map a): %d\n", lenA)
 		t.Logf("len(map b): %d\n", lenB)
-		t.Fatalf(";; expected maps of same length")
+		fail(t, ";; expected maps of same length")
 		return
 	}
 
 	for key, valueA := range a {
 		valueB, exists := b[key]
 		if !exists {
-			t.Logf(cmp.Diff(a, b))
-			t.Fatalf(";; expected maps of same keys")
+			t.Logf(diff(a, b))
+			fail(t, ";; expected maps of same keys")
 			return
 		}
 
 		if !eq(valueA, valueB) {
-			t.Logf(cmp.Diff(a, b))
-			t.Fatalf(";; expected maps of same values via 'eq' function")
+			t.Logf(diff(a, b))
+			fail(t, ";; expected maps of same values via 'eq' function")
 			return
 		}
 	}
@@ -473,7 +515,7 @@ func MapEqFunc[M1 ~map[K]V1, M2 ~map[K]V2, K comparable, V1, V2 any](t T, a M1, 
 
 // MapEquals asserts maps a and b contain the same key/value pairs, using Equals
 // method to compare values
-func MapEquals[M ~map[K]V, K comparable, V EqualsFunc[V]](t T, a, b M) {
+func MapEquals[M MapEqualsFunc[K, V], K comparable, V EqualsFunc[V]](t T, a, b M) {
 	t.Helper()
 
 	lenA, lenB := len(a), len(b)
@@ -481,21 +523,21 @@ func MapEquals[M ~map[K]V, K comparable, V EqualsFunc[V]](t T, a, b M) {
 	if lenA != lenB {
 		t.Logf("len(map a): %d\n", lenA)
 		t.Logf("len(map b): %d\n", lenB)
-		t.Fatalf(";; expected maps of same length")
+		fail(t, ";; expected maps of same length")
 		return
 	}
 
 	for key, valueA := range a {
 		valueB, exists := b[key]
 		if !exists {
-			t.Logf(cmp.Diff(a, b))
-			t.Fatalf(";; expected maps of same keys")
+			t.Logf(diff(a, b))
+			fail(t, ";; expected maps of same keys")
 			return
 		}
 
-		if !valueB.Equals(valueA) {
-			t.Logf(cmp.Diff(a, b))
-			t.Fatalf(";; expected maps of same values via .Equals method")
+		if !(valueB).Equals(valueA) {
+			t.Logf(diff(a, b))
+			fail(t, ";; expected maps of same values via .Equals method")
 			return
 		}
 	}
@@ -505,10 +547,9 @@ func MapEquals[M ~map[K]V, K comparable, V EqualsFunc[V]](t T, a, b M) {
 func MapLen[M ~map[K]V, K comparable, V any](t T, n int, m M) {
 	t.Helper()
 
-	l := len(m)
-	if l != n {
+	if l := len(m); l != n {
 		t.Logf("len(map): %d, expected: %d\n", l, n)
-		t.Fatalf(";; expected map to be different length")
+		fail(t, ";; expected map to be different length")
 	}
 }
 
@@ -517,7 +558,7 @@ func MapEmpty[M ~map[K]V, K comparable, V any](t T, m M) {
 	t.Helper()
 
 	if l := len(m); l > 0 {
-		t.Logf("len(map): %d\n")
-		t.Fatalf(";; expected map to be empty")
+		t.Logf("len(map): %d\n", l)
+		fail(t, ";; expected map to be empty")
 	}
 }

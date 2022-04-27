@@ -4,15 +4,17 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"strings"
 	"testing"
 	"time"
 )
 
 type internalTest struct {
-	t        *testing.T
-	trigger  bool
-	helper   bool
-	exp, msg string
+	t       *testing.T
+	trigger bool
+	helper  bool
+	exp     string
+	capture []string
 }
 
 func (it *internalTest) Helper() {
@@ -20,13 +22,14 @@ func (it *internalTest) Helper() {
 }
 
 func (it *internalTest) Logf(s string, args ...any) {
-	fmt.Printf(s, args...)
+	msg := strings.TrimSpace(fmt.Sprintf(s, args...))
+	it.capture = append(it.capture, msg)
+	fmt.Println(msg)
 }
 
-func (it *internalTest) Fatalf(msg string, args ...any) {
+func (it *internalTest) Fail() {
 	if !it.trigger {
 		it.trigger = true
-		it.msg = fmt.Sprintf(msg, args...)
 	}
 }
 
@@ -37,8 +40,16 @@ func (it *internalTest) assert() {
 	if !it.trigger {
 		it.t.Fatalf("condition expected to trigger; did not")
 	}
-	if it.exp != it.msg {
-		it.t.Fatalf("expected message %q ... got %q", it.exp, it.msg)
+
+	found := false
+	for i := 0; i < len(it.capture); i++ {
+		if it.capture[i] == it.exp {
+			found = true
+			break
+		}
+	}
+	if !found {
+		it.t.Fatalf("expected message %q in output, got %q", it.exp, strings.Join(it.capture, ","))
 	}
 }
 
