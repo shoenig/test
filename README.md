@@ -12,7 +12,7 @@ A modern, generics based testing assertions library for Go.
 Package `test` provides an opinionated, lightweight library for writing
 test case assertions in Go.
 
-There are no external dependencies.
+Only depends on `github.com/google/go-cmp`.
 
 The minimum Go version is **go1.18**.
 
@@ -33,10 +33,15 @@ go get -u github.com/shoenig/test@latest
 ### Examples (basic)
 
 ```go
-// using ==
+// using cmp.Equal
 e1 := Employee{ID: 100, Name: "Alice"}
 e2 := Employee{ID: 101, Name: "Bob"}
 test.Eq(t, e1, e2)
+
+// using == operator
+e1 := Employee{ID: 100, Name: "Alice"}
+e2 := Employee{ID: 101, Name: "Bob"}
+test.EqCmp(t, e1, e2)
 
 // using a custom comparator
 e1 := &Employee{ID: 100, Name: "Alice"}
@@ -45,7 +50,7 @@ test.EqFunc(t, e1, e2, func(a, b *Employee) bool {
     return a.ID == b.ID
 })
 
-// using .Equals
+// using .Equals method
 e1 := &Employee{ID: 100, Name: "Alice"}
 e2 := &Employee{ID: 101, Name: "Bob"}
 test.Equals(t, e1, e2)
