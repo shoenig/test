@@ -66,6 +66,12 @@ func Error(t T, err error) {
 	test.Error(convert(t), err)
 }
 
+// EqError asserts error contains value msg.
+func EqError(t T, err error, msg string) {
+	t.Helper()
+	test.EqError(convert(t), err, msg)
+}
+
 // ErrorIs asserts err
 func ErrorIs(t T, err error, target error) {
 	t.Helper()

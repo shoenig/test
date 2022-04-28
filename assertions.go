@@ -87,6 +87,17 @@ func Error(t T, err error) {
 	}
 }
 
+func EqError(t T, err error, msg string) {
+	t.Helper()
+
+	s := err.Error()
+	if s != msg {
+		t.Logf("msg: %q", msg)
+		t.Logf("err: %q", s)
+		fail(t, ";; expected matching error strings")
+	}
+}
+
 // ErrorIs asserts err
 func ErrorIs(t T, err error, target error) {
 	t.Helper()
