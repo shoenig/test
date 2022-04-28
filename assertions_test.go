@@ -98,6 +98,13 @@ func TestError(t *testing.T) {
 	Error(tc, nil)
 }
 
+func TestEqError(t *testing.T) {
+	tc := newCase(t, `;; expected matching error strings`)
+	t.Cleanup(tc.assert)
+
+	EqError(tc, errors.New("oops"), "blah")
+}
+
 func TestErrorIs(t *testing.T) {
 	tc := newCase(t, `;; expected errors.Is match`)
 	t.Cleanup(tc.assert)
