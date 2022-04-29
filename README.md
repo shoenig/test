@@ -33,7 +33,7 @@ Generally there are 4 ways of asserting equivalence between types.
 
 #### the == operator
 
-Functions like `EqCmp` and `ContainsCmp` work on types that are `comparable`, i.e. are
+Functions like `EqOp` and `ContainsOp` work on types that are `comparable`, i.e. are
 compatible with Go's built-in `==` and `!=` operators.
 
 #### a comparator function
@@ -94,7 +94,7 @@ test.Eq(t, e1, e2)
 // using == operator
 e1 := Employee{ID: 100, Name: "Alice"}
 e2 := Employee{ID: 101, Name: "Bob"}
-test.EqCmp(t, e1, e2)
+test.EqOp(t, e1, e2)
 
 // using a custom comparator
 e1 := &Employee{ID: 100, Name: "Alice"}
