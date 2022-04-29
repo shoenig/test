@@ -146,6 +146,38 @@ MapEqFunc(tc, a, b, func(p1, p2 Person) bool {
 })
 ```
 
+### Examples (output)
+
+```text
+tests_test.go:569: expected maps of same values via 'eq' function
+↪ difference:
+  map[int]test.Person{
+  	0: {ID: 100, Name: "Alice"},
+  	1: {
+  		ID:   101,
+- 		Name: "Bob",
++ 		Name: "Bob B.",
+  	},
+  }
+```
+
+```text
+tests_test.go:518: expected slices of same length
+↪ len(slice a): 2
+↪ len(slice b): 3
+```
+
+```text
+tests_test.go:147: expected equality via cmp.Equal function
+↪ difference:
+  test.Person{
+- 	ID:   100,
++ 	ID:   101,
+- 	Name: "Alice",
++ 	Name: "Bob",
+  }
+```
+
 ### License
 
 Open source under the [MPL](LICENSE)
