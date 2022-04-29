@@ -140,7 +140,7 @@ func Eq[A any](a, b A) (s string) {
 	return
 }
 
-func EqCmp[C comparable](a, b C) (s string) {
+func EqOp[C comparable](a, b C) (s string) {
 	if a != b {
 		s = "expected equality via ==\n"
 		s += diff(a, b)
@@ -293,7 +293,7 @@ func Contains[A any](slice []A, item A) (s string) {
 	return
 }
 
-func ContainsCmp[C comparable](slice []C, item C) (s string) {
+func ContainsOp[C comparable](slice []C, item C) (s string) {
 	if !contains(slice, item) {
 		s = "expected slice to contain missing item via == operator\n"
 		s += fmt.Sprintf("↪ slice is missing %#v\n", item)

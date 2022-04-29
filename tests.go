@@ -85,10 +85,10 @@ func Eq[A any](t T, a, b A) {
 	invoke(t, assertions.Eq(a, b))
 }
 
-// EqCmp asserts a == b.
-func EqCmp[C comparable](t T, a, b C) {
+// EqOp asserts a == b.
+func EqOp[C comparable](t T, a, b C) {
 	t.Helper()
-	invoke(t, assertions.EqCmp(a, b))
+	invoke(t, assertions.EqOp(a, b))
 }
 
 // EqFunc asserts a and b are equal using eq.
@@ -163,10 +163,10 @@ func Contains[A any](t T, slice []A, item A) {
 	invoke(t, assertions.Contains(slice, item))
 }
 
-// ContainsCmp asserts item exists in slice using == operator.
-func ContainsCmp[C comparable](t T, slice []C, item C) {
+// ContainsOp asserts item exists in slice using == operator.
+func ContainsOp[C comparable](t T, slice []C, item C) {
 	t.Helper()
-	invoke(t, assertions.ContainsCmp(slice, item))
+	invoke(t, assertions.ContainsOp(slice, item))
 }
 
 // ContainsFunc asserts item exists in slice, using eq to compare elements.

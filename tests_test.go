@@ -154,11 +154,11 @@ func TestEq(t *testing.T) {
 	})
 }
 
-func TestEqCmp(t *testing.T) {
+func TestEqOp(t *testing.T) {
 	t.Run("number", func(t *testing.T) {
 		tc := newCase(t, `expected equality via ==`)
 		t.Cleanup(tc.assert)
-		EqCmp(tc, "foo", "bar")
+		EqOp(tc, "foo", "bar")
 	})
 }
 
@@ -360,17 +360,17 @@ func TestContains(t *testing.T) {
 	})
 }
 
-func TestContainsCmp(t *testing.T) {
+func TestContainsOp(t *testing.T) {
 	t.Run("numbers", func(t *testing.T) {
 		tc := newCase(t, `expected slice to contain missing item via == operator`)
 		t.Cleanup(tc.assert)
-		ContainsCmp(tc, []int{3, 4, 5}, 7)
+		ContainsOp(tc, []int{3, 4, 5}, 7)
 	})
 
 	t.Run("strings", func(t *testing.T) {
 		tc := newCase(t, `expected slice to contain missing item via == operator`)
 		t.Cleanup(tc.assert)
-		ContainsCmp(tc, []string{"alice", "carl"}, "bob")
+		ContainsOp(tc, []string{"alice", "carl"}, "bob")
 	})
 }
 
