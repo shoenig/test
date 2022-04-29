@@ -14,23 +14,20 @@ type internalTest struct {
 	trigger bool
 	helper  bool
 	exp     string
-	capture []string
+	capture string
 }
 
 func (it *internalTest) Helper() {
 	it.helper = true
 }
 
-func (it *internalTest) Logf(s string, args ...any) {
-	msg := strings.TrimSpace(fmt.Sprintf(s, args...))
-	it.capture = append(it.capture, msg)
-	fmt.Println(msg)
-}
-
-func (it *internalTest) Fail() {
+func (it *internalTest) Errorf(s string, args ...any) {
 	if !it.trigger {
 		it.trigger = true
 	}
+	msg := strings.TrimSpace(fmt.Sprintf(s, args...))
+	it.capture = msg
+	fmt.Println(msg)
 }
 
 func (it *internalTest) assert() {
@@ -41,15 +38,8 @@ func (it *internalTest) assert() {
 		it.t.Fatalf("condition expected to trigger; did not")
 	}
 
-	found := false
-	for i := 0; i < len(it.capture); i++ {
-		if it.capture[i] == it.exp {
-			found = true
-			break
-		}
-	}
-	if !found {
-		it.t.Fatalf("expected message %q in output, got %q", it.exp, strings.Join(it.capture, ","))
+	if !strings.Contains(it.capture, it.exp) {
+		it.t.Fatalf("expected message %q in output, got %q", it.exp, it.capture)
 	}
 }
 
@@ -62,7 +52,7 @@ func newCase(t *testing.T, msg string) *internalTest {
 }
 
 func TestNil(t *testing.T) {
-	tc := newCase(t, `;; expected to be nil; is not nil`)
+	tc := newCase(t, `expected to be nil; is not nil`)
 	t.Cleanup(tc.assert)
 
 	Nil(tc, 42)
@@ -71,42 +61,42 @@ func TestNil(t *testing.T) {
 }
 
 func TestNotNil(t *testing.T) {
-	tc := newCase(t, `;; expected to not be nil; is nil`)
+	tc := newCase(t, `expected to not be nil; is nil`)
 	t.Cleanup(tc.assert)
 
 	NotNil(tc, nil)
 }
 
 func TestTrue(t *testing.T) {
-	tc := newCase(t, `;; expected condition to be true; is false`)
+	tc := newCase(t, `expected condition to be true; is false`)
 	t.Cleanup(tc.assert)
 
 	True(tc, false)
 }
 
 func TestFalse(t *testing.T) {
-	tc := newCase(t, `;; expected condition to be false; is true`)
+	tc := newCase(t, `expected condition to be false; is true`)
 	t.Cleanup(tc.assert)
 
 	False(tc, true)
 }
 
 func TestError(t *testing.T) {
-	tc := newCase(t, `;; expected non-nil error; is nil`)
+	tc := newCase(t, `expected non-nil error; is nil`)
 	t.Cleanup(tc.assert)
 
 	Error(tc, nil)
 }
 
 func TestEqError(t *testing.T) {
-	tc := newCase(t, `;; expected matching error strings`)
+	tc := newCase(t, `expected matching error strings`)
 	t.Cleanup(tc.assert)
 
 	EqError(tc, errors.New("oops"), "blah")
 }
 
 func TestErrorIs(t *testing.T) {
-	tc := newCase(t, `;; expected errors.Is match`)
+	tc := newCase(t, `expected errors.Is match`)
 	t.Cleanup(tc.assert)
 
 	e1 := errors.New("foo")
@@ -115,7 +105,7 @@ func TestErrorIs(t *testing.T) {
 }
 
 func TestNoError(t *testing.T) {
-	tc := newCase(t, `;; expected nil error`)
+	tc := newCase(t, `expected nil error`)
 	t.Cleanup(tc.assert)
 
 	NoError(tc, errors.New("hello"))
@@ -123,21 +113,21 @@ func TestNoError(t *testing.T) {
 
 func TestEq(t *testing.T) {
 	t.Run("number", func(t *testing.T) {
-		tc := newCase(t, `;; expected equality via cmp.Equal function`)
+		tc := newCase(t, `expected equality via cmp.Equal function`)
 		t.Cleanup(tc.assert)
 
 		Eq(tc, 42, 43)
 	})
 
 	t.Run("string", func(t *testing.T) {
-		tc := newCase(t, `;; expected equality via cmp.Equal function`)
+		tc := newCase(t, `expected equality via cmp.Equal function`)
 		t.Cleanup(tc.assert)
 
 		Eq(tc, "foo", "bar")
 	})
 
 	t.Run("duration", func(t *testing.T) {
-		tc := newCase(t, `;; expected equality via cmp.Equal function`)
+		tc := newCase(t, `expected equality via cmp.Equal function`)
 		t.Cleanup(tc.assert)
 
 		a := 2 * time.Second
@@ -146,7 +136,7 @@ func TestEq(t *testing.T) {
 	})
 
 	t.Run("person", func(t *testing.T) {
-		tc := newCase(t, `;; expected equality via cmp.Equal function`)
+		tc := newCase(t, `expected equality via cmp.Equal function`)
 		t.Cleanup(tc.assert)
 
 		p1 := Person{ID: 100, Name: "Alice"}
@@ -155,7 +145,7 @@ func TestEq(t *testing.T) {
 	})
 
 	t.Run("slice", func(t *testing.T) {
-		tc := newCase(t, `;; expected equality via cmp.Equal function`)
+		tc := newCase(t, `expected equality via cmp.Equal function`)
 		t.Cleanup(tc.assert)
 
 		a := []int{1, 2, 3, 4}
@@ -166,14 +156,14 @@ func TestEq(t *testing.T) {
 
 func TestEqCmp(t *testing.T) {
 	t.Run("number", func(t *testing.T) {
-		tc := newCase(t, `;; expected equality via ==`)
+		tc := newCase(t, `expected equality via ==`)
 		t.Cleanup(tc.assert)
 		EqCmp(tc, "foo", "bar")
 	})
 }
 
 func TestEqFunc(t *testing.T) {
-	tc := newCase(t, `;; expected equality via 'eq' function`)
+	tc := newCase(t, `expected equality via 'eq' function`)
 	t.Cleanup(tc.assert)
 
 	a := &Person{ID: 100, Name: "Alice"}
@@ -186,26 +176,26 @@ func TestEqFunc(t *testing.T) {
 
 func TestNotEq(t *testing.T) {
 	t.Run("number", func(t *testing.T) {
-		tc := newCase(t, `;; expected inequality via !=`)
+		tc := newCase(t, `expected inequality via !=`)
 		t.Cleanup(tc.assert)
 		NotEq(tc, 42, 42)
 	})
 
 	t.Run("string", func(t *testing.T) {
-		tc := newCase(t, `;; expected inequality via !=`)
+		tc := newCase(t, `expected inequality via !=`)
 		t.Cleanup(tc.assert)
 		NotEq(tc, "foo", "foo")
 	})
 
 	t.Run("duration", func(t *testing.T) {
-		tc := newCase(t, `;; expected inequality via !=`)
+		tc := newCase(t, `expected inequality via !=`)
 		t.Cleanup(tc.assert)
 		NotEq(tc, 3*time.Second, 3*time.Second)
 	})
 }
 
 func TestNotEqFunc(t *testing.T) {
-	tc := newCase(t, `;; expected inequality via 'eq' function`)
+	tc := newCase(t, `expected inequality via 'eq' function`)
 	t.Cleanup(tc.assert)
 
 	a := &Person{ID: 100, Name: "Alice"}
@@ -217,16 +207,15 @@ func TestNotEqFunc(t *testing.T) {
 }
 
 func TestEqJSON(t *testing.T) {
-	tc := newCase(t, `;; expected equality via json marshalling`)
+	tc := newCase(t, `expected equality via json marshalling`)
 	t.Cleanup(tc.assert)
 
 	EqJSON(tc, `{"a":1, "b":2}`, `{"b":2, "a":9}`)
 }
 
 func TestEqSliceFunc(t *testing.T) {
-
 	t.Run("length", func(t *testing.T) {
-		tc := newCase(t, `;; expected slices of same length`)
+		tc := newCase(t, `expected slices of same length`)
 		t.Cleanup(tc.assert)
 
 		a := []int{1, 2, 3}
@@ -237,7 +226,7 @@ func TestEqSliceFunc(t *testing.T) {
 	})
 
 	t.Run("elements", func(t *testing.T) {
-		tc := newCase(t, `;; expected slice equality via 'eq' function`)
+		tc := newCase(t, `expected slice equality via 'eq' function`)
 		t.Cleanup(tc.assert)
 
 		a := []*Person{
@@ -272,7 +261,7 @@ func (p *Person) Less(o *Person) bool {
 }
 
 func TestEquals(t *testing.T) {
-	tc := newCase(t, `;; expected equality via .Equals method`)
+	tc := newCase(t, `expected equality via .Equals method`)
 	t.Cleanup(tc.assert)
 
 	a := &Person{ID: 100, Name: "Alice"}
@@ -282,7 +271,7 @@ func TestEquals(t *testing.T) {
 }
 
 func TestNotEquals(t *testing.T) {
-	tc := newCase(t, `;; expected inequality via .Equals method`)
+	tc := newCase(t, `expected inequality via .Equals method`)
 	t.Cleanup(tc.assert)
 
 	a := &Person{ID: 100, Name: "Alice"}
@@ -293,7 +282,7 @@ func TestNotEquals(t *testing.T) {
 
 func TestEqualsSlice(t *testing.T) {
 	t.Run("length", func(t *testing.T) {
-		tc := newCase(t, `;; expected slices of same length`)
+		tc := newCase(t, `expected slices of same length`)
 		t.Cleanup(tc.assert)
 
 		a := []*Person{
@@ -309,7 +298,7 @@ func TestEqualsSlice(t *testing.T) {
 	})
 
 	t.Run("elements", func(t *testing.T) {
-		tc := newCase(t, `;; expected slice equality via .Equals method`)
+		tc := newCase(t, `expected slice equality via .Equals method`)
 		t.Cleanup(tc.assert)
 
 		a := []*Person{
@@ -328,7 +317,7 @@ func TestEqualsSlice(t *testing.T) {
 }
 
 func TestLesser(t *testing.T) {
-	tc := newCase(t, `;; expected to be less via .Less method`)
+	tc := newCase(t, `expected to be less via .Less method`)
 	t.Cleanup(tc.assert)
 
 	a := &Person{ID: 200, Name: "Alice"}
@@ -338,7 +327,7 @@ func TestLesser(t *testing.T) {
 }
 
 func TestEmptySlice(t *testing.T) {
-	tc := newCase(t, `;; expected slice to be empty`)
+	tc := newCase(t, `expected slice to be empty`)
 	t.Cleanup(tc.assert)
 
 	EmptySlice(tc, []int{1, 2})
@@ -346,13 +335,13 @@ func TestEmptySlice(t *testing.T) {
 
 func TestLenSlice(t *testing.T) {
 	t.Run("strings", func(t *testing.T) {
-		tc := newCase(t, `;; expected slice to be different length`)
+		tc := newCase(t, `expected slice to be different length`)
 		t.Cleanup(tc.assert)
 		LenSlice(tc, 2, []string{"a", "b", "c"})
 	})
 
 	t.Run("numbers", func(t *testing.T) {
-		tc := newCase(t, `;; expected slice to be different length`)
+		tc := newCase(t, `expected slice to be different length`)
 		t.Cleanup(tc.assert)
 		LenSlice(tc, 3, []int{8, 9})
 	})
@@ -360,7 +349,7 @@ func TestLenSlice(t *testing.T) {
 
 func TestContains(t *testing.T) {
 	t.Run("people", func(t *testing.T) {
-		tc := newCase(t, `;; expected slice to contain missing item via cmp.Equal function`)
+		tc := newCase(t, `expected slice to contain missing item via cmp.Equal function`)
 		t.Cleanup(tc.assert)
 		a := []*Person{
 			{ID: 100, Name: "Alice"},
@@ -373,20 +362,20 @@ func TestContains(t *testing.T) {
 
 func TestContainsCmp(t *testing.T) {
 	t.Run("numbers", func(t *testing.T) {
-		tc := newCase(t, `;; expected slice to contain missing item via == operator`)
+		tc := newCase(t, `expected slice to contain missing item via == operator`)
 		t.Cleanup(tc.assert)
 		ContainsCmp(tc, []int{3, 4, 5}, 7)
 	})
 
 	t.Run("strings", func(t *testing.T) {
-		tc := newCase(t, `;; expected slice to contain missing item via == operator`)
+		tc := newCase(t, `expected slice to contain missing item via == operator`)
 		t.Cleanup(tc.assert)
 		ContainsCmp(tc, []string{"alice", "carl"}, "bob")
 	})
 }
 
 func TestContainsFunc(t *testing.T) {
-	tc := newCase(t, `;; expected slice to contain missing item via 'eq' function`)
+	tc := newCase(t, `expected slice to contain missing item via 'eq' function`)
 	t.Cleanup(tc.assert)
 
 	s := []*Person{
@@ -400,7 +389,7 @@ func TestContainsFunc(t *testing.T) {
 }
 
 func TestContainsEquals(t *testing.T) {
-	tc := newCase(t, `;; expected slice to contain missing item via .Equals method`)
+	tc := newCase(t, `expected slice to contain missing item via .Equals method`)
 	t.Cleanup(tc.assert)
 
 	s := []*Person{
@@ -413,107 +402,107 @@ func TestContainsEquals(t *testing.T) {
 
 func TestLess(t *testing.T) {
 	t.Run("integers", func(t *testing.T) {
-		tc := newCase(t, `;; expected 7 < 5`)
+		tc := newCase(t, `expected 7 < 5`)
 		t.Cleanup(tc.assert)
 		Less(tc, 7, 5)
 	})
 
 	t.Run("floats", func(t *testing.T) {
-		tc := newCase(t, `;; expected 7.7 < 5.5`)
+		tc := newCase(t, `expected 7.7 < 5.5`)
 		t.Cleanup(tc.assert)
 		Less(tc, 7.7, 5.5)
 	})
 
 	t.Run("strings", func(t *testing.T) {
-		tc := newCase(t, `;; expected foo < bar`)
+		tc := newCase(t, `expected foo < bar`)
 		t.Cleanup(tc.assert)
 		Less(tc, "foo", "bar")
 	})
 
 	t.Run("equal", func(t *testing.T) {
-		tc := newCase(t, `;; expected 7 < 7`)
+		tc := newCase(t, `expected 7 < 7`)
 		t.Cleanup(tc.assert)
 		Less(tc, 7, 7)
 	})
 }
 
 func TestLessEq(t *testing.T) {
-	tc := newCase(t, `;; expected 7 <= 5`)
+	tc := newCase(t, `expected 7 <= 5`)
 	t.Cleanup(tc.assert)
 	LessEq(tc, 7, 5)
 }
 
 func TestGreater(t *testing.T) {
 	t.Run("integer", func(t *testing.T) {
-		tc := newCase(t, `;; expected 5 > 7`)
+		tc := newCase(t, `expected 5 > 7`)
 		t.Cleanup(tc.assert)
 		Greater(tc, 5, 7)
 	})
 
 	t.Run("floats", func(t *testing.T) {
-		tc := newCase(t, `;; expected 5.5 > 7.7`)
+		tc := newCase(t, `expected 5.5 > 7.7`)
 		t.Cleanup(tc.assert)
 		Greater(tc, 5.5, 7.7)
 	})
 
 	t.Run("strings", func(t *testing.T) {
-		tc := newCase(t, `;; expected bar > foo`)
+		tc := newCase(t, `expected bar > foo`)
 		t.Cleanup(tc.assert)
 		Greater(tc, "bar", "foo")
 	})
 
 	t.Run("equal", func(t *testing.T) {
-		tc := newCase(t, `;; expected bar > bar`)
+		tc := newCase(t, `expected bar > bar`)
 		t.Cleanup(tc.assert)
 		Greater(tc, "bar", "bar")
 	})
 }
 
 func TestGreaterEq(t *testing.T) {
-	tc := newCase(t, `;; expected 5 >= 7`)
+	tc := newCase(t, `expected 5 >= 7`)
 	t.Cleanup(tc.assert)
 	GreaterEq(tc, 5, 7)
 }
 
 func TestInDelta(t *testing.T) {
 	t.Run("inf delta", func(t *testing.T) {
-		tc := newCase(t, `;; delta must be numeric; got +Inf`)
+		tc := newCase(t, `delta must be numeric; got +Inf`)
 		t.Cleanup(tc.assert)
 		InDelta(tc, 100.0, 101.0, math.Inf(1))
 	})
 
 	t.Run("nan delta", func(t *testing.T) {
-		tc := newCase(t, `;; delta must be numeric; got NaN`)
+		tc := newCase(t, `delta must be numeric; got NaN`)
 		t.Cleanup(tc.assert)
 		InDelta(tc, 100.0, 101.0, math.NaN())
 	})
 
 	t.Run("negative delta", func(t *testing.T) {
-		tc := newCase(t, `;; delta must be positive; got -3.5`)
+		tc := newCase(t, `delta must be positive; got -3.5`)
 		t.Cleanup(tc.assert)
 		InDelta(tc, 100.0, 101.0, -3.5)
 	})
 
 	t.Run("inf arg1", func(t *testing.T) {
-		tc := newCase(t, `;; first argument must be numeric; got +Inf`)
+		tc := newCase(t, `first argument must be numeric; got +Inf`)
 		t.Cleanup(tc.assert)
 		InDelta(tc, math.Inf(1), 101.0, 1.0)
 	})
 
 	t.Run("inf arg2", func(t *testing.T) {
-		tc := newCase(t, `;; second argument must be numeric; got +Inf`)
+		tc := newCase(t, `second argument must be numeric; got +Inf`)
 		t.Cleanup(tc.assert)
 		InDelta(tc, 100.0, math.Inf(1), 1.0)
 	})
 
 	t.Run("float", func(t *testing.T) {
-		tc := newCase(t, `;; 100.1 and 101.5 not within 0.7`)
+		tc := newCase(t, `100.1 and 101.5 not within 0.7`)
 		t.Cleanup(tc.assert)
 		InDelta(tc, 100.1, 101.5, 0.7)
 	})
 
 	t.Run("int", func(t *testing.T) {
-		tc := newCase(t, `;; 50 and 70 not within 10`)
+		tc := newCase(t, `50 and 70 not within 10`)
 		t.Cleanup(tc.assert)
 		InDelta(tc, 50, 70, 10)
 	})
@@ -521,13 +510,13 @@ func TestInDelta(t *testing.T) {
 
 func TestInDeltaSlice(t *testing.T) {
 	t.Run("different length", func(t *testing.T) {
-		tc := newCase(t, `;; expected slices of same length`)
+		tc := newCase(t, `expected slices of same length`)
 		t.Cleanup(tc.assert)
 		InDeltaSlice(tc, []int{2, 3}, []int{2, 3, 4}, 2)
 	})
 
 	t.Run("float", func(t *testing.T) {
-		tc := newCase(t, `;; 25 and 42 not within 5`)
+		tc := newCase(t, `25 and 42 not within 5`)
 		t.Cleanup(tc.assert)
 		InDeltaSlice(tc, []int{10, 25, 300}, []int{11, 42, 299}, 5)
 	})
@@ -535,7 +524,7 @@ func TestInDeltaSlice(t *testing.T) {
 
 func TestMapEq(t *testing.T) {
 	t.Run("different length", func(t *testing.T) {
-		tc := newCase(t, `;; expected maps of same length`)
+		tc := newCase(t, `expected maps of same length`)
 		t.Cleanup(tc.assert)
 		a := map[string]int{"a": 1}
 		b := map[string]int{"a": 1, "b": 2}
@@ -543,7 +532,7 @@ func TestMapEq(t *testing.T) {
 	})
 
 	t.Run("different keys", func(t *testing.T) {
-		tc := newCase(t, `;; expected maps of same keys`)
+		tc := newCase(t, `expected maps of same keys`)
 		t.Cleanup(tc.assert)
 		a := map[int]string{1: "a", 2: "b"}
 		b := map[int]string{1: "a", 3: "c"}
@@ -551,7 +540,7 @@ func TestMapEq(t *testing.T) {
 	})
 
 	t.Run("different values", func(t *testing.T) {
-		tc := newCase(t, `;; expected maps of same values via cmp.Diff function`)
+		tc := newCase(t, `expected maps of same values via cmp.Diff function`)
 		t.Cleanup(tc.assert)
 		a := map[string]string{"a": "amp", "b": "bar"}
 		b := map[string]string{"a": "amp", "b": "foo"}
@@ -561,7 +550,7 @@ func TestMapEq(t *testing.T) {
 
 func TestMapEqFunc(t *testing.T) {
 	t.Run("different value", func(t *testing.T) {
-		tc := newCase(t, `;; expected maps of same values via 'eq' function`)
+		tc := newCase(t, `expected maps of same values via 'eq' function`)
 		t.Cleanup(tc.assert)
 
 		a := map[int]Person{
@@ -582,7 +571,7 @@ func TestMapEqFunc(t *testing.T) {
 
 func TestMapEquals(t *testing.T) {
 	t.Run("different value", func(t *testing.T) {
-		tc := newCase(t, `;; expected maps of same values via .Equals method`)
+		tc := newCase(t, `expected maps of same values via .Equals method`)
 		t.Cleanup(tc.assert)
 
 		a := map[int]*Person{
@@ -600,7 +589,7 @@ func TestMapEquals(t *testing.T) {
 }
 
 func TestMapLen(t *testing.T) {
-	tc := newCase(t, `;; expected map to be different length`)
+	tc := newCase(t, `expected map to be different length`)
 	t.Cleanup(tc.assert)
 
 	m := map[string]int{"a": 1, "b": 2, "c": 3}
@@ -608,7 +597,7 @@ func TestMapLen(t *testing.T) {
 }
 
 func TestMapEmpty(t *testing.T) {
-	tc := newCase(t, `;; expected map to be empty`)
+	tc := newCase(t, `expected map to be empty`)
 	t.Cleanup(tc.assert)
 	m := map[string]int{"a": 1, "b": 2}
 	MapEmpty(tc, m)
