@@ -1,35 +1,13 @@
-// Package test provides a modern generic testing assertions library.
 package test
 
 import (
-	"fmt"
-	"strings"
+	"io/fs"
+	"regexp"
 
 	"github.com/shoenig/test/interfaces"
 	"github.com/shoenig/test/internal/assertions"
 	"github.com/shoenig/test/internal/constraints"
 )
-
-// T is the minimal set of functions to be implemented by any testing framework
-// compatible with the test package.
-type T interface {
-	Helper()
-	Errorf(string, ...any)
-}
-
-const pass = ""
-
-func fail(t T, msg string, args ...any) {
-	c := assertions.Caller()
-	s := c + fmt.Sprintf(msg, args...)
-	t.Errorf("\n" + strings.TrimSpace(s) + "\n")
-}
-
-func invoke(t T, result string) {
-	if result != pass {
-		fail(t, result)
-	}
-}
 
 // Nil asserts a is nil.
 func Nil(t T, a any) {
@@ -97,10 +75,16 @@ func EqFunc[A any](t T, a, b A, eq func(a, b A) bool) {
 	invoke(t, assertions.EqFunc(a, b, eq))
 }
 
-// NotEq asserts a != b.
-func NotEq[C comparable](t T, a, b C) {
+// NotEq asserts a and b are not equal using cmp.Equal.
+func NotEq[A any](t T, a, b A) {
 	t.Helper()
 	invoke(t, assertions.NotEq(a, b))
+}
+
+// NotEqOp asserts a != b.
+func NotEqOp[C comparable](t T, a, b C) {
+	t.Helper()
+	invoke(t, assertions.NotEqOp(a, b))
 }
 
 // NotEqFunc asserts a and b are not equal using eq.
@@ -151,10 +135,26 @@ func EmptySlice[A any](t T, slice []A) {
 	invoke(t, assertions.EmptySlice(slice))
 }
 
+// Empty asserts slice is empty.
+//
+// Convenience function for EmptySlice.
+func Empty[A any](t T, slice []A) {
+	t.Helper()
+	EmptySlice(t, slice)
+}
+
 // LenSlice asserts slice is of length n.
 func LenSlice[A any](t T, n int, slice []A) {
 	t.Helper()
 	invoke(t, assertions.LenSlice(n, slice))
+}
+
+// Len asserts slice is of length n.
+//
+// Convenience function for LenSlice.
+func Len[A any](t T, n int, slice []A) {
+	t.Helper()
+	LenSlice(t, n, slice)
 }
 
 // Contains asserts item exists in slice using cmp.Equal function.
@@ -179,6 +179,36 @@ func ContainsFunc[A any](t T, slice []A, item A, eq func(a, b A) bool) {
 func ContainsEquals[E interfaces.EqualsFunc[E]](t T, slice []E, item E) {
 	t.Helper()
 	invoke(t, assertions.ContainsEquals(slice, item))
+}
+
+// ContainsString asserts s contains sub.
+func ContainsString(t T, s, sub string) {
+	t.Helper()
+	invoke(t, assertions.ContainsString(s, sub))
+}
+
+// Positive asserts n > 0.
+func Positive[N interfaces.Number](t T, n N) {
+	t.Helper()
+	invoke(t, assertions.Positive(n))
+}
+
+// Negative asserts n < 0.
+func Negative[N interfaces.Number](t T, n N) {
+	t.Helper()
+	invoke(t, assertions.Negative(n))
+}
+
+// Zero asserts n == 0.
+func Zero[N interfaces.Number](t T, n N) {
+	t.Helper()
+	invoke(t, assertions.Zero(n))
+}
+
+// NonZero asserts n != 0.
+func NonZero[N interfaces.Number](t T, n N) {
+	t.Helper()
+	invoke(t, assertions.NonZero(n))
 }
 
 // Less asserts a < b.
@@ -248,4 +278,77 @@ func MapLen[M map[K]V, K comparable, V any](t T, n int, m M) {
 func MapEmpty[M map[K]V, K comparable, V any](t T, m M) {
 	t.Helper()
 	invoke(t, assertions.MapEmpty(m))
+}
+
+// FileExists asserts file exists on system.
+//
+// Often os.DirFS is used to interact with the the host filesystem.
+// Example,
+// FileExists(t, os.DirFS("/etc"), "hosts")
+func FileExists(t T, system fs.FS, file string) {
+	t.Helper()
+	invoke(t, assertions.FileExists(system, file))
+}
+
+// FileNotExists asserts file does not exist on system.
+//
+// Often os.DirFS is used to interact with the host filesystem.
+// Example,
+// FileNotExist(t, os.DirFS("/bin"), "exploit.exe")
+func FileNotExists(t T, system fs.FS, file string) {
+	t.Helper()
+	invoke(t, assertions.FileNotExists(system, file))
+}
+
+// DirExists asserts directory exists on system.
+//
+// Often os.DirFS is used to interact with the host filesystem.
+// Example,
+// DirExists(t, os.DirFS("/usr/local"), "bin")
+func DirExists(t T, system fs.FS, directory string) {
+	t.Helper()
+	invoke(t, assertions.DirExists(system, directory))
+}
+
+// DirNotExists asserts directory does not exist on system.
+//
+// Often os.DirFS is used to interact with the host filesystem.
+// Example,
+// DirNotExists(t, os.DirFS("/tmp"), "scratch")
+func DirNotExists(t T, system fs.FS, directory string) {
+	t.Helper()
+	invoke(t, assertions.DirNotExists(system, directory))
+}
+
+// FileMode asserts the file or directory at path has exactly
+// the given permission bits.
+//
+// Often os.DirFS is used to interact with the host filesystem.
+// Example,
+// FileMode(t, os.DirFS("/bin"), "find", 0655)
+func FileMode(t T, system fs.FS, path string, permissions fs.FileMode) {
+	t.Helper()
+	invoke(t, assertions.FileMode(system, path, permissions))
+}
+
+// FileContains asserts the file contains content as a substring.
+//
+// Often os.DirFS is used to interact with the host filesystem.
+// Example,
+// FileContains(t, os.DirFS("/etc"), "hosts", "localhost")
+func FileContains(t T, system fs.FS, file, content string) {
+	t.Helper()
+	invoke(t, assertions.FileContains(system, file, content))
+}
+
+// FilePathValid asserts path is a valid file path.
+func FilePathValid(t T, path string) {
+	t.Helper()
+	invoke(t, assertions.FilePathValid(path))
+}
+
+// RegexMatch asserts regular expression re matches string s.
+func RegexMatch(t T, re *regexp.Regexp, s string) {
+	t.Helper()
+	invoke(t, assertions.RegexMatch(re, s))
 }

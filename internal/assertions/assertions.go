@@ -4,9 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/fs"
+	"os"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"runtime"
+	"strings"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/shoenig/test/interfaces"
@@ -29,10 +33,10 @@ func Caller() string {
 func diff[A, B any](a A, b B) (s string) {
 	defer func() {
 		if r := recover(); r != nil {
-			s = fmt.Sprintf("↪ difference!\na: %#v\nb: %#v\n", a, b)
+			s = fmt.Sprintf("↪ comparison ↷\na: %#v\nb: %#v\n", a, b)
 		}
 	}()
-	s = "↪ difference:\n" + cmp.Diff(a, b)
+	s = "↪ differential ↷\n" + cmp.Diff(a, b)
 	return
 }
 
@@ -140,6 +144,13 @@ func Eq[A any](a, b A) (s string) {
 	return
 }
 
+func NotEq[A any](a, b A) (s string) {
+	if equal(a, b) {
+		s = "expected inequality via cmp.Equal function\n"
+	}
+	return
+}
+
 func EqOp[C comparable](a, b C) (s string) {
 	if a != b {
 		s = "expected equality via ==\n"
@@ -156,7 +167,7 @@ func EqFunc[A any](a, b A, eq func(a, b A) bool) (s string) {
 	return
 }
 
-func NotEq[C comparable](a, b C) (s string) {
+func NotEqOp[C comparable](a, b C) (s string) {
 	if a == b {
 		s = "expected inequality via !="
 	}
@@ -313,6 +324,47 @@ func ContainsEquals[E interfaces.EqualsFunc[E]](slice []E, item E) (s string) {
 	if !containsFunc(slice, item, E.Equals) {
 		s = "expected slice to contain missing item via .Equals method\n"
 		s += fmt.Sprintf("↪ slice is missing %#v\n", item)
+	}
+	return
+}
+
+func ContainsString(original, sub string) (s string) {
+	if !strings.Contains(original, sub) {
+		s = "expected to contain substring\n"
+		s += fmt.Sprintf("↪ str: %s\n", original)
+		s += fmt.Sprintf("↪ sub: %s\n", sub)
+	}
+	return
+}
+
+func Positive[N interfaces.Number](n N) (s string) {
+	if !(n > 0) {
+		s = "expected positive value\n"
+		s += fmt.Sprintf("↪ n: %v\n", n)
+	}
+	return
+}
+
+func Negative[N interfaces.Number](n N) (s string) {
+	if n > 0 {
+		s = "expected negative value\n"
+		s += fmt.Sprintf("↪ n: %v\n", n)
+	}
+	return
+}
+
+func Zero[N interfaces.Number](n N) (s string) {
+	if n != 0 {
+		s = "expected zero\n"
+		s += fmt.Sprintf("↪ n: %v\n", n)
+	}
+	return
+}
+
+func NonZero[N interfaces.Number](n N) (s string) {
+	if n == 0 {
+		s = "expected non-zero\n"
+		s += fmt.Sprintf("↪ n: %v\n", n)
 	}
 	return
 }
@@ -487,6 +539,114 @@ func MapEmpty[M map[K]V, K comparable, V any](m M) (s string) {
 	if l := len(m); l > 0 {
 		s = "expected map to be empty\n"
 		s += fmt.Sprintf("↪ len(map): %d\n", l)
+	}
+	return
+}
+
+func FileExists(system fs.FS, file string) (s string) {
+	info, err := fs.Stat(system, file)
+	if errors.Is(err, fs.ErrNotExist) {
+		s = "expected file to exist\n"
+		s += fmt.Sprintf("↪ name: %s\n", file)
+		s += fmt.Sprintf("↪ error: %s\n", err)
+		return
+	}
+	// other errors - file probably exists but cannot be read
+	if info.IsDir() {
+		s = "expected file but is a directory\n"
+		s += fmt.Sprintf("↪ name: %s\n", file)
+		return
+	}
+	return
+}
+
+func FileNotExists(system fs.FS, file string) (s string) {
+	_, err := fs.Stat(system, file)
+	if !errors.Is(err, fs.ErrNotExist) {
+		s = "expected file to not exist\n"
+		s += fmt.Sprintf("↪ name: %s\n", file)
+		return
+	}
+	return
+}
+
+func DirExists(system fs.FS, directory string) (s string) {
+	info, err := fs.Stat(system, directory)
+	if os.IsNotExist(err) {
+		s = "expected directory to exist\n"
+		s += fmt.Sprintf("↪ name: %s\n", directory)
+		s += fmt.Sprintf("↪ error: %s\n", err)
+		return
+	}
+	// other errors - directory probably exists but cannot be read
+	if !info.IsDir() {
+		s = "expected directory but is a file\n"
+		s += fmt.Sprintf("↪ name: %s\n", directory)
+		return
+	}
+	return
+}
+
+func DirNotExists(system fs.FS, directory string) (s string) {
+	_, err := fs.Stat(system, directory)
+	if !errors.Is(err, fs.ErrNotExist) {
+		s = "expected directory to not exist\n"
+		s += fmt.Sprintf("↪ name: %s\n", directory)
+		return
+	}
+	return
+}
+
+func FileMode(system fs.FS, path string, permissions fs.FileMode) (s string) {
+	info, err := fs.Stat(system, path)
+	if err != nil {
+		s = "expected to stat path\n"
+		s += fmt.Sprintf("↪ name: %s\n", path)
+		s += fmt.Sprintf("↪ error: %s\n", err)
+		return
+	}
+
+	mode := info.Mode()
+	if permissions != mode {
+		s = "expected different file permissions\n"
+		s += fmt.Sprintf("↪ name: %s\n", path)
+		s += fmt.Sprintf("↪ exp: %s\n", permissions)
+		s += fmt.Sprintf("↪ got: %s\n", mode)
+	}
+	return
+}
+
+func FileContains(system fs.FS, file, content string) (s string) {
+	b, err := fs.ReadFile(system, file)
+	if err != nil {
+		s = "expected to read file\n"
+		s += fmt.Sprintf("↪ name: %s\n", file)
+		s += fmt.Sprintf("↪ error: %s\n", err)
+		return
+	}
+	actual := string(b)
+	if !strings.Contains(string(b), content) {
+		s = "expected file contents\n"
+		s += fmt.Sprintf("↪ name: %s\n", file)
+		s += fmt.Sprintf("↪ wanted: %s\n", content)
+		s += fmt.Sprintf("↪ actual: %s\n", actual)
+		return
+	}
+	return
+}
+
+func FilePathValid(path string) (s string) {
+	if !fs.ValidPath(path) {
+		s = "expected valid file path\n"
+	}
+	return
+}
+
+func RegexMatch(re *regexp.Regexp, target string) (s string) {
+	if !re.MatchString(target) {
+		s = "expected regexp match\n"
+		s += fmt.Sprintf("↪ s: %s\n", target)
+		s += fmt.Sprintf("↪ re: %s\n", re)
 	}
 	return
 }

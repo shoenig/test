@@ -2,54 +2,12 @@ package test
 
 import (
 	"errors"
-	"fmt"
 	"math"
-	"strings"
+	"os"
+	"regexp"
 	"testing"
 	"time"
 )
-
-type internalTest struct {
-	t       *testing.T
-	trigger bool
-	helper  bool
-	exp     string
-	capture string
-}
-
-func (it *internalTest) Helper() {
-	it.helper = true
-}
-
-func (it *internalTest) Errorf(s string, args ...any) {
-	if !it.trigger {
-		it.trigger = true
-	}
-	msg := strings.TrimSpace(fmt.Sprintf(s, args...))
-	it.capture = msg
-	fmt.Println(msg)
-}
-
-func (it *internalTest) assert() {
-	if !it.helper {
-		it.t.Fatal("should be marked as helper")
-	}
-	if !it.trigger {
-		it.t.Fatalf("condition expected to trigger; did not")
-	}
-
-	if !strings.Contains(it.capture, it.exp) {
-		it.t.Fatalf("expected message %q in output, got %q", it.exp, it.capture)
-	}
-}
-
-func newCase(t *testing.T, msg string) *internalTest {
-	return &internalTest{
-		t:       t,
-		trigger: false,
-		exp:     msg,
-	}
-}
 
 func TestNil(t *testing.T) {
 	tc := newCase(t, `expected to be nil; is not nil`)
@@ -175,22 +133,32 @@ func TestEqFunc(t *testing.T) {
 }
 
 func TestNotEq(t *testing.T) {
+	tc := newCase(t, `expected inequality via cmp.Equal function`)
+	t.Cleanup(tc.assert)
+
+	a := &Person{ID: 100, Name: "Alice"}
+	b := &Person{ID: 100, Name: "Alice"}
+
+	NotEq(tc, a, b)
+}
+
+func TestNotEqOp(t *testing.T) {
 	t.Run("number", func(t *testing.T) {
 		tc := newCase(t, `expected inequality via !=`)
 		t.Cleanup(tc.assert)
-		NotEq(tc, 42, 42)
+		NotEqOp(tc, 42, 42)
 	})
 
 	t.Run("string", func(t *testing.T) {
 		tc := newCase(t, `expected inequality via !=`)
 		t.Cleanup(tc.assert)
-		NotEq(tc, "foo", "foo")
+		NotEqOp(tc, "foo", "foo")
 	})
 
 	t.Run("duration", func(t *testing.T) {
 		tc := newCase(t, `expected inequality via !=`)
 		t.Cleanup(tc.assert)
-		NotEq(tc, 3*time.Second, 3*time.Second)
+		NotEqOp(tc, 3*time.Second, 3*time.Second)
 	})
 }
 
@@ -333,6 +301,13 @@ func TestEmptySlice(t *testing.T) {
 	EmptySlice(tc, []int{1, 2})
 }
 
+func TestEmpty(t *testing.T) {
+	tc := newCase(t, `expected slice to be empty`)
+	t.Cleanup(tc.assert)
+
+	Empty(tc, []int{1, 2})
+}
+
 func TestLenSlice(t *testing.T) {
 	t.Run("strings", func(t *testing.T) {
 		tc := newCase(t, `expected slice to be different length`)
@@ -398,6 +373,41 @@ func TestContainsEquals(t *testing.T) {
 	}
 
 	ContainsEquals(tc, s, &Person{ID: 102, Name: "Carl"})
+}
+
+func TestContainsString(t *testing.T) {
+	tc := newCase(t, `expected to contain substring`)
+	t.Cleanup(tc.assert)
+
+	ContainsString(tc, "foobar", "food")
+}
+
+func TestPositive(t *testing.T) {
+	tc := newCase(t, `expected positive value`)
+	t.Cleanup(tc.assert)
+
+	Positive(tc, -1)
+}
+
+func TestNegative(t *testing.T) {
+	tc := newCase(t, `expected negative value`)
+	t.Cleanup(tc.assert)
+
+	Negative(tc, 1)
+}
+
+func TestZero(t *testing.T) {
+	tc := newCase(t, `expected zero`)
+	t.Cleanup(tc.assert)
+
+	Zero(tc, 1)
+}
+
+func TestNonZero(t *testing.T) {
+	tc := newCase(t, `expected non-zero`)
+	t.Cleanup(tc.assert)
+
+	NonZero(tc, 0)
 }
 
 func TestLess(t *testing.T) {
@@ -601,4 +611,61 @@ func TestMapEmpty(t *testing.T) {
 	t.Cleanup(tc.assert)
 	m := map[string]int{"a": 1, "b": 2}
 	MapEmpty(tc, m)
+}
+
+func TestFileExists(t *testing.T) {
+	tc := newCase(t, `expected file to exist`)
+	t.Cleanup(tc.assert)
+
+	FileExists(tc, os.DirFS("/etc"), "hosts2")
+}
+
+func TestFileNotExists(t *testing.T) {
+	tc := newCase(t, `expected file to not exist`)
+	t.Cleanup(tc.assert)
+
+	FileNotExists(tc, os.DirFS("/etc"), "hosts")
+}
+
+func TestDirExists(t *testing.T) {
+	tc := newCase(t, `expected directory to exist`)
+	t.Cleanup(tc.assert)
+
+	DirExists(tc, os.DirFS("/usr/local"), "bin2")
+}
+
+func TestDirNotExists(t *testing.T) {
+	tc := newCase(t, `expected directory to not exist`)
+	t.Cleanup(tc.assert)
+
+	DirNotExists(tc, os.DirFS("/usr"), "local")
+}
+
+func TestFileMode(t *testing.T) {
+	tc := newCase(t, `expected different file permissions`)
+	t.Cleanup(tc.assert)
+
+	FileMode(tc, os.DirFS("/bin"), "find", 0673) // (actual 0655)
+}
+
+func TestFileContains(t *testing.T) {
+	tc := newCase(t, `expected file contents`)
+	t.Cleanup(tc.assert)
+
+	FileContains(tc, os.DirFS("/etc"), "hosts", "127.0.0.999")
+}
+
+func TestFilePathValid(t *testing.T) {
+	tc := newCase(t, `expected valid file path`)
+	t.Cleanup(tc.assert)
+
+	FilePathValid(tc, "foo/../bar")
+}
+
+func TestRegexMatch(t *testing.T) {
+	tc := newCase(t, `expected regexp match`)
+	t.Cleanup(tc.assert)
+
+	re := regexp.MustCompile(`abc\d`)
+	RegexMatch(tc, re, "abcX")
 }
