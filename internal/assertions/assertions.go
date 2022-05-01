@@ -397,6 +397,78 @@ func GreaterEq[O constraints.Ordered](a, b O) (s string) {
 	return
 }
 
+func Ascending[O constraints.Ordered](slice []O) (s string) {
+	for i := 0; i < len(slice)-1; i++ {
+		if slice[i] > slice[i+1] {
+			s = fmt.Sprintf("expected slice[%d] <= slice[%d]\n", i, i+1)
+			s += fmt.Sprintf("↪ slice[%d]: %v\n", i, slice[i])
+			s += fmt.Sprintf("↪ slice[%d]: %v\n", i+1, slice[i+1])
+			return
+		}
+	}
+	return
+}
+
+func AscendingFunc[A any](slice []A, less func(a, b A) bool) (s string) {
+	for i := 0; i < len(slice)-1; i++ {
+		if !less(slice[i], slice[i+1]) {
+			s = fmt.Sprintf("expected less(slice[%d], slice[%d])\n", i, i+1)
+			s += fmt.Sprintf("↪ slice[%d]: %v\n", i, slice[i])
+			s += fmt.Sprintf("↪ slice[%d]: %v\n", i+1, slice[i+1])
+			return
+		}
+	}
+	return
+}
+
+func AscendingLess[L interfaces.LessFunc[L]](slice []L) (s string) {
+	for i := 0; i < len(slice)-1; i++ {
+		if !slice[i].Less(slice[i+1]) {
+			s = fmt.Sprintf("expected slice[%d].Less(slice[%d])\n", i, i+1)
+			s += fmt.Sprintf("↪ slice[%d]: %v\n", i, slice[i])
+			s += fmt.Sprintf("↪ slice[%d]: %v\n", i+1, slice[i+1])
+			return
+		}
+	}
+	return
+}
+
+func Descending[O constraints.Ordered](slice []O) (s string) {
+	for i := 0; i < len(slice)-1; i++ {
+		if slice[i] < slice[i+1] {
+			s = fmt.Sprintf("expected slice[%d] >= slice[%d]\n", i, i+1)
+			s += fmt.Sprintf("↪ slice[%d]: %v\n", i, slice[i])
+			s += fmt.Sprintf("↪ slice[%d]: %v\n", i+1, slice[i+1])
+			return
+		}
+	}
+	return
+}
+
+func DescendingFunc[A any](slice []A, less func(a, b A) bool) (s string) {
+	for i := 0; i < len(slice)-1; i++ {
+		if !less(slice[i+1], slice[i]) {
+			s = fmt.Sprintf("expected less(slice[%d], slice[%d])\n", i+1, i)
+			s += fmt.Sprintf("↪ slice[%d]: %v\n", i, slice[i])
+			s += fmt.Sprintf("↪ slice[%d]: %v\n", i+1, slice[i+1])
+			return
+		}
+	}
+	return
+}
+
+func DescendingLess[L interfaces.LessFunc[L]](slice []L) (s string) {
+	for i := 0; i < len(slice)-1; i++ {
+		if !(slice[i+1].Less(slice[i])) {
+			s = fmt.Sprintf("expected slice[%d].Less(slice[%d])\n", i+1, i)
+			s += fmt.Sprintf("↪ slice[%d]: %v\n", i, slice[i])
+			s += fmt.Sprintf("↪ slice[%d]: %v\n", i+1, slice[i+1])
+			return
+		}
+	}
+	return
+}
+
 func InDelta[N interfaces.Number](a, b, delta N) (s string) {
 	var zero N
 

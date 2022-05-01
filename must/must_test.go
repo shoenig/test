@@ -476,6 +476,97 @@ func TestGreaterEq(t *testing.T) {
 	GreaterEq(tc, 5, 7)
 }
 
+func TestAscending(t *testing.T) {
+	t.Run("numbers", func(t *testing.T) {
+		tc := newCase(t, `expected slice`)
+		t.Cleanup(tc.assert)
+
+		l := []int{1, 2, 3, 5, 4}
+		Ascending(tc, l)
+	})
+
+	t.Run("strings", func(t *testing.T) {
+		tc := newCase(t, `expected slice`)
+		t.Cleanup(tc.assert)
+
+		l := []string{"alpha", "beta", "gamma", "delta"}
+		Ascending(tc, l)
+	})
+}
+
+func TestAscendingFunc(t *testing.T) {
+	tc := newCase(t, `expected less`)
+	t.Cleanup(tc.assert)
+
+	l := []*Person{
+		{ID: 100, Name: "Alice"},
+		{ID: 200, Name: "Bob"},
+		{ID: 300, Name: "Dale"},
+		{ID: 400, Name: "Carl"},
+	}
+
+	AscendingFunc(tc, l, func(p1, p2 *Person) bool {
+		return p1.Name < p2.Name
+	})
+}
+
+func TestAscendingLess(t *testing.T) {
+	tc := newCase(t, `expected slice`)
+	t.Cleanup(tc.assert)
+
+	l := []*Person{
+		{ID: 100, Name: "Alice"},
+		{ID: 200, Name: "Bob"},
+		{ID: 150, Name: "Carl"},
+	}
+	AscendingLess(tc, l)
+}
+
+func TestDescending(t *testing.T) {
+	t.Run("numbers", func(t *testing.T) {
+		tc := newCase(t, `expected slice`)
+		t.Cleanup(tc.assert)
+
+		l := []int{6, 5, 3, 4, 1}
+		Descending(tc, l)
+	})
+
+	t.Run("strings", func(t *testing.T) {
+		tc := newCase(t, `expected slice`)
+		t.Cleanup(tc.assert)
+
+		l := []string{"zoo", "yard", "boat", "xray"}
+		Descending(tc, l)
+	})
+}
+
+func TestDescendingFunc(t *testing.T) {
+	tc := newCase(t, `expected less`)
+	t.Cleanup(tc.assert)
+	l := []*Person{
+		{ID: 400, Name: "Dale"},
+		{ID: 300, Name: "Bob"},
+		{ID: 200, Name: "Carl"},
+		{ID: 100, Name: "Alice"},
+	}
+
+	DescendingFunc(tc, l, func(p1, p2 *Person) bool {
+		return p1.Name < p2.Name
+	})
+}
+
+func TestDescendingLess(t *testing.T) {
+	tc := newCase(t, `expected slice`)
+	t.Cleanup(tc.assert)
+	l := []*Person{
+		{ID: 400, Name: "Dale"},
+		{ID: 300, Name: "Carl"},
+		{ID: 100, Name: "Bob"},
+		{ID: 200, Name: "Alice"},
+	}
+	DescendingLess(tc, l)
+}
+
 func TestInDelta(t *testing.T) {
 	t.Run("inf delta", func(t *testing.T) {
 		tc := newCase(t, `delta must be numeric; got +Inf`)
