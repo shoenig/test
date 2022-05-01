@@ -235,6 +235,42 @@ func GreaterEq[O constraints.Ordered](t T, a, b O) {
 	invoke(t, assertions.GreaterEq(a, b))
 }
 
+// Ascending asserts slice[n] <= slice[n+1] for each element n.
+func Ascending[O constraints.Ordered](t T, slice []O) {
+	t.Helper()
+	invoke(t, assertions.Ascending(slice))
+}
+
+// AscendingFunc asserts slice[n] is less than slice[n+1] for each element n using the less comparator.
+func AscendingFunc[A any](t T, slice []A, less func(a, b A) bool) {
+	t.Helper()
+	invoke(t, assertions.AscendingFunc(slice, less))
+}
+
+// AscendingLess asserts slice[n].Less(slice[n+1]) for each element n.
+func AscendingLess[L interfaces.LessFunc[L]](t T, slice []L) {
+	t.Helper()
+	invoke(t, assertions.AscendingLess(slice))
+}
+
+// Descending asserts slice[n] >= slice[n+1] for each element n.
+func Descending[O constraints.Ordered](t T, slice []O) {
+	t.Helper()
+	invoke(t, assertions.Descending(slice))
+}
+
+// DescendingFunc asserts slice[n+1] is less than slice[n] for each element n using the less comparator.
+func DescendingFunc[A any](t T, slice []A, less func(a, b A) bool) {
+	t.Helper()
+	invoke(t, assertions.DescendingFunc(slice, less))
+}
+
+// DescendingLess asserts slice[n+1].Less(slice[n]) for each element n.
+func DescendingLess[L interfaces.LessFunc[L]](t T, slice []L) {
+	t.Helper()
+	invoke(t, assertions.DescendingLess(slice))
+}
+
 // InDelta asserts a and b are within delta of each other.
 func InDelta[N interfaces.Number](t T, a, b, delta N) {
 	t.Helper()
