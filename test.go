@@ -242,7 +242,7 @@ func Ascending[O constraints.Ordered](t T, slice []O) {
 }
 
 // AscendingFunc asserts slice[n] is less than slice[n+1] for each element n using the less comparator.
-func AscendingFunc[A any](t T, slice []A, less func(a, b A) bool) {
+func AscendingFunc[A any](t T, slice []A, less func(A, A) bool) {
 	t.Helper()
 	invoke(t, assertions.AscendingFunc(slice, less))
 }
@@ -260,7 +260,7 @@ func Descending[O constraints.Ordered](t T, slice []O) {
 }
 
 // DescendingFunc asserts slice[n+1] is less than slice[n] for each element n using the less comparator.
-func DescendingFunc[A any](t T, slice []A, less func(a, b A) bool) {
+func DescendingFunc[A any](t T, slice []A, less func(A, A) bool) {
 	t.Helper()
 	invoke(t, assertions.DescendingFunc(slice, less))
 }
@@ -287,33 +287,56 @@ func InDeltaSlice[N interfaces.Number](t T, a, b []N, delta N) {
 // cmp.Equal function to compare values.
 func MapEq[M1, M2 interfaces.Map[K, V], K comparable, V any](t T, a M1, b M2) {
 	t.Helper()
-	invoke(t, assertions.MapEq(a, b))
+	invoke(t, assertions.MapEq[M1, M2, K, V](a, b))
 }
 
 // MapEqFunc asserts maps a and b contain the same key/value pairs, using eq to
 // compare values.
 func MapEqFunc[M1, M2 interfaces.Map[K, V], K comparable, V any](t T, a M1, b M2, eq func(V, V) bool) {
 	t.Helper()
-	invoke(t, assertions.MapEqFunc(a, b, eq))
+	invoke(t, assertions.MapEqFunc[M1, M2, K, V](a, b, eq))
 }
 
 // MapEquals asserts maps a and b contain the same key/value pairs, using Equals
 // method to compare values
 func MapEquals[M interfaces.MapEqualsFunc[K, V], K comparable, V interfaces.EqualsFunc[V]](t T, a, b M) {
 	t.Helper()
-	invoke(t, assertions.MapEquals(a, b))
+	invoke(t, assertions.MapEquals[M, K, V](a, b))
 }
 
 // MapLen asserts map is of size n.
 func MapLen[M map[K]V, K comparable, V any](t T, n int, m M) {
 	t.Helper()
-	invoke(t, assertions.MapLen(n, m))
+	invoke(t, assertions.MapLen[M, K, V](n, m))
 }
 
 // MapEmpty asserts map is empty.
 func MapEmpty[M map[K]V, K comparable, V any](t T, m M) {
 	t.Helper()
-	invoke(t, assertions.MapEmpty(m))
+	invoke(t, assertions.MapEmpty[M, K, V](m))
+}
+
+// MapContainsKeys asserts m contains each key in keys.
+func MapContainsKeys[M map[K]V, K comparable, V any](t T, m M, keys []K) {
+	t.Helper()
+	invoke(t, assertions.MapContainsKeys[M, K, V](m, keys))
+}
+
+// MapContainsValues asserts m contains each value in values.
+func MapContainsValues[M map[K]V, K comparable, V any](t T, m M, values []V) {
+	t.Helper()
+	invoke(t, assertions.MapContainsValues[M, K, V](m, values))
+}
+
+// MapContainsValuesFunc asserts m contains each value in values using the eq function.
+func MapContainsValuesFunc[M map[K]V, K comparable, V any](t T, m M, values []V, eq func(V, V) bool) {
+	t.Helper()
+	invoke(t, assertions.MapContainsValuesFunc[M, K, V](m, values, eq))
+}
+
+func MapContainsValuesEquals[M map[K]V, K comparable, V interfaces.EqualsFunc[V]](t T, m M, values []V) {
+	t.Helper()
+	invoke(t, assertions.MapContainsValuesEquals[M, K, V](m, values))
 }
 
 // FileExists asserts file exists on system.
