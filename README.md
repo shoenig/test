@@ -5,13 +5,26 @@
 [![CI Tests](https://github.com/shoenig/test/actions/workflows/ci.yaml/badge.svg)](https://github.com/shoenig/test/actions/workflows/ci.yaml)
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
 
-A clean, generics based testing assertions library for Go.
+`test` is a generics based testing assertions library for Go.
+
+There are two packages, `test` and `must`.
+
+- `test` - assertions that mark the test for failure and allow the test case to continue
+- `must` - assertions that mark the test for failure and halt the test case immediately
 
 ### Requirements
 
 Only depends on `github.com/google/go-cmp`.
 
 The minimum Go version is `go1.18`.
+
+### Install
+
+Use `go get` to grab the latest version of `test`.
+
+```shell
+go get -u github.com/shoenig/test@latest
+```
 
 ### Influence
 
@@ -75,43 +88,38 @@ make sense to fail immediately and stop the test case execution.
 
 `must` - functions stop test case execution immediately
 
-### Install
-
-Use `go get` to grab the latest version of `test`.
-
-```shell
-go get -u github.com/shoenig/test@latest
-```
-
-### Examples (basic)
+### Examples (equality)
 
 ```go
-// using cmp.Equal
+import "github.com/shoenig/test/must"
+
+// ... 
+
 e1 := Employee{ID: 100, Name: "Alice"}
 e2 := Employee{ID: 101, Name: "Bob"}
-test.Eq(t, e1, e2)
+
+// using cmp.Equal (like magic!)
+must.Eq(t, e1, e2)
 
 // using == operator
-e1 := Employee{ID: 100, Name: "Alice"}
-e2 := Employee{ID: 101, Name: "Bob"}
-test.EqOp(t, e1, e2)
+must.EqOp(t, e1, e2)
 
 // using a custom comparator
-e1 := &Employee{ID: 100, Name: "Alice"}
-e2 := &Employee{ID: 101, Name: "Bob"}
-test.EqFunc(t, e1, e2, func(a, b *Employee) bool {
+must.EqFunc(t, e1, e2, func(a, b *Employee) bool {
     return a.ID == b.ID
 })
 
 // using .Equals method
-e1 := &Employee{ID: 100, Name: "Alice"}
-e2 := &Employee{ID: 101, Name: "Bob"}
-test.Equals(t, e1, e2)
+must.Equals(t, e1, e2)
 ```
 
 ### Examples (slices)
 
 ```go
+import "github.com/shoenig/test/must"
+
+// ... 
+
 a := []*Employee{
   {ID: 100, Name: "Alice"},
   {ID: 101, Name: "Bob"},
@@ -123,7 +131,7 @@ b := []*Employee{
   {ID: 103, Name: "Dian"},
 }
 
-EqSliceFunc(tc, a, b, func(a, b *Person) bool {
+must.EqSliceFunc(tc, a, b, func(a, b *Person) bool {
   return a.ID == b.ID && a.Name == b.Name
 })
 ```
@@ -131,6 +139,10 @@ EqSliceFunc(tc, a, b, func(a, b *Person) bool {
 ### Examples (maps)
 
 ```go
+import "github.com/shoenig/test/must"
+
+// ... 
+
 a := map[int]Person{
   0: {ID: 100, Name: "Alice"},
   1: {ID: 101, Name: "Bob"},
@@ -141,12 +153,21 @@ b := map[int]Person{
   1: {ID: 101, Name: "Bob B."},
 }
 
-MapEqFunc(tc, a, b, func(p1, p2 Person) bool {
+must.MapEqFunc(tc, a, b, func(p1, p2 Person) bool {
   return p1.ID == p2.ID && p1.Name == p2.Name
 })
 ```
 
-### Examples (output)
+### Output
+
+The `test` and `must` package attempt to create useful, readable output when an assertions goes awry. Some random examples below.
+
+```text
+test_test.go:779: expected different file permissions
+↪ name: find
+↪ exp: -rw-rwx-wx
+↪ got: -rwxr-xr-x
+```
 
 ```text
 tests_test.go:569: expected maps of same values via 'eq' function
@@ -162,20 +183,28 @@ tests_test.go:569: expected maps of same values via 'eq' function
 ```
 
 ```text
-tests_test.go:518: expected slices of same length
-↪ len(slice a): 2
-↪ len(slice b): 3
+test_test.go:520: expected slice[1].Less(slice[2])
+↪ slice[1]: &{200 Bob}
+↪ slice[2]: &{150 Carl}
 ```
 
 ```text
-tests_test.go:147: expected equality via cmp.Equal function
-↪ difference:
-  test.Person{
-- 	ID:   100,
-+ 	ID:   101,
-- 	Name: "Alice",
-+ 	Name: "Bob",
-  }
+test_test.go:688: expected maps of same values via .Equals method
+↪ differential ↷
+  map[int]*test.Person{
+  	0: &{ID: 100, Name: "Alice"},
+  	1: &{
+- 		ID:   101,
++ 		ID:   200,
+  		Name: "Bob",
+  	},
+  }
+```
+
+```text
+test_test.go:801: expected regexp match
+↪ s: abcX
+↪ re: abc\d
 ```
 
 ### License
