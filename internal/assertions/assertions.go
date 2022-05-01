@@ -615,6 +615,63 @@ func MapEmpty[M map[K]V, K comparable, V any](m M) (s string) {
 	return
 }
 
+func MapContainsKeys[M map[K]V, K comparable, V any](m M, keys []K) (s string) {
+	var missing []K
+	for _, key := range keys {
+		if _, exists := m[key]; !exists {
+			missing = append(missing, key)
+		}
+	}
+
+	if len(missing) > 0 {
+		s = "expected map to contain keys\n"
+		for _, key := range missing {
+			s += fmt.Sprintf("↪ key: %v\n", key)
+		}
+	}
+	return
+}
+
+func mapContains[M map[K]V, K comparable, V any](m M, values []V, eq func(V, V) bool) (s string) {
+	var missing []V
+	for _, wanted := range values {
+		found := false
+		for _, v := range m {
+			if equal[V](wanted, v) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			missing = append(missing, wanted)
+		}
+	}
+
+	if len(missing) > 0 {
+		s = "expected map to contain values\n"
+		for _, value := range missing {
+			s += fmt.Sprintf("↪ value: %v\n", value)
+		}
+	}
+	return
+}
+
+func MapContainsValues[M map[K]V, K comparable, V any](m M, values []V) (s string) {
+	return mapContains[M, K, V](m, values, func(a, b V) bool {
+		return equal(a, b)
+	})
+}
+
+func MapContainsValuesFunc[M map[K]V, K comparable, V any](m M, values []V, eq func(V, V) bool) (s string) {
+	return mapContains[M, K, V](m, values, eq)
+}
+
+func MapContainsValuesEquals[M map[K]V, K comparable, V interfaces.EqualsFunc[V]](m M, values []V) (s string) {
+	return mapContains[M, K, V](m, values, func(a, b V) bool {
+		return a.Equals(b)
+	})
+}
+
 func FileExists(system fs.FS, file string) (s string) {
 	info, err := fs.Stat(system, file)
 	if errors.Is(err, fs.ErrNotExist) {

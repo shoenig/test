@@ -704,6 +704,46 @@ func TestMapEmpty(t *testing.T) {
 	MapEmpty(tc, m)
 }
 
+func TestMapContainsKeys(t *testing.T) {
+	tc := newCase(t, `expected map to contain keys`)
+	t.Cleanup(tc.assert)
+
+	m := map[string]int{"a": 1, "b": 2, "c": 3}
+	MapContainsKeys(tc, m, []string{"z", "a", "b", "c", "d"})
+}
+
+func TestMapContainsValues(t *testing.T) {
+	tc := newCase(t, `expected map to contain values`)
+	t.Cleanup(tc.assert)
+
+	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+	MapContainsValues(tc, m, []int{9, 1, 2, 7})
+}
+
+func TestMapContainsValuesFunc(t *testing.T) {
+	tc := newCase(t, `expected map to contain values`)
+	t.Cleanup(tc.assert)
+
+	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+	MapContainsValuesFunc(tc, m, []int{9, 1, 2, 7}, func(a, b int) bool {
+		return a == b
+	})
+}
+
+func TestMapContainsValuesEquals(t *testing.T) {
+	tc := newCase(t, `expected map to contain values`)
+	t.Cleanup(tc.assert)
+
+	m := map[int]*Person{
+		1: {ID: 100, Name: "Alice"},
+		2: {ID: 200, Name: "Bob"},
+		3: {ID: 300, Name: "Carl"},
+	}
+	MapContainsValuesEquals(tc, m, []*Person{
+		{ID: 201, Name: "Bob"},
+	})
+}
+
 func TestFileExists(t *testing.T) {
 	tc := newCase(t, `expected file to exist`)
 	t.Cleanup(tc.assert)
