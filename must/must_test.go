@@ -62,6 +62,13 @@ func TestEqError(t *testing.T) {
 	EqError(tc, errors.New("oops"), "blah")
 }
 
+func TestEqError_nil(t *testing.T) {
+	tc := newCase(t, `expected error; got nil`)
+	t.Cleanup(tc.assert)
+
+	EqError(tc, nil, "blah")
+}
+
 func TestErrorIs(t *testing.T) {
 	tc := newCase(t, `expected errors.Is match`)
 	t.Cleanup(tc.assert)
@@ -69,6 +76,14 @@ func TestErrorIs(t *testing.T) {
 	e1 := errors.New("foo")
 	e2 := errors.New("bar")
 	ErrorIs(tc, e1, e2)
+}
+
+func TestErrorIs_nil(t *testing.T) {
+	tc := newCase(t, `expected error; got nil`)
+	t.Cleanup(tc.assert)
+
+	err := errors.New("oops")
+	ErrorIs(tc, nil, err)
 }
 
 func TestNoError(t *testing.T) {
