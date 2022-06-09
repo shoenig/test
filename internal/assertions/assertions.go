@@ -126,6 +126,10 @@ func Error(err error) (s string) {
 }
 
 func EqError(err error, msg string) (s string) {
+	if err == nil {
+		s = "expected error; got nil"
+		return
+	}
 	e := err.Error()
 	if e != msg {
 		s = "expected matching error strings\n"
@@ -136,6 +140,10 @@ func EqError(err error, msg string) (s string) {
 }
 
 func ErrorIs(err error, target error) (s string) {
+	if err == nil {
+		s = "expected error; got nil"
+		return
+	}
 	if !errors.Is(err, target) {
 		s = "expected errors.Is match\n"
 		s += fmt.Sprintf("↪ error: %v\n", err)
