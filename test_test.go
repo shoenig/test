@@ -16,13 +16,20 @@ func TestNil(t *testing.T) {
 	Nil(tc, 42)
 	Nil(tc, "hello")
 	Nil(tc, time.UTC)
+	Nil(tc, []string{"foo"})
+	Nil(tc, map[string]int{"foo": 1})
 }
 
 func TestNotNil(t *testing.T) {
 	tc := newCase(t, `expected to not be nil; is nil`)
 	t.Cleanup(tc.assert)
 
+	var s []string
+	var m map[string]int
+
 	NotNil(tc, nil)
+	NotNil(tc, s)
+	NotNil(tc, m)
 }
 
 func TestTrue(t *testing.T) {

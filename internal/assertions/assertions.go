@@ -74,15 +74,31 @@ func containsFunc[A any](slice []A, item A, eq func(a, b A) bool) bool {
 	return found
 }
 
+func isNil(a any) bool {
+	// comparable check only works for simple types
+	if a == nil {
+		return true
+	}
+
+	// check for non-nil nil types
+	value := reflect.ValueOf(a)
+	switch value.Kind() {
+	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice:
+		return value.IsNil()
+	default:
+		return false
+	}
+}
+
 func Nil(a any) (s string) {
-	if a != nil {
+	if !isNil(a) {
 		s = "expected to be nil; is not nil"
 	}
 	return
 }
 
 func NotNil(a any) (s string) {
-	if a == nil {
+	if isNil(a) {
 		s = "expected to not be nil; is nil"
 	}
 	return
