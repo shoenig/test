@@ -305,36 +305,36 @@ func MapEquals[M interfaces.MapEqualsFunc[K, V], K comparable, V interfaces.Equa
 }
 
 // MapLen asserts map is of size n.
-func MapLen[M map[K]V, K comparable, V any](t T, n int, m M) {
+func MapLen[M ~map[K]V, K comparable, V any](t T, n int, m M) {
 	t.Helper()
 	invoke(t, assertions.MapLen[M, K, V](n, m))
 }
 
 // MapEmpty asserts map is empty.
-func MapEmpty[M map[K]V, K comparable, V any](t T, m M) {
+func MapEmpty[M ~map[K]V, K comparable, V any](t T, m M) {
 	t.Helper()
 	invoke(t, assertions.MapEmpty[M, K, V](m))
 }
 
 // MapContainsKeys asserts m contains each key in keys.
-func MapContainsKeys[M map[K]V, K comparable, V any](t T, m M, keys []K) {
+func MapContainsKeys[M ~map[K]V, K comparable, V any](t T, m M, keys []K) {
 	t.Helper()
 	invoke(t, assertions.MapContainsKeys[M, K, V](m, keys))
 }
 
 // MapContainsValues asserts m contains each value in values.
-func MapContainsValues[M map[K]V, K comparable, V any](t T, m M, values []V) {
+func MapContainsValues[M ~map[K]V, K comparable, V any](t T, m M, values []V) {
 	t.Helper()
 	invoke(t, assertions.MapContainsValues[M, K, V](m, values))
 }
 
 // MapContainsValuesFunc asserts m contains each value in values using the eq function.
-func MapContainsValuesFunc[M map[K]V, K comparable, V any](t T, m M, values []V, eq func(V, V) bool) {
+func MapContainsValuesFunc[M ~map[K]V, K comparable, V any](t T, m M, values []V, eq func(V, V) bool) {
 	t.Helper()
 	invoke(t, assertions.MapContainsValuesFunc[M, K, V](m, values, eq))
 }
 
-func MapContainsValuesEquals[M map[K]V, K comparable, V interfaces.EqualsFunc[V]](t T, m M, values []V) {
+func MapContainsValuesEquals[M ~map[K]V, K comparable, V interfaces.EqualsFunc[V]](t T, m M, values []V) {
 	t.Helper()
 	invoke(t, assertions.MapContainsValuesEquals[M, K, V](m, values))
 }
