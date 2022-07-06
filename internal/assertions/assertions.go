@@ -118,6 +118,11 @@ func False(condition bool) (s string) {
 	return
 }
 
+func Unreachable() (s string) {
+	s = "expected not to execute this code path"
+	return
+}
+
 func Error(err error) (s string) {
 	if err == nil {
 		s = "expected non-nil error; is nil"
