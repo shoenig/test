@@ -678,6 +678,17 @@ func TestMapEq(t *testing.T) {
 		b := map[string]string{"a": "amp", "b": "foo"}
 		MapEq(tc, a, b)
 	})
+
+	t.Run("custom types", func(t *testing.T) {
+		tc := newCase(t, `expected maps of same values via cmp.Diff function`)
+		t.Cleanup(tc.assert)
+
+		type custom1 map[string]int
+		a := custom1{"key": 1}
+		type custom2 map[string]int
+		b := custom2{"key": 2}
+		MapEq(tc, a, b)
+	})
 }
 
 func TestMapEqFunc(t *testing.T) {
