@@ -33,6 +33,12 @@ func False(t T, condition bool) {
 	invoke(t, assertions.False(condition))
 }
 
+// Unreachable asserts a code path is not executed.
+func Unreachable(t T) {
+	t.Helper()
+	invoke(t, assertions.Unreachable())
+}
+
 // Error asserts err is a non-nil error.
 func Error(t T, err error) {
 	t.Helper()

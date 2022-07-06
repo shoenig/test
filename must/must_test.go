@@ -48,6 +48,13 @@ func TestFalse(t *testing.T) {
 	False(tc, true)
 }
 
+func TestUnreachable(t *testing.T) {
+	tc := newCase(t, `expected not to execute this code path`)
+	t.Cleanup(tc.assert)
+
+	Unreachable(tc)
+}
+
 func TestError(t *testing.T) {
 	tc := newCase(t, `expected non-nil error; is nil`)
 	t.Cleanup(tc.assert)
