@@ -351,6 +351,20 @@ func TestLenSlice(t *testing.T) {
 	})
 }
 
+func TestLen(t *testing.T) {
+	t.Run("strings", func(t *testing.T) {
+		tc := newCase(t, `expected slice to be different length`)
+		t.Cleanup(tc.assert)
+		Len(tc, 2, []string{"a", "b", "c"})
+	})
+
+	t.Run("numbers", func(t *testing.T) {
+		tc := newCase(t, `expected slice to be different length`)
+		t.Cleanup(tc.assert)
+		Len(tc, 3, []int{8, 9})
+	})
+}
+
 func TestContains(t *testing.T) {
 	t.Run("people", func(t *testing.T) {
 		tc := newCase(t, `expected slice to contain missing item via cmp.Equal function`)
