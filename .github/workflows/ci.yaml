@@ -1,7 +1,7 @@
 name: Run CI Tests
 on: [push]
 env:
-  GO_VERSION: 1.18.3
+  GO_VERSION: 1.18.4
 jobs:
   run-tests:
     runs-on: ubuntu-22.04
