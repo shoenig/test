@@ -22,6 +22,13 @@ func TestNil(t *testing.T) {
 	Nil(tc, map[string]int{"foo": 1})
 }
 
+func TestNil_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	Nil(tc, 42, tc.PS("nil"))
+}
+
 func TestNotNil(t *testing.T) {
 	tc := newCase(t, `expected to not be nil; is nil`)
 	t.Cleanup(tc.assert)
@@ -34,11 +41,25 @@ func TestNotNil(t *testing.T) {
 	NotNil(tc, m)
 }
 
+func TestNotNil_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	NotNil(tc, nil, tc.PS("not nil"))
+}
+
 func TestTrue(t *testing.T) {
 	tc := newCase(t, `expected condition to be true; is false`)
 	t.Cleanup(tc.assert)
 
 	True(tc, false)
+}
+
+func TestTrue_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	True(tc, false, tc.PS("true"))
 }
 
 func TestFalse(t *testing.T) {
@@ -48,11 +69,25 @@ func TestFalse(t *testing.T) {
 	False(tc, true)
 }
 
+func TestFalse_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	False(tc, true, tc.PS("false"))
+}
+
 func TestUnreachable(t *testing.T) {
 	tc := newCase(t, `expected not to execute this code path`)
 	t.Cleanup(tc.assert)
 
 	Unreachable(tc)
+}
+
+func TestUnreachable_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	Unreachable(tc, tc.PS("unreachable"))
 }
 
 func TestError(t *testing.T) {
@@ -62,11 +97,25 @@ func TestError(t *testing.T) {
 	Error(tc, nil)
 }
 
+func TestError_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	Error(tc, nil, tc.PS("error"))
+}
+
 func TestEqError(t *testing.T) {
 	tc := newCase(t, `expected matching error strings`)
 	t.Cleanup(tc.assert)
 
 	EqError(tc, errors.New("oops"), "blah")
+}
+
+func TestEqError_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	EqError(tc, errors.New("oops"), "blah", tc.PS("eq error"))
 }
 
 func TestEqError_nil(t *testing.T) {
@@ -85,6 +134,15 @@ func TestErrorIs(t *testing.T) {
 	ErrorIs(tc, e1, e2)
 }
 
+func TestErrorIs_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	e1 := errors.New("foo")
+	e2 := errors.New("bar")
+	ErrorIs(tc, e1, e2, tc.PS("error is"))
+}
+
 func TestErrorIs_nil(t *testing.T) {
 	tc := newCase(t, `expected error; got nil`)
 	t.Cleanup(tc.assert)
@@ -98,6 +156,13 @@ func TestNoError(t *testing.T) {
 	t.Cleanup(tc.assert)
 
 	NoError(tc, errors.New("hello"))
+}
+
+func TestNoError_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	NoError(tc, errors.New("hello"), tc.PS("no error"))
 }
 
 func TestEq(t *testing.T) {
@@ -143,12 +208,26 @@ func TestEq(t *testing.T) {
 	})
 }
 
+func TestEq_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	Eq(tc, 1, 2, tc.PS("eq"))
+}
+
 func TestEqOp(t *testing.T) {
 	t.Run("number", func(t *testing.T) {
 		tc := newCase(t, `expected equality via ==`)
 		t.Cleanup(tc.assert)
 		EqOp(tc, "foo", "bar")
 	})
+}
+
+func TestEqOp_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	EqOp(tc, "foo", "bar", tc.PS("eq op"))
 }
 
 func TestEqFunc(t *testing.T) {
@@ -163,6 +242,15 @@ func TestEqFunc(t *testing.T) {
 	})
 }
 
+func TestEqFunc_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	EqFunc(tc, "hello", "world", func(a, b string) bool {
+		return a == b
+	}, tc.PS("eq func"))
+}
+
 func TestNotEq(t *testing.T) {
 	tc := newCase(t, `expected inequality via cmp.Equal function`)
 	t.Cleanup(tc.assert)
@@ -171,6 +259,13 @@ func TestNotEq(t *testing.T) {
 	b := &Person{ID: 100, Name: "Alice"}
 
 	NotEq(tc, a, b)
+}
+
+func TestNotEq_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	NotEq(tc, 1, 1, tc.PS("not eq"))
 }
 
 func TestNotEqOp(t *testing.T) {
@@ -193,6 +288,13 @@ func TestNotEqOp(t *testing.T) {
 	})
 }
 
+func TestNotEqOp_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	NotEqOp(tc, 1, 1, tc.PS("not eq op"))
+}
+
 func TestNotEqFunc(t *testing.T) {
 	tc := newCase(t, `expected inequality via 'eq' function`)
 	t.Cleanup(tc.assert)
@@ -205,11 +307,27 @@ func TestNotEqFunc(t *testing.T) {
 	})
 }
 
+func TestNotEqFunc_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	NotEqFunc(tc, 1, 1, func(a, b int) bool {
+		return a == b
+	}, tc.PS("not eq func"))
+}
+
 func TestEqJSON(t *testing.T) {
 	tc := newCase(t, `expected equality via json marshalling`)
 	t.Cleanup(tc.assert)
 
 	EqJSON(tc, `{"a":1, "b":2}`, `{"b":2, "a":9}`)
+}
+
+func TestEqJSON_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	EqJSON(tc, `"one"`, `"two"`, tc.PS("eq json"))
 }
 
 func TestEqSliceFunc(t *testing.T) {
@@ -245,6 +363,17 @@ func TestEqSliceFunc(t *testing.T) {
 	})
 }
 
+func TestEqSliceFunc_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	a := []int{1, 2, 3}
+	b := []int{1, 2}
+	EqSliceFunc(tc, a, b, func(a, b int) bool {
+		return false
+	}, tc.PS("eq slice func"))
+}
+
 // Person implements the Equals and Less functions.
 type Person struct {
 	ID   int
@@ -269,6 +398,16 @@ func TestEquals(t *testing.T) {
 	Equals(tc, a, b)
 }
 
+func TestEquals_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	a := &Person{ID: 100, Name: "Alice"}
+	b := &Person{ID: 150, Name: "Alice"}
+
+	Equals(tc, a, b, tc.PS("equals"))
+}
+
 func TestNotEquals(t *testing.T) {
 	tc := newCase(t, `expected inequality via .Equals method`)
 	t.Cleanup(tc.assert)
@@ -277,6 +416,16 @@ func TestNotEquals(t *testing.T) {
 	b := &Person{ID: 100, Name: "Alice"}
 
 	NotEquals(tc, a, b)
+}
+
+func TestNotEquals_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	a := &Person{ID: 100, Name: "Alice"}
+	b := &Person{ID: 100, Name: "Alice"}
+
+	NotEquals(tc, a, b, tc.PS("not equals"))
 }
 
 func TestEqualsSlice(t *testing.T) {
@@ -325,18 +474,38 @@ func TestLesser(t *testing.T) {
 	Lesser(tc, a, b)
 }
 
+func TestLesser_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+
+	a := &Person{ID: 200, Name: "Alice"}
+	b := &Person{ID: 100, Name: "Bob"}
+
+	Lesser(tc, a, b, tc.PS("lesser"))
+}
+
 func TestEmptySlice(t *testing.T) {
 	tc := newCase(t, `expected slice to be empty`)
 	t.Cleanup(tc.assert)
-
 	EmptySlice(tc, []int{1, 2})
+}
+
+func TestEmptySlice_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+	EmptySlice(tc, []int{1, 2}, tc.PS("empty slice"))
 }
 
 func TestEmpty(t *testing.T) {
 	tc := newCase(t, `expected slice to be empty`)
 	t.Cleanup(tc.assert)
-
 	Empty(tc, []int{1, 2})
+}
+
+func TestEmpty_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+	Empty(tc, []int{1, 2}, tc.PS("empty"))
 }
 
 func TestLenSlice(t *testing.T) {
@@ -353,6 +522,12 @@ func TestLenSlice(t *testing.T) {
 	})
 }
 
+func TestLenSlice_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+	LenSlice(tc, 3, []int{1, 2}, tc.PS("len slice"))
+}
+
 func TestLen(t *testing.T) {
 	t.Run("strings", func(t *testing.T) {
 		tc := newCase(t, `expected slice to be different length`)
@@ -367,6 +542,12 @@ func TestLen(t *testing.T) {
 	})
 }
 
+func TestLen_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+	Len(tc, 3, []int{1, 2}, tc.PS("len"))
+}
+
 func TestContains(t *testing.T) {
 	t.Run("people", func(t *testing.T) {
 		tc := newCase(t, `expected slice to contain missing item via cmp.Equal function`)
@@ -378,6 +559,14 @@ func TestContains(t *testing.T) {
 		target := &Person{ID: 102, Name: "Carl"}
 		Contains(tc, a, target)
 	})
+}
+
+func TestContains_PS(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.post)
+	s := []string{"one", "two", "three"}
+	target := "four"
+	Contains(tc, s, target, tc.PS("contains"))
 }
 
 func TestContainsOp(t *testing.T) {
@@ -865,4 +1054,33 @@ func TestRegexMatch(t *testing.T) {
 
 	re := regexp.MustCompile(`abc\d`)
 	RegexMatch(tc, re, "abcX")
+}
+
+func TestPS_Sprintf(t *testing.T) {
+	tc := newCapture(t)
+	Eq(tc, "a", "b", Sprintf("hello %s", "world"))
+}
+
+func TestPS_Sprint(t *testing.T) {
+	tc := newCapture(t)
+	Eq(tc, "a", "b", Sprint("hello", 42, "hi"))
+}
+
+func TestPS_Values(t *testing.T) {
+	tc := newCapture(t)
+	Eq(tc, "a", "b", Values("foo", "bar", 1, 2, "now", time.Now()))
+}
+
+func TestPS_Func(t *testing.T) {
+	tc := newCapture(t)
+	Eq(tc, "a", "b", Func(func() string {
+		return "hello"
+	}))
+}
+
+func TestEq_Combo(t *testing.T) {
+	tc := newCapture(t)
+	Eq(tc, "a", "b", Sprintf("this is a note"), Values("foo", "bar", "baz", 3), Func(func() string {
+		return "this is the result of a function"
+	}))
 }

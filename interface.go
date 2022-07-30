@@ -2,7 +2,6 @@
 package test
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/shoenig/test/internal/assertions"
@@ -19,14 +18,15 @@ func passing(result string) bool {
 	return result == ""
 }
 
-func fail(t T, msg string, args ...any) {
+func fail(t T, msg string, scripts ...PostScript) {
 	c := assertions.Caller()
-	s := c + fmt.Sprintf(msg, args...)
+	s := c + msg + "\n" + run(scripts...)
 	t.Errorf("\n" + strings.TrimSpace(s) + "\n")
 }
 
-func invoke(t T, result string) {
+func invoke(t T, result string, scripts ...PostScript) {
+	result = strings.TrimSpace(result)
 	if !passing(result) {
-		fail(t, result)
+		fail(t, result, scripts...)
 	}
 }

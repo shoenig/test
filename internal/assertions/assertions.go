@@ -33,10 +33,10 @@ func Caller() string {
 func diff[A, B any](a A, b B) (s string) {
 	defer func() {
 		if r := recover(); r != nil {
-			s = fmt.Sprintf("↪ comparison ↷\na: %#v\nb: %#v\n", a, b)
+			s = fmt.Sprintf("↪ Assertion | comparison ↷\na: %#v\nb: %#v\n", a, b)
 		}
 	}()
-	s = "↪ differential ↷\n" + cmp.Diff(a, b)
+	s = "↪ Assertion | differential ↷\n" + cmp.Diff(a, b)
 	return
 }
 
