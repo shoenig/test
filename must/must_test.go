@@ -1048,12 +1048,124 @@ func TestFilePathValid(t *testing.T) {
 	FilePathValid(tc, "foo/../bar")
 }
 
+func TestStrEqFold(t *testing.T) {
+	tc := newCase(t, `expected strings to be equal ignoring case`)
+	t.Cleanup(tc.assert)
+
+	StrEqFold(tc, "hello", "hi")
+}
+
+func TestStrNotEqFold(t *testing.T) {
+	tc := newCase(t, `expected strings to not be equal ignoring case; but they are`)
+	t.Cleanup(tc.assert)
+
+	StrNotEqFold(tc, "hello", "HeLLo")
+}
+
+func TestStrContains(t *testing.T) {
+	tc := newCase(t, `expected string to contain substring; it does not`)
+	t.Cleanup(tc.assert)
+
+	StrContains(tc, "banana", "band")
+}
+
+func TestStrContainsFold(t *testing.T) {
+	tc := newCase(t, `expected string to contain substring; it does not`)
+	t.Cleanup(tc.assert)
+
+	StrContainsFold(tc, "banana", "band")
+}
+
+func TestStrNotContains(t *testing.T) {
+	tc := newCase(t, `expected string to not contain substring; but it does`)
+	t.Cleanup(tc.assert)
+
+	StrNotContains(tc, "banana", "ana")
+}
+
+func TestStrNotContainsFold(t *testing.T) {
+	tc := newCase(t, `expected string to not contain substring; but it does`)
+	t.Cleanup(tc.assert)
+
+	StrNotContainsFold(tc, "banana", "aNA")
+}
+
+func TestStrContainsAny(t *testing.T) {
+	tc := newCase(t, `expected string to contain one or more code points`)
+	t.Cleanup(tc.assert)
+
+	StrContainsAny(tc, "banana", "xyz")
+}
+
+func TestStrNotContainsAny(t *testing.T) {
+	tc := newCase(t, `expected string to not contain code points; but it does`)
+	t.Cleanup(tc.assert)
+
+	StrNotContainsAny(tc, "banana", "xnz")
+}
+
+func TestStrCount(t *testing.T) {
+	tc := newCase(t, `expected string to contain`)
+	t.Cleanup(tc.assert)
+
+	StrCount(tc, "mississippi", "ssi", 3)
+}
+
+func TestStrContainsFields(t *testing.T) {
+	tc := newCase(t, `expected fields of string to contain subset of values`)
+	t.Cleanup(tc.assert)
+
+	StrContainsFields(tc, "one too three", []string{"one", "two", "three", "nine"})
+}
+
+func TestStrHasPrefix(t *testing.T) {
+	tc := newCase(t, `expected string to have prefix`)
+	t.Cleanup(tc.assert)
+
+	StrHasPrefix(tc, "mr. biggles", "mrs.")
+}
+
+func TestStrNotHasPrefix(t *testing.T) {
+	tc := newCase(t, `expected string to not have prefix; but it does`)
+	t.Cleanup(tc.assert)
+
+	StrNotHasPrefix(tc, "mr. biggles", "mr.")
+}
+
+func TestStrHasSuffix(t *testing.T) {
+	tc := newCase(t, `expected string to have suffix`)
+	t.Cleanup(tc.assert)
+
+	StrHasSuffix(tc, "mr. biggles", "wiggles")
+}
+
+func TestStringNotHasSuffix(t *testing.T) {
+	tc := newCase(t, `expected string to not have suffix; but it does`)
+	t.Cleanup(tc.assert)
+
+	StrNotHasSuffix(tc, "mr. biggles", "biggles")
+}
+
 func TestRegexMatch(t *testing.T) {
 	tc := newCase(t, `expected regexp match`)
 	t.Cleanup(tc.assert)
 
 	re := regexp.MustCompile(`abc\d`)
 	RegexMatch(tc, re, "abcX")
+}
+
+func TestRegexCompiles(t *testing.T) {
+	tc := newCase(t, `expected regular expression to compile`)
+	t.Cleanup(tc.assert)
+
+	RegexCompiles(tc, "ab"+`\`+"ef")
+}
+
+func TestRegexCompilesPOSIX(t *testing.T) {
+	tc := newCase(t, `expected regular expression to compile (posix)`)
+	t.Cleanup(tc.assert)
+
+	RegexCompilesPOSIX(tc, "ab"+`\`+"ef")
 }
 
 func TestPS_Sprintf(t *testing.T) {

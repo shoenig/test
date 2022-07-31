@@ -190,6 +190,8 @@ func ContainsEquals[E interfaces.EqualsFunc[E]](t T, slice []E, item E, scripts 
 }
 
 // ContainsString asserts s contains sub.
+//
+// Deprecated: use StrContains instead.
 func ContainsString(t T, s, sub string, scripts ...PostScript) {
 	t.Helper()
 	invoke(t, assertions.ContainsString(s, sub), scripts...)
@@ -414,8 +416,103 @@ func FilePathValid(t T, path string, scripts ...PostScript) {
 	invoke(t, assertions.FilePathValid(path), scripts...)
 }
 
+// StrEqFold asserts first and second are equivalent, ignoring case.
+func StrEqFold(t T, first, second string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.StrEqFold(first, second), scripts...)
+}
+
+// StrNotEqFold asserts first and second are not equivalent, ignoring case.
+func StrNotEqFold(t T, first, second string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.StrNotEqFold(first, second), scripts...)
+}
+
+// StrContains asserts s contains substring sub.
+func StrContains(t T, s, sub string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.StrContains(s, sub), scripts...)
+}
+
+// StrContainsFold asserts s contains substring sub, ignoring case.
+func StrContainsFold(t T, s, sub string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.StrContainsFold(s, sub), scripts...)
+}
+
+// StrNotContains asserts s does not contain substring sub.
+func StrNotContains(t T, s, sub string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.StrNotContains(s, sub), scripts...)
+}
+
+// StrNotContainsFold asserts s does not contain substring sub, ignoring case.
+func StrNotContainsFold(t T, s, sub string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.StrNotContainsFold(s, sub), scripts...)
+}
+
+// StrContainsAny asserts s contains at least one character in chars.
+func StrContainsAny(t T, s, chars string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.StrContainsAny(s, chars), scripts...)
+}
+
+// StrNotContainsAny asserts s does not contain any character in chars.
+func StrNotContainsAny(t T, s, chars string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.StrNotContainsAny(s, chars), scripts...)
+}
+
+// StrCount asserts s contains exactly count instances of substring sub.
+func StrCount(t T, s, sub string, count int, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.StrCount(s, sub, count), scripts...)
+}
+
+// StrContainsFields asserts that fields is a subset of the result of strings.Fields(s).
+func StrContainsFields(t T, s string, fields []string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.StrContainsFields(s, fields), scripts...)
+}
+
+// StrHasPrefix asserts that s starts with prefix.
+func StrHasPrefix(t T, s, prefix string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.StrHasPrefix(s, prefix), scripts...)
+}
+
+// StrNotHasPrefix asserts that s does not start with prefix.
+func StrNotHasPrefix(t T, s, prefix string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.StrNotHasPrefix(s, prefix), scripts...)
+}
+
+// StrHasSuffix asserts that s ends with suffix.
+func StrHasSuffix(t T, s, suffix string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.StrHasSuffix(s, suffix), scripts...)
+}
+
+// StrNotHasSuffix asserts that s does not end with suffix.
+func StrNotHasSuffix(t T, s, suffix string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.StrNotHasSuffix(s, suffix), scripts...)
+}
+
 // RegexMatch asserts regular expression re matches string s.
 func RegexMatch(t T, re *regexp.Regexp, s string, scripts ...PostScript) {
 	t.Helper()
 	invoke(t, assertions.RegexMatch(re, s), scripts...)
+}
+
+// RegexCompiles asserts expr compiles as a valid regular expression.
+func RegexCompiles(t T, expr string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.RegexpCompiles(expr), scripts...)
+}
+
+func RegexCompilesPOSIX(t T, expr string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.RegexpCompilesPOSIX(expr), scripts...)
 }

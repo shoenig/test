@@ -705,7 +705,7 @@ func FileExists(system fs.FS, file string) (s string) {
 	info, err := fs.Stat(system, file)
 	if errors.Is(err, fs.ErrNotExist) {
 		s = "expected file to exist\n"
-		s += fmt.Sprintf("↪ name: %s\n", file)
+		s += fmt.Sprintf("↪  name: %s\n", file)
 		s += fmt.Sprintf("↪ error: %s\n", err)
 		return
 	}
@@ -732,7 +732,7 @@ func DirExists(system fs.FS, directory string) (s string) {
 	info, err := fs.Stat(system, directory)
 	if os.IsNotExist(err) {
 		s = "expected directory to exist\n"
-		s += fmt.Sprintf("↪ name: %s\n", directory)
+		s += fmt.Sprintf("↪  name: %s\n", directory)
 		s += fmt.Sprintf("↪ error: %s\n", err)
 		return
 	}
@@ -759,7 +759,7 @@ func FileMode(system fs.FS, path string, permissions fs.FileMode) (s string) {
 	info, err := fs.Stat(system, path)
 	if err != nil {
 		s = "expected to stat path\n"
-		s += fmt.Sprintf("↪ name: %s\n", path)
+		s += fmt.Sprintf("↪  name: %s\n", path)
 		s += fmt.Sprintf("↪ error: %s\n", err)
 		return
 	}
@@ -768,8 +768,8 @@ func FileMode(system fs.FS, path string, permissions fs.FileMode) (s string) {
 	if permissions != mode {
 		s = "expected different file permissions\n"
 		s += fmt.Sprintf("↪ name: %s\n", path)
-		s += fmt.Sprintf("↪ exp: %s\n", permissions)
-		s += fmt.Sprintf("↪ got: %s\n", mode)
+		s += fmt.Sprintf("↪  exp: %s\n", permissions)
+		s += fmt.Sprintf("↪  got: %s\n", mode)
 	}
 	return
 }
@@ -778,14 +778,14 @@ func FileContains(system fs.FS, file, content string) (s string) {
 	b, err := fs.ReadFile(system, file)
 	if err != nil {
 		s = "expected to read file\n"
-		s += fmt.Sprintf("↪ name: %s\n", file)
+		s += fmt.Sprintf("↪  name: %s\n", file)
 		s += fmt.Sprintf("↪ error: %s\n", err)
 		return
 	}
 	actual := string(b)
 	if !strings.Contains(string(b), content) {
 		s = "expected file contents\n"
-		s += fmt.Sprintf("↪ name: %s\n", file)
+		s += fmt.Sprintf("↪   name: %s\n", file)
 		s += fmt.Sprintf("↪ wanted: %s\n", content)
 		s += fmt.Sprintf("↪ actual: %s\n", actual)
 		return
@@ -800,11 +800,158 @@ func FilePathValid(path string) (s string) {
 	return
 }
 
+func StrEqFold(first, second string) (s string) {
+	if !strings.EqualFold(first, second) {
+		s = "expected strings to be equal ignoring case\n"
+		s += fmt.Sprintf("↪  first: %s\n", first)
+		s += fmt.Sprintf("↪ second: %s\n", second)
+	}
+	return
+}
+
+func StrNotEqFold(first, second string) (s string) {
+	if strings.EqualFold(first, second) {
+		s = "expected strings to not be equal ignoring case; but they are\n"
+		s += fmt.Sprintf("↪  first: %s\n", first)
+		s += fmt.Sprintf("↪ second: %s\n", second)
+	}
+	return
+}
+
+func StrContains(str, sub string) (s string) {
+	if !strings.Contains(str, sub) {
+		s = "expected string to contain substring; it does not\n"
+		s += fmt.Sprintf("↪ substring: %s\n", sub)
+		s += fmt.Sprintf("↪    string: %s\n", str)
+	}
+	return
+}
+
+func StrContainsFold(str, sub string) (s string) {
+	upperS := strings.ToUpper(str)
+	upperSub := strings.ToUpper(sub)
+	return StrContains(upperS, upperSub)
+}
+
+func StrNotContains(str, sub string) (s string) {
+	if strings.Contains(str, sub) {
+		s = "expected string to not contain substring; but it does\n"
+		s += fmt.Sprintf("↪ substring: %s\n", sub)
+		s += fmt.Sprintf("↪    string: %s\n", str)
+	}
+	return
+}
+
+func StrNotContainsFold(str, sub string) (s string) {
+	upperS := strings.ToUpper(str)
+	upperSub := strings.ToUpper(sub)
+	return StrNotContains(upperS, upperSub)
+}
+
+func StrContainsAny(str, chars string) (s string) {
+	if !strings.ContainsAny(str, chars) {
+		s = "expected string to contain one or more code points\n"
+		s += fmt.Sprintf("↪ code-points: %s\n", chars)
+		s += fmt.Sprintf("↪      string: %s\n", str)
+	}
+	return
+}
+
+func StrNotContainsAny(str, chars string) (s string) {
+	if strings.ContainsAny(str, chars) {
+		s = "expected string to not contain code points; but it does\n"
+		s += fmt.Sprintf("↪ code-points: %s\n", chars)
+		s += fmt.Sprintf("↪      string: %s\n", str)
+	}
+	return
+}
+
+func StrCount(str, sub string, exp int) (s string) {
+	count := strings.Count(str, sub)
+	if count != exp {
+		s = fmt.Sprintf("expected string to contain %d non-overlapping cases of substring\n", exp)
+		s += fmt.Sprintf("↪ count: %d\n", count)
+	}
+	return
+}
+
+func StrContainsFields(str string, fields []string) (s string) {
+	set := make(map[string]struct{}, len(fields))
+	for _, field := range strings.Fields(str) {
+		set[field] = struct{}{}
+	}
+	var missing []string
+	for _, field := range fields {
+		if _, exists := set[field]; !exists {
+			missing = append(missing, field)
+		}
+	}
+	if len(missing) > 0 {
+		s = fmt.Sprintf("expected fields of string to contain subset of values\n")
+		s += fmt.Sprintf("↪ missing: %s\n", strings.Join(missing, ", "))
+	}
+	return
+}
+
+func StrHasPrefix(str, prefix string) (s string) {
+	if !strings.HasPrefix(str, prefix) {
+		s = "expected string to have prefix\n"
+		s += fmt.Sprintf("↪ prefix: %s\n", prefix)
+		s += fmt.Sprintf("↪ string: %s\n", str)
+	}
+	return
+}
+
+func StrNotHasPrefix(str, prefix string) (s string) {
+	if strings.HasPrefix(str, prefix) {
+		s = "expected string to not have prefix; but it does\n"
+		s += fmt.Sprintf("↪ prefix: %s\n", prefix)
+		s += fmt.Sprintf("↪ string: %s\n", str)
+	}
+	return
+}
+
+func StrHasSuffix(str, suffix string) (s string) {
+	if !strings.HasSuffix(str, suffix) {
+		s = "expected string to have suffix\n"
+		s += fmt.Sprintf("↪ suffix: %s\n", suffix)
+		s += fmt.Sprintf("↪ string: %s\n", str)
+	}
+	return
+}
+
+func StrNotHasSuffix(str, suffix string) (s string) {
+	if strings.HasSuffix(str, suffix) {
+		s = "expected string to not have suffix; but it does\n"
+		s += fmt.Sprintf("↪ suffix: %s\n", suffix)
+		s += fmt.Sprintf("↪ string: %s\n", str)
+	}
+	return
+}
+
 func RegexMatch(re *regexp.Regexp, target string) (s string) {
 	if !re.MatchString(target) {
 		s = "expected regexp match\n"
-		s += fmt.Sprintf("↪ s: %s\n", target)
-		s += fmt.Sprintf("↪ re: %s\n", re)
+		s += fmt.Sprintf("↪  regex: %s\n", re)
+		s += fmt.Sprintf("↪ string: %s\n", target)
+	}
+	return
+}
+
+func RegexpCompiles(expr string) (s string) {
+	if _, err := regexp.Compile(expr); err != nil {
+		s = "expected regular expression to compile\n"
+		s += fmt.Sprintf("↪ regex: %s\n", expr)
+		s += fmt.Sprintf("↪ error: %v\n", err)
+	}
+	return
+}
+
+func RegexpCompilesPOSIX(expr string) (s string) {
+	if _, err := regexp.CompilePOSIX(expr); err != nil {
+		s = "expected regular expression to compile (posix)\n"
+		s += fmt.Sprintf("↪ regex: %s\n", expr)
+		s += fmt.Sprintf("↪ error: %v\n", err)
 	}
 	return
 }
