@@ -12,339 +12,339 @@ import (
 )
 
 // Nil asserts a is nil.
-func Nil(t T, a any) {
+func Nil(t T, a any, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Nil(a))
+	invoke(t, assertions.Nil(a), scripts...)
 }
 
 // NotNil asserts a is not nil.
-func NotNil(t T, a any) {
+func NotNil(t T, a any, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.NotNil(a))
+	invoke(t, assertions.NotNil(a), scripts...)
 }
 
 // True asserts that condition is true.
-func True(t T, condition bool) {
+func True(t T, condition bool, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.True(condition))
+	invoke(t, assertions.True(condition), scripts...)
 }
 
 // False asserts condition is false.
-func False(t T, condition bool) {
+func False(t T, condition bool, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.False(condition))
+	invoke(t, assertions.False(condition), scripts...)
 }
 
 // Unreachable asserts a code path is not executed.
-func Unreachable(t T) {
+func Unreachable(t T, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Unreachable())
+	invoke(t, assertions.Unreachable(), scripts...)
 }
 
 // Error asserts err is a non-nil error.
-func Error(t T, err error) {
+func Error(t T, err error, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Error(err))
+	invoke(t, assertions.Error(err), scripts...)
 }
 
 // EqError asserts err contains message msg.
-func EqError(t T, err error, msg string) {
+func EqError(t T, err error, msg string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.EqError(err, msg))
+	invoke(t, assertions.EqError(err, msg), scripts...)
 }
 
 // ErrorIs asserts err
-func ErrorIs(t T, err error, target error) {
+func ErrorIs(t T, err error, target error, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.ErrorIs(err, target))
+	invoke(t, assertions.ErrorIs(err, target), scripts...)
 }
 
 // NoError asserts err is a nil error.
-func NoError(t T, err error) {
+func NoError(t T, err error, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.NoError(err))
+	invoke(t, assertions.NoError(err), scripts...)
 }
 
 // Eq asserts a and b are equal using cmp.Equal.
-func Eq[A any](t T, a, b A) {
+func Eq[A any](t T, a, b A, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Eq(a, b))
+	invoke(t, assertions.Eq(a, b), scripts...)
 }
 
 // EqOp asserts a == b.
-func EqOp[C comparable](t T, a, b C) {
+func EqOp[C comparable](t T, a, b C, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.EqOp(a, b))
+	invoke(t, assertions.EqOp(a, b), scripts...)
 }
 
 // EqFunc asserts a and b are equal using eq.
-func EqFunc[A any](t T, a, b A, eq func(a, b A) bool) {
+func EqFunc[A any](t T, a, b A, eq func(a, b A) bool, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.EqFunc(a, b, eq))
+	invoke(t, assertions.EqFunc(a, b, eq), scripts...)
 }
 
 // NotEq asserts a and b are not equal using cmp.Equal.
-func NotEq[A any](t T, a, b A) {
+func NotEq[A any](t T, a, b A, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.NotEq(a, b))
+	invoke(t, assertions.NotEq(a, b), scripts...)
 }
 
 // NotEqOp asserts a != b.
-func NotEqOp[C comparable](t T, a, b C) {
+func NotEqOp[C comparable](t T, a, b C, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.NotEqOp(a, b))
+	invoke(t, assertions.NotEqOp(a, b), scripts...)
 }
 
 // NotEqFunc asserts a and b are not equal using eq.
-func NotEqFunc[A any](t T, a, b A, eq func(a, b A) bool) {
+func NotEqFunc[A any](t T, a, b A, eq func(a, b A) bool, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.NotEqFunc(a, b, eq))
+	invoke(t, assertions.NotEqFunc(a, b, eq), scripts...)
 }
 
 // EqJSON asserts a and b are equivalent JSON.
-func EqJSON(t T, a, b string) {
+func EqJSON(t T, a, b string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.EqJSON(a, b))
+	invoke(t, assertions.EqJSON(a, b), scripts...)
 }
 
 // EqSliceFunc asserts elements of a and b are the same using eq.
-func EqSliceFunc[A any](t T, a, b []A, eq func(a, b A) bool) {
+func EqSliceFunc[A any](t T, a, b []A, eq func(a, b A) bool, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.EqSliceFunc(a, b, eq))
+	invoke(t, assertions.EqSliceFunc(a, b, eq), scripts...)
 }
 
 // Equals asserts a.Equals(b).
-func Equals[E interfaces.EqualsFunc[E]](t T, a, b E) {
+func Equals[E interfaces.EqualsFunc[E]](t T, a, b E, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Equals(a, b))
+	invoke(t, assertions.Equals(a, b), scripts...)
 }
 
 // NotEquals asserts !a.Equals(b).
-func NotEquals[E interfaces.EqualsFunc[E]](t T, a, b E) {
+func NotEquals[E interfaces.EqualsFunc[E]](t T, a, b E, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.NotEquals(a, b))
+	invoke(t, assertions.NotEquals(a, b), scripts...)
 }
 
 // EqualsSlice asserts a[n].Equals(b[n]) for each element n in slices a and b.
-func EqualsSlice[E interfaces.EqualsFunc[E]](t T, a, b []E) {
+func EqualsSlice[E interfaces.EqualsFunc[E]](t T, a, b []E, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.EqualsSlice(a, b))
+	invoke(t, assertions.EqualsSlice(a, b), scripts...)
 }
 
 // Lesser asserts a.Less(b).
-func Lesser[L interfaces.LessFunc[L]](t T, a, b L) {
+func Lesser[L interfaces.LessFunc[L]](t T, a, b L, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Lesser(a, b))
+	invoke(t, assertions.Lesser(a, b), scripts...)
 }
 
 // EmptySlice asserts slice is empty.
-func EmptySlice[A any](t T, slice []A) {
+func EmptySlice[A any](t T, slice []A, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.EmptySlice(slice))
+	invoke(t, assertions.EmptySlice(slice), scripts...)
 }
 
 // Empty asserts slice is empty.
 //
 // Convenience function for EmptySlice.
-func Empty[A any](t T, slice []A) {
+func Empty[A any](t T, slice []A, scripts ...PostScript) {
 	t.Helper()
-	EmptySlice(t, slice)
+	EmptySlice(t, slice, scripts...)
 }
 
 // LenSlice asserts slice is of length n.
-func LenSlice[A any](t T, n int, slice []A) {
+func LenSlice[A any](t T, n int, slice []A, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.LenSlice(n, slice))
+	invoke(t, assertions.LenSlice(n, slice), scripts...)
 }
 
 // Len asserts slice is of length n.
 //
 // Convenience function for LenSlice.
-func Len[A any](t T, n int, slice []A) {
+func Len[A any](t T, n int, slice []A, scripts ...PostScript) {
 	t.Helper()
-	LenSlice(t, n, slice)
+	invoke(t, assertions.LenSlice(n, slice), scripts...)
 }
 
 // Contains asserts item exists in slice using cmp.Equal function.
-func Contains[A any](t T, slice []A, item A) {
+func Contains[A any](t T, slice []A, item A, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Contains(slice, item))
+	invoke(t, assertions.Contains(slice, item), scripts...)
 }
 
 // ContainsOp asserts item exists in slice using == operator.
-func ContainsOp[C comparable](t T, slice []C, item C) {
+func ContainsOp[C comparable](t T, slice []C, item C, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.ContainsOp(slice, item))
+	invoke(t, assertions.ContainsOp(slice, item), scripts...)
 }
 
 // ContainsFunc asserts item exists in slice, using eq to compare elements.
-func ContainsFunc[A any](t T, slice []A, item A, eq func(a, b A) bool) {
+func ContainsFunc[A any](t T, slice []A, item A, eq func(a, b A) bool, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.ContainsFunc(slice, item, eq))
+	invoke(t, assertions.ContainsFunc(slice, item, eq), scripts...)
 }
 
 // ContainsEquals asserts item exists in slice, using Equals to compare elements.
-func ContainsEquals[E interfaces.EqualsFunc[E]](t T, slice []E, item E) {
+func ContainsEquals[E interfaces.EqualsFunc[E]](t T, slice []E, item E, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.ContainsEquals(slice, item))
+	invoke(t, assertions.ContainsEquals(slice, item), scripts...)
 }
 
 // ContainsString asserts s contains sub.
-func ContainsString(t T, s, sub string) {
+func ContainsString(t T, s, sub string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.ContainsString(s, sub))
+	invoke(t, assertions.ContainsString(s, sub), scripts...)
 }
 
 // Positive asserts n > 0.
-func Positive[N interfaces.Number](t T, n N) {
+func Positive[N interfaces.Number](t T, n N, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Positive(n))
+	invoke(t, assertions.Positive(n), scripts...)
 }
 
 // Negative asserts n < 0.
-func Negative[N interfaces.Number](t T, n N) {
+func Negative[N interfaces.Number](t T, n N, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Negative(n))
+	invoke(t, assertions.Negative(n), scripts...)
 }
 
 // Zero asserts n == 0.
-func Zero[N interfaces.Number](t T, n N) {
+func Zero[N interfaces.Number](t T, n N, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Zero(n))
+	invoke(t, assertions.Zero(n), scripts...)
 }
 
 // NonZero asserts n != 0.
-func NonZero[N interfaces.Number](t T, n N) {
+func NonZero[N interfaces.Number](t T, n N, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.NonZero(n))
+	invoke(t, assertions.NonZero(n), scripts...)
 }
 
 // Less asserts a < b.
-func Less[O constraints.Ordered](t T, a, b O) {
+func Less[O constraints.Ordered](t T, a, b O, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Less(a, b))
+	invoke(t, assertions.Less(a, b), scripts...)
 }
 
 // LessEq asserts a <= b.
-func LessEq[O constraints.Ordered](t T, a, b O) {
+func LessEq[O constraints.Ordered](t T, a, b O, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.LessEq(a, b))
+	invoke(t, assertions.LessEq(a, b), scripts...)
 }
 
 // Greater asserts a > b.
-func Greater[O constraints.Ordered](t T, a, b O) {
+func Greater[O constraints.Ordered](t T, a, b O, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Greater(a, b))
+	invoke(t, assertions.Greater(a, b), scripts...)
 }
 
 // GreaterEq asserts a >= b.
-func GreaterEq[O constraints.Ordered](t T, a, b O) {
+func GreaterEq[O constraints.Ordered](t T, a, b O, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.GreaterEq(a, b))
+	invoke(t, assertions.GreaterEq(a, b), scripts...)
 }
 
 // Ascending asserts slice[n] <= slice[n+1] for each element n.
-func Ascending[O constraints.Ordered](t T, slice []O) {
+func Ascending[O constraints.Ordered](t T, slice []O, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Ascending(slice))
+	invoke(t, assertions.Ascending(slice), scripts...)
 }
 
 // AscendingFunc asserts slice[n] is less than slice[n+1] for each element n using the less comparator.
-func AscendingFunc[A any](t T, slice []A, less func(A, A) bool) {
+func AscendingFunc[A any](t T, slice []A, less func(A, A) bool, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.AscendingFunc(slice, less))
+	invoke(t, assertions.AscendingFunc(slice, less), scripts...)
 }
 
 // AscendingLess asserts slice[n].Less(slice[n+1]) for each element n.
-func AscendingLess[L interfaces.LessFunc[L]](t T, slice []L) {
+func AscendingLess[L interfaces.LessFunc[L]](t T, slice []L, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.AscendingLess(slice))
+	invoke(t, assertions.AscendingLess(slice), scripts...)
 }
 
 // Descending asserts slice[n] >= slice[n+1] for each element n.
-func Descending[O constraints.Ordered](t T, slice []O) {
+func Descending[O constraints.Ordered](t T, slice []O, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Descending(slice))
+	invoke(t, assertions.Descending(slice), scripts...)
 }
 
 // DescendingFunc asserts slice[n+1] is less than slice[n] for each element n using the less comparator.
-func DescendingFunc[A any](t T, slice []A, less func(A, A) bool) {
+func DescendingFunc[A any](t T, slice []A, less func(A, A) bool, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.DescendingFunc(slice, less))
+	invoke(t, assertions.DescendingFunc(slice, less), scripts...)
 }
 
 // DescendingLess asserts slice[n+1].Less(slice[n]) for each element n.
-func DescendingLess[L interfaces.LessFunc[L]](t T, slice []L) {
+func DescendingLess[L interfaces.LessFunc[L]](t T, slice []L, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.DescendingLess(slice))
+	invoke(t, assertions.DescendingLess(slice), scripts...)
 }
 
 // InDelta asserts a and b are within delta of each other.
-func InDelta[N interfaces.Number](t T, a, b, delta N) {
+func InDelta[N interfaces.Number](t T, a, b, delta N, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.InDelta(a, b, delta))
+	invoke(t, assertions.InDelta(a, b, delta), scripts...)
 }
 
 // InDeltaSlice asserts each element a[n] is within delta of b[n].
-func InDeltaSlice[N interfaces.Number](t T, a, b []N, delta N) {
+func InDeltaSlice[N interfaces.Number](t T, a, b []N, delta N, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.InDeltaSlice(a, b, delta))
+	invoke(t, assertions.InDeltaSlice(a, b, delta), scripts...)
 }
 
 // MapEq asserts maps a and b contain the same key/value pairs, using
 // cmp.Equal function to compare values.
-func MapEq[M1, M2 interfaces.Map[K, V], K comparable, V any](t T, a M1, b M2) {
+func MapEq[M1, M2 interfaces.Map[K, V], K comparable, V any](t T, a M1, b M2, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapEq[M1, M2, K, V](a, b))
+	invoke(t, assertions.MapEq[M1, M2, K, V](a, b), scripts...)
 }
 
 // MapEqFunc asserts maps a and b contain the same key/value pairs, using eq to
 // compare values.
-func MapEqFunc[M1, M2 interfaces.Map[K, V], K comparable, V any](t T, a M1, b M2, eq func(V, V) bool) {
+func MapEqFunc[M1, M2 interfaces.Map[K, V], K comparable, V any](t T, a M1, b M2, eq func(V, V) bool, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapEqFunc[M1, M2, K, V](a, b, eq))
+	invoke(t, assertions.MapEqFunc[M1, M2, K, V](a, b, eq), scripts...)
 }
 
 // MapEquals asserts maps a and b contain the same key/value pairs, using Equals
 // method to compare values
-func MapEquals[M interfaces.MapEqualsFunc[K, V], K comparable, V interfaces.EqualsFunc[V]](t T, a, b M) {
+func MapEquals[M interfaces.MapEqualsFunc[K, V], K comparable, V interfaces.EqualsFunc[V]](t T, a, b M, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapEquals[M, K, V](a, b))
+	invoke(t, assertions.MapEquals[M, K, V](a, b), scripts...)
 }
 
 // MapLen asserts map is of size n.
-func MapLen[M ~map[K]V, K comparable, V any](t T, n int, m M) {
+func MapLen[M ~map[K]V, K comparable, V any](t T, n int, m M, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapLen[M, K, V](n, m))
+	invoke(t, assertions.MapLen[M, K, V](n, m), scripts...)
 }
 
 // MapEmpty asserts map is empty.
-func MapEmpty[M ~map[K]V, K comparable, V any](t T, m M) {
+func MapEmpty[M ~map[K]V, K comparable, V any](t T, m M, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapEmpty[M, K, V](m))
+	invoke(t, assertions.MapEmpty[M, K, V](m), scripts...)
 }
 
 // MapContainsKeys asserts m contains each key in keys.
-func MapContainsKeys[M ~map[K]V, K comparable, V any](t T, m M, keys []K) {
+func MapContainsKeys[M ~map[K]V, K comparable, V any](t T, m M, keys []K, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapContainsKeys[M, K, V](m, keys))
+	invoke(t, assertions.MapContainsKeys[M, K, V](m, keys), scripts...)
 }
 
 // MapContainsValues asserts m contains each value in values.
-func MapContainsValues[M ~map[K]V, K comparable, V any](t T, m M, values []V) {
+func MapContainsValues[M ~map[K]V, K comparable, V any](t T, m M, values []V, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapContainsValues[M, K, V](m, values))
+	invoke(t, assertions.MapContainsValues[M, K, V](m, values), scripts...)
 }
 
 // MapContainsValuesFunc asserts m contains each value in values using the eq function.
-func MapContainsValuesFunc[M ~map[K]V, K comparable, V any](t T, m M, values []V, eq func(V, V) bool) {
+func MapContainsValuesFunc[M ~map[K]V, K comparable, V any](t T, m M, values []V, eq func(V, V) bool, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapContainsValuesFunc[M, K, V](m, values, eq))
+	invoke(t, assertions.MapContainsValuesFunc[M, K, V](m, values, eq), scripts...)
 }
 
-func MapContainsValuesEquals[M ~map[K]V, K comparable, V interfaces.EqualsFunc[V]](t T, m M, values []V) {
+func MapContainsValuesEquals[M ~map[K]V, K comparable, V interfaces.EqualsFunc[V]](t T, m M, values []V, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapContainsValuesEquals[M, K, V](m, values))
+	invoke(t, assertions.MapContainsValuesEquals[M, K, V](m, values), scripts...)
 }
 
 // FileExists asserts file exists on system.
@@ -352,9 +352,9 @@ func MapContainsValuesEquals[M ~map[K]V, K comparable, V interfaces.EqualsFunc[V
 // Often os.DirFS is used to interact with the the host filesystem.
 // Example,
 // FileExists(t, os.DirFS("/etc"), "hosts")
-func FileExists(t T, system fs.FS, file string) {
+func FileExists(t T, system fs.FS, file string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.FileExists(system, file))
+	invoke(t, assertions.FileExists(system, file), scripts...)
 }
 
 // FileNotExists asserts file does not exist on system.
@@ -362,9 +362,9 @@ func FileExists(t T, system fs.FS, file string) {
 // Often os.DirFS is used to interact with the host filesystem.
 // Example,
 // FileNotExist(t, os.DirFS("/bin"), "exploit.exe")
-func FileNotExists(t T, system fs.FS, file string) {
+func FileNotExists(t T, system fs.FS, file string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.FileNotExists(system, file))
+	invoke(t, assertions.FileNotExists(system, file), scripts...)
 }
 
 // DirExists asserts directory exists on system.
@@ -372,9 +372,9 @@ func FileNotExists(t T, system fs.FS, file string) {
 // Often os.DirFS is used to interact with the host filesystem.
 // Example,
 // DirExists(t, os.DirFS("/usr/local"), "bin")
-func DirExists(t T, system fs.FS, directory string) {
+func DirExists(t T, system fs.FS, directory string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.DirExists(system, directory))
+	invoke(t, assertions.DirExists(system, directory), scripts...)
 }
 
 // DirNotExists asserts directory does not exist on system.
@@ -382,9 +382,9 @@ func DirExists(t T, system fs.FS, directory string) {
 // Often os.DirFS is used to interact with the host filesystem.
 // Example,
 // DirNotExists(t, os.DirFS("/tmp"), "scratch")
-func DirNotExists(t T, system fs.FS, directory string) {
+func DirNotExists(t T, system fs.FS, directory string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.DirNotExists(system, directory))
+	invoke(t, assertions.DirNotExists(system, directory), scripts...)
 }
 
 // FileMode asserts the file or directory at path has exactly
@@ -393,9 +393,9 @@ func DirNotExists(t T, system fs.FS, directory string) {
 // Often os.DirFS is used to interact with the host filesystem.
 // Example,
 // FileMode(t, os.DirFS("/bin"), "find", 0655)
-func FileMode(t T, system fs.FS, path string, permissions fs.FileMode) {
+func FileMode(t T, system fs.FS, path string, permissions fs.FileMode, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.FileMode(system, path, permissions))
+	invoke(t, assertions.FileMode(system, path, permissions), scripts...)
 }
 
 // FileContains asserts the file contains content as a substring.
@@ -403,19 +403,19 @@ func FileMode(t T, system fs.FS, path string, permissions fs.FileMode) {
 // Often os.DirFS is used to interact with the host filesystem.
 // Example,
 // FileContains(t, os.DirFS("/etc"), "hosts", "localhost")
-func FileContains(t T, system fs.FS, file, content string) {
+func FileContains(t T, system fs.FS, file, content string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.FileContains(system, file, content))
+	invoke(t, assertions.FileContains(system, file, content), scripts...)
 }
 
 // FilePathValid asserts path is a valid file path.
-func FilePathValid(t T, path string) {
+func FilePathValid(t T, path string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.FilePathValid(path))
+	invoke(t, assertions.FilePathValid(path), scripts...)
 }
 
 // RegexMatch asserts regular expression re matches string s.
-func RegexMatch(t T, re *regexp.Regexp, s string) {
+func RegexMatch(t T, re *regexp.Regexp, s string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.RegexMatch(re, s))
+	invoke(t, assertions.RegexMatch(re, s), scripts...)
 }

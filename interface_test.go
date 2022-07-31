@@ -6,12 +6,32 @@ import (
 	"testing"
 )
 
+type testScript struct {
+	label   string
+	content string
+}
+
+func (ts *testScript) Label() string {
+	return ts.label
+}
+
+func (ts *testScript) Content() string {
+	return ts.content
+}
+
 type internalTest struct {
 	t       *testing.T
 	trigger bool
 	helper  bool
 	exp     string
 	capture string
+}
+
+func (it *internalTest) PS(s string) PostScript {
+	return &testScript{
+		label:   "label: " + s,
+		content: "content: " + s,
+	}
 }
 
 func (it *internalTest) Helper() {
@@ -34,9 +54,14 @@ func (it *internalTest) assert() {
 	if !it.trigger {
 		it.t.Fatalf("condition expected to trigger; did not")
 	}
-
 	if !strings.Contains(it.capture, it.exp) {
 		it.t.Fatalf("expected message %q in output, got %q", it.exp, it.capture)
+	}
+}
+
+func (it *internalTest) post() {
+	if !strings.Contains(it.capture, "PostScript |") {
+		it.t.Fatal("expected post-script output")
 	}
 }
 
@@ -45,5 +70,11 @@ func newCase(t *testing.T, msg string) *internalTest {
 		t:       t,
 		trigger: false,
 		exp:     msg,
+	}
+}
+
+func newCapture(t *testing.T) *internalTest {
+	return &internalTest{
+		t: t,
 	}
 }

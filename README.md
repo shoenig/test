@@ -84,6 +84,41 @@ a failure. Sometimes it is helpful for a test case to continue running even thou
 occurred (e.g. contains cleanup logic not captured via a `t.Cleanup` function). Other times it
 make sense to fail immediately and stop the test case execution.
 
+#### annotations
+
+Some tests are large and complex (like e2e testing). It can be helpful to provide more context
+on test case failures beyond the actual assertion. Logging could do this, but often we want to
+only produce output on failure.
+
+The `test` and `must` packages provide a `PostScript` interface which can be implemented to
+add more context in the output of failed tests. There are handy implementations of the `PostScript`
+interface provided - `Sprint`, `Sprintf`, `Values`, and `Func`.
+
+By adding one or more `PostScript` to an assertion, on failure the error message will be appended
+with the additional context.
+
+```golang
+// Add a single Sprintf-string to the output of a failed test assertion.
+must.Eq(t, exp, result, must.Sprintf("some more context: %v", value))
+```
+
+```golang
+// Add a formatted key-value map to the output of a failed test assertion.
+must.Eq(t, exp, result, must.Values(
+  "one", 1,
+  "two", 2,
+  "fruit", "banana",
+))
+```
+
+```golang
+// Add the output from a closure to the output of a failed test assertion.
+must.Eq(t, exp, result, must.Func(func() string {
+  // ... something interesting
+  return s
+})
+```
+
 `test` - functions allow test cases to continue execution
 
 `must` - functions stop test case execution immediately
