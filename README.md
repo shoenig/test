@@ -84,7 +84,7 @@ a failure. Sometimes it is helpful for a test case to continue running even thou
 occurred (e.g. contains cleanup logic not captured via a `t.Cleanup` function). Other times it
 make sense to fail immediately and stop the test case execution.
 
-#### annotations
+### PostScripts
 
 Some tests are large and complex (like e2e testing). It can be helpful to provide more context
 on test case failures beyond the actual assertion. Logging could do this, but often we want to
@@ -119,10 +119,6 @@ must.Eq(t, exp, result, must.Func(func() string {
 })
 ```
 
-`test` - functions allow test cases to continue execution
-
-`must` - functions stop test case execution immediately
-
 ### Examples (equality)
 
 ```go
@@ -146,51 +142,6 @@ must.EqFunc(t, e1, e2, func(a, b *Employee) bool {
 
 // using .Equals method
 must.Equals(t, e1, e2)
-```
-
-### Examples (slices)
-
-```go
-import "github.com/shoenig/test/must"
-
-// ... 
-
-a := []*Employee{
-  {ID: 100, Name: "Alice"},
-  {ID: 101, Name: "Bob"},
-  {ID: 102, Name: "Carl"},
-}
-b := []*Employee{
-  {ID: 100, Name: "Alice"},
-  {ID: 101, Name: "Bob"},
-  {ID: 103, Name: "Dian"},
-}
-
-must.EqSliceFunc(tc, a, b, func(a, b *Person) bool {
-  return a.ID == b.ID && a.Name == b.Name
-})
-```
-
-### Examples (maps)
-
-```go
-import "github.com/shoenig/test/must"
-
-// ... 
-
-a := map[int]Person{
-  0: {ID: 100, Name: "Alice"},
-  1: {ID: 101, Name: "Bob"},
-}
-
-b := map[int]Person{
-  0: {ID: 100, Name: "Alice"},
-  1: {ID: 101, Name: "Bob B."},
-}
-
-must.MapEqFunc(tc, a, b, func(p1, p2 Person) bool {
-  return p1.ID == p2.ID && p1.Name == p2.Name
-})
 ```
 
 ### Output
