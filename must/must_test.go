@@ -1154,6 +1154,20 @@ func TestRegexMatch(t *testing.T) {
 	RegexMatch(tc, re, "abcX")
 }
 
+func TestRegexCompiles(t *testing.T) {
+	tc := newCase(t, `expected regular expression to compile`)
+	t.Cleanup(tc.assert)
+
+	RegexCompiles(tc, "ab"+`\`+"ef")
+}
+
+func TestRegexCompilesPOSIX(t *testing.T) {
+	tc := newCase(t, `expected regular expression to compile (posix)`)
+	t.Cleanup(tc.assert)
+
+	RegexCompilesPOSIX(tc, "ab"+`\`+"ef")
+}
+
 func TestPS_Sprintf(t *testing.T) {
 	tc := newCapture(t)
 	Eq(tc, "a", "b", Sprintf("hello %s", "world"))

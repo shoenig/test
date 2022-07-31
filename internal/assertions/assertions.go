@@ -937,3 +937,21 @@ func RegexMatch(re *regexp.Regexp, target string) (s string) {
 	}
 	return
 }
+
+func RegexpCompiles(expr string) (s string) {
+	if _, err := regexp.Compile(expr); err != nil {
+		s = "expected regular expression to compile\n"
+		s += fmt.Sprintf("↪ regex: %s\n", expr)
+		s += fmt.Sprintf("↪ error: %v\n", err)
+	}
+	return
+}
+
+func RegexpCompilesPOSIX(expr string) (s string) {
+	if _, err := regexp.CompilePOSIX(expr); err != nil {
+		s = "expected regular expression to compile (posix)\n"
+		s += fmt.Sprintf("↪ regex: %s\n", expr)
+		s += fmt.Sprintf("↪ error: %v\n", err)
+	}
+	return
+}

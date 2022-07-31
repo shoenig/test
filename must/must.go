@@ -504,4 +504,15 @@ func StrNotHasSuffix(t T, s, suffix string, scripts ...PostScript) {
 func RegexMatch(t T, re *regexp.Regexp, s string, scripts ...PostScript) {
 	t.Helper()
 	invoke(t, assertions.RegexMatch(re, s), scripts...)
-} 
+}
+
+// RegexCompiles asserts expr compiles as a valid regular expression.
+func RegexCompiles(t T, expr string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.RegexpCompiles(expr), scripts...)
+}
+
+func RegexCompilesPOSIX(t T, expr string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.RegexpCompilesPOSIX(expr), scripts...)
+}
