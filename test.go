@@ -510,7 +510,14 @@ func RegexCompiles(t T, expr string, scripts ...PostScript) {
 	invoke(t, assertions.RegexpCompiles(expr), scripts...)
 }
 
+// RegexCompilesPOSIX asserts expr compiles as a valid POSIX regular expression.
 func RegexCompilesPOSIX(t T, expr string, scripts ...PostScript) {
 	t.Helper()
 	invoke(t, assertions.RegexpCompilesPOSIX(expr), scripts...)
+}
+
+// UUIDv4 asserts id meets the criteria of a v4 UUID.
+func UUIDv4(t T, id string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.UUIDv4(id), scripts...)
 }
