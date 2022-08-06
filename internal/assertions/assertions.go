@@ -955,3 +955,15 @@ func RegexpCompilesPOSIX(expr string) (s string) {
 	}
 	return
 }
+
+// a10b173d-1427-432d-8a27-b12eada42feb
+var uuid4Re = regexp.MustCompile(`^[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}$`)
+
+func UUIDv4(id string) (s string) {
+	if !uuid4Re.MatchString(id) {
+		s = "expected well-formed v4 UUID\n"
+		s += "↪ format: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n"
+		s += "↪ actual: " + id + "\n"
+	}
+	return
+}

@@ -1196,3 +1196,11 @@ func TestEq_Combo(t *testing.T) {
 		return "this is the result of a function"
 	}))
 }
+
+func Test_UUIDv4(t *testing.T) {
+	tc := newCase(t, `expected well-formed v4 UUID`)
+	t.Cleanup(tc.assert)
+
+	UUIDv4(tc, "abc123")                              // fail
+	UUIDv4(t, "12345678-abcd-1234-abcd-aabbccdd1122") // pass
+}
