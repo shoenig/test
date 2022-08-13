@@ -5,6 +5,7 @@ import (
 	"math"
 	"os"
 	"regexp"
+	"runtime"
 	"testing"
 	"time"
 )
@@ -1029,7 +1030,15 @@ func TestFileMode(t *testing.T) {
 	tc := newCase(t, `expected different file permissions`)
 	t.Cleanup(tc.assert)
 
-	FileMode(tc, os.DirFS("/bin"), "find", 0673) // (actual 0655)
+	var unexpected os.FileMode = 0673 // (actual 0655)
+	switch runtime.GOOS {
+	case "linux":
+		FileMode(tc, os.DirFS("/bin"), "find", unexpected)
+	case "darwin":
+		FileMode(tc, os.DirFS("/usr/bin"), "find", unexpected)
+	default:
+		t.Skip("unsupported operating system")
+	}
 }
 
 func TestFileContains(t *testing.T) {
