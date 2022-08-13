@@ -10,6 +10,12 @@ import (
 	"time"
 )
 
+func needsOS(t *testing.T, os string) {
+	if os != runtime.GOOS {
+		t.Skip("not supported on this OS")
+	}
+}
+
 func TestNil(t *testing.T) {
 	tc := newCase(t, `expected to be nil; is not nil`)
 	t.Cleanup(tc.assert)
@@ -1006,6 +1012,8 @@ func TestFileExists(t *testing.T) {
 }
 
 func TestFileNotExists(t *testing.T) {
+	needsOS(t, "linux")
+
 	tc := newCase(t, `expected file to not exist`)
 	t.Cleanup(tc.assert)
 
@@ -1020,6 +1028,8 @@ func TestDirExists(t *testing.T) {
 }
 
 func TestDirNotExists(t *testing.T) {
+	needsOS(t, "linux")
+
 	tc := newCase(t, `expected directory to not exist`)
 	t.Cleanup(tc.assert)
 
@@ -1027,21 +1037,18 @@ func TestDirNotExists(t *testing.T) {
 }
 
 func TestFileMode(t *testing.T) {
+	needsOS(t, "linux")
+
 	tc := newCase(t, `expected different file permissions`)
 	t.Cleanup(tc.assert)
 
 	var unexpected os.FileMode = 0673 // (actual 0655)
-	switch runtime.GOOS {
-	case "linux":
-		FileMode(tc, os.DirFS("/bin"), "find", unexpected)
-	case "darwin":
-		FileMode(tc, os.DirFS("/usr/bin"), "find", unexpected)
-	default:
-		t.Skip("unsupported operating system")
-	}
+	FileMode(tc, os.DirFS("/bin"), "find", unexpected)
 }
 
 func TestFileContains(t *testing.T) {
+	needsOS(t, "linux")
+
 	tc := newCase(t, `expected file contents`)
 	t.Cleanup(tc.assert)
 
