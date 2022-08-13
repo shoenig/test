@@ -14,5 +14,6 @@ vet:
 changes:
 	@echo "--> Checking for source diffs ..."
 	@go generate ./...
+	@go mod tidy
 	@go fmt ./...
-	@git ls-files -m
+	@./scripts/changes.sh
