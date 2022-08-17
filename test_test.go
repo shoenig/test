@@ -649,6 +649,13 @@ func TestNonZero(t *testing.T) {
 	NonZero(tc, 0)
 }
 
+func TestOne(t *testing.T) {
+	tc := newCase(t, `expected one`)
+	t.Cleanup(tc.assert)
+
+	One(tc, 1.1)
+}
+
 func TestLess(t *testing.T) {
 	t.Run("integers", func(t *testing.T) {
 		tc := newCase(t, `expected 7 < 5`)
