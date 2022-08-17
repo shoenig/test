@@ -398,6 +398,14 @@ func NonZero[N interfaces.Number](n N) (s string) {
 	return
 }
 
+func One[N interfaces.Number](n N) (s string) {
+	if n != 1 {
+		s = "expected one\n"
+		s += fmt.Sprintf("↪ n: %v\n", n)
+	}
+	return
+}
+
 func Less[O constraints.Ordered](a, b O) (s string) {
 	if !(a < b) {
 		s = fmt.Sprintf("expected %v < %v", a, b)

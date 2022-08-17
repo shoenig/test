@@ -219,6 +219,12 @@ func NonZero[N interfaces.Number](t T, n N, scripts ...PostScript) {
 	invoke(t, assertions.NonZero(n), scripts...)
 }
 
+// One asserts n == 1.
+func One[N interfaces.Number](t T, n N, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.One(n), scripts...)
+}
+
 // Less asserts a < b.
 func Less[O constraints.Ordered](t T, a, b O, scripts ...PostScript) {
 	t.Helper()
