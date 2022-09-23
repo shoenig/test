@@ -727,6 +727,46 @@ func TestGreaterEq(t *testing.T) {
 	GreaterEq(tc, 5, 7)
 }
 
+func TestBetween(t *testing.T) {
+	t.Run("too high", func(t *testing.T) {
+		tc := newCase(t, `expected value in range (3 ≤ value ≤ 5)`)
+		t.Cleanup(tc.assert)
+		Between(tc, 3, 7, 5)
+	})
+
+	t.Run("too low", func(t *testing.T) {
+		tc := newCase(t, `expected value in range (3 ≤ value ≤ 5)`)
+		t.Cleanup(tc.assert)
+		Between(tc, 3, 1, 5)
+	})
+}
+
+func TestBetweenExclusive(t *testing.T) {
+	t.Run("too high", func(t *testing.T) {
+		tc := newCase(t, `expected value in range (3 < value < 5)`)
+		t.Cleanup(tc.assert)
+		BetweenExclusive(tc, 3, 7, 5)
+	})
+
+	t.Run("too high fence", func(t *testing.T) {
+		tc := newCase(t, `expected value in range (3 < value < 5)`)
+		t.Cleanup(tc.assert)
+		BetweenExclusive(tc, 3, 5, 5)
+	})
+
+	t.Run("too low", func(t *testing.T) {
+		tc := newCase(t, `expected value in range (3 < value < 5)`)
+		t.Cleanup(tc.assert)
+		BetweenExclusive(tc, 3, 1, 5)
+	})
+
+	t.Run("too low fence", func(t *testing.T) {
+		tc := newCase(t, `expected value in range (3 < value < 5)`)
+		t.Cleanup(tc.assert)
+		BetweenExclusive(tc, 3, 3, 5)
+	})
+}
+
 func TestAscending(t *testing.T) {
 	t.Run("numbers", func(t *testing.T) {
 		tc := newCase(t, `expected slice`)
