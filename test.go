@@ -186,6 +186,17 @@ func SliceContains[A any](t T, slice []A, item A, scripts ...PostScript) {
 	invoke(t, assertions.SliceContains(slice, item), scripts...)
 }
 
+func SliceNotContains[A any](t T, slice []A, item A, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.SliceNotContains(slice, item), scripts...)
+}
+
+// SliceContainsAll asserts each item in items is contained in slice.
+func SliceContainsAll[A any](t T, slice, items []A, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.SliceContainsAll(slice, items), scripts...)
+}
+
 // Positive asserts n > 0.
 func Positive[N interfaces.Number](t T, n N, scripts ...PostScript) {
 	t.Helper()
