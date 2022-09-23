@@ -6,9 +6,9 @@ import (
 	"github.com/shoenig/test/internal/constraints"
 )
 
-// EqualsFunc represents a type implementing the Equals method.
-type EqualsFunc[A any] interface {
-	Equals(A) bool
+// EqualFunc represents a type implementing the Equal method.
+type EqualFunc[A any] interface {
+	Equal(A) bool
 }
 
 // LessFunc represents any type implementing the Less method.
@@ -21,8 +21,8 @@ type Map[K comparable, V any] interface {
 	~map[K]V
 }
 
-// MapEqualsFunc represents any map type where keys are comparable and values implement .Equals method.
-type MapEqualsFunc[K comparable, V EqualsFunc[V]] interface {
+// MapEqualFunc represents any map type where keys are comparable and values implement .Equal method.
+type MapEqualFunc[K comparable, V EqualFunc[V]] interface {
 	~map[K]V
 }
 
@@ -45,4 +45,24 @@ func Numeric[N Number](n N) bool {
 		return true
 	}
 	return check(float64(n))
+}
+
+// The LengthFunc interface is satisfied by a type that implements Len().
+type LengthFunc interface {
+	Len() int
+}
+
+// The SizeFunc interface is satisfied by a type that implements Size().
+type SizeFunc interface {
+	Size() int
+}
+
+// The EmptyFunc interface is satisfied by a type that implements Empty().
+type EmptyFunc interface {
+	Empty() bool
+}
+
+// The Contains interface is satisfied by a type that implements Contains(T).
+type Contains[T any] interface {
+	Contains(T) bool
 }

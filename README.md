@@ -12,6 +12,10 @@ There are two packages, `test` and `must`.
 - `test` - assertions that mark the test for failure and allow the test case to continue
 - `must` - assertions that mark the test for failure and halt the test case immediately
 
+### Changes
+
+:warning: v0.4.0 contains breaking changes - Slice functions are renamed to be more consistent and to make room for interface based variants.
+
 ### Requirements
 
 Only depends on `github.com/google/go-cmp`.
@@ -54,10 +58,10 @@ compatible with Go's built-in `==` and `!=` operators.
 Functions like `EqFunc` and `ContainsFunc` work on any type, as the caller passes in a
 function that takes two arguments of that type, returning a boolean indicating equivalence.
 
-#### an .Equals method
+#### an .Equal method
 
-Functions like `Equals` and `ContainsEquals` work on types implementing the `EqualsFunc`
-generic interface (i.e. implement an `.Equals` method). The `.Equals` method is called
+Functions like `Equal` and `ContainsEqual` work on types implementing the `EqualFunc`
+generic interface (i.e. implement an `.Equal` method). The `.Equal` method is called
 to determine equivalence.
 
 #### the cmp.Equal or reflect.DeepEqual functions
@@ -140,8 +144,8 @@ must.EqFunc(t, e1, e2, func(a, b *Employee) bool {
     return a.ID == b.ID
 })
 
-// using .Equals method
-must.Equals(t, e1, e2)
+// using .Equal method
+must.Equal(t, e1, e2)
 ```
 
 ### Output
@@ -175,7 +179,7 @@ test_test.go:520: expected slice[1].Less(slice[2])
 ```
 
 ```text
-test_test.go:688: expected maps of same values via .Equals method
+test_test.go:688: expected maps of same values via .Equal method
 ↪ differential ↷
   map[int]*test.Person{
   	0: &{ID: 100, Name: "Alice"},

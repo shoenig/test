@@ -335,14 +335,14 @@ func TestEqJSON_PS(t *testing.T) {
 	EqJSON(tc, `"one"`, `"two"`, tc.PS("eq json"))
 }
 
-func TestEqSliceFunc(t *testing.T) {
+func TestSliceEqFunc(t *testing.T) {
 	t.Run("length", func(t *testing.T) {
 		tc := newCase(t, `expected slices of same length`)
 		t.Cleanup(tc.assert)
 
 		a := []int{1, 2, 3}
 		b := []int{1, 2}
-		EqSliceFunc(tc, a, b, func(a, b int) bool {
+		SliceEqFunc(tc, a, b, func(a, b int) bool {
 			return false
 		})
 	})
@@ -362,30 +362,30 @@ func TestEqSliceFunc(t *testing.T) {
 			{ID: 103, Name: "Dian"},
 		}
 
-		EqSliceFunc(tc, a, b, func(a, b *Person) bool {
+		SliceEqFunc(tc, a, b, func(a, b *Person) bool {
 			return a.ID == b.ID
 		})
 	})
 }
 
-func TestEqSliceFunc_PS(t *testing.T) {
+func TestSliceEqFunc_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
 
 	a := []int{1, 2, 3}
 	b := []int{1, 2}
-	EqSliceFunc(tc, a, b, func(a, b int) bool {
+	SliceEqFunc(tc, a, b, func(a, b int) bool {
 		return false
 	}, tc.PS("eq slice func"))
 }
 
-// Person implements the Equals and Less functions.
+// Person implements the Equal and Less functions.
 type Person struct {
 	ID   int
 	Name string
 }
 
-func (p *Person) Equals(o *Person) bool {
+func (p *Person) Equal(o *Person) bool {
 	return p.ID == o.ID
 }
 
@@ -393,47 +393,47 @@ func (p *Person) Less(o *Person) bool {
 	return p.ID < o.ID
 }
 
-func TestEquals(t *testing.T) {
-	tc := newCase(t, `expected equality via .Equals method`)
+func TestEqual(t *testing.T) {
+	tc := newCase(t, `expected equality via .Equal method`)
 	t.Cleanup(tc.assert)
 
 	a := &Person{ID: 100, Name: "Alice"}
 	b := &Person{ID: 150, Name: "Alice"}
 
-	Equals(tc, a, b)
+	Equal(tc, a, b)
 }
 
-func TestEquals_PS(t *testing.T) {
+func TestEqual_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
 
 	a := &Person{ID: 100, Name: "Alice"}
 	b := &Person{ID: 150, Name: "Alice"}
 
-	Equals(tc, a, b, tc.PS("equals"))
+	Equal(tc, a, b, tc.PS("equal"))
 }
 
-func TestNotEquals(t *testing.T) {
-	tc := newCase(t, `expected inequality via .Equals method`)
+func TestNotEqual(t *testing.T) {
+	tc := newCase(t, `expected inequality via .Equal method`)
 	t.Cleanup(tc.assert)
 
 	a := &Person{ID: 100, Name: "Alice"}
 	b := &Person{ID: 100, Name: "Alice"}
 
-	NotEquals(tc, a, b)
+	NotEqual(tc, a, b)
 }
 
-func TestNotEquals_PS(t *testing.T) {
+func TestNotEqual_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
 
 	a := &Person{ID: 100, Name: "Alice"}
 	b := &Person{ID: 100, Name: "Alice"}
 
-	NotEquals(tc, a, b, tc.PS("not equals"))
+	NotEqual(tc, a, b, tc.PS("not equal"))
 }
 
-func TestEqualsSlice(t *testing.T) {
+func TestSliceEqual(t *testing.T) {
 	t.Run("length", func(t *testing.T) {
 		tc := newCase(t, `expected slices of same length`)
 		t.Cleanup(tc.assert)
@@ -447,11 +447,11 @@ func TestEqualsSlice(t *testing.T) {
 			{ID: 100, Name: "Alice"},
 			{ID: 101, Name: "Bob"},
 		}
-		EqualsSlice(tc, a, b)
+		SliceEqual(tc, a, b)
 	})
 
 	t.Run("elements", func(t *testing.T) {
-		tc := newCase(t, `expected slice equality via .Equals method`)
+		tc := newCase(t, `expected slice equality via .Equal method`)
 		t.Cleanup(tc.assert)
 
 		a := []*Person{
@@ -465,7 +465,7 @@ func TestEqualsSlice(t *testing.T) {
 			{ID: 103, Name: "Dian"},
 		}
 
-		EqualsSlice(tc, a, b)
+		SliceEqual(tc, a, b)
 	})
 }
 
@@ -489,48 +489,42 @@ func TestLesser_PS(t *testing.T) {
 	Lesser(tc, a, b, tc.PS("lesser"))
 }
 
-func TestEmptySlice(t *testing.T) {
+func TestSliceEmpty(t *testing.T) {
 	tc := newCase(t, `expected slice to be empty`)
 	t.Cleanup(tc.assert)
-	EmptySlice(tc, []int{1, 2})
+	SliceEmpty(tc, []int{1, 2})
 }
 
-func TestEmptySlice_PS(t *testing.T) {
+func TestSliceEmpty_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
-	EmptySlice(tc, []int{1, 2}, tc.PS("empty slice"))
+	SliceEmpty(tc, []int{1, 2}, tc.PS("empty slice"))
 }
 
-func TestEmpty(t *testing.T) {
-	tc := newCase(t, `expected slice to be empty`)
+func TestSliceNotEmpty(t *testing.T) {
+	tc := newCase(t, `expected slice to not be empty`)
 	t.Cleanup(tc.assert)
-	Empty(tc, []int{1, 2})
+	SliceNotEmpty(tc, []int{})
 }
 
-func TestEmpty_PS(t *testing.T) {
-	tc := newCapture(t)
-	t.Cleanup(tc.post)
-	Empty(tc, []int{1, 2}, tc.PS("empty"))
-}
-
-func TestLenSlice(t *testing.T) {
+func TestSliceLen(t *testing.T) {
 	t.Run("strings", func(t *testing.T) {
 		tc := newCase(t, `expected slice to be different length`)
 		t.Cleanup(tc.assert)
-		LenSlice(tc, 2, []string{"a", "b", "c"})
+		SliceLen(tc, 2, []string{"a", "b", "c"})
 	})
 
 	t.Run("numbers", func(t *testing.T) {
 		tc := newCase(t, `expected slice to be different length`)
 		t.Cleanup(tc.assert)
-		LenSlice(tc, 3, []int{8, 9})
+		SliceLen(tc, 3, []int{8, 9})
 	})
 }
 
-func TestLenSlice_PS(t *testing.T) {
+func TestSliceLen_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
-	LenSlice(tc, 3, []int{1, 2}, tc.PS("len slice"))
+	SliceLen(tc, 3, []int{1, 2}, tc.PS("len slice"))
 }
 
 func TestLen(t *testing.T) {
@@ -553,42 +547,21 @@ func TestLen_PS(t *testing.T) {
 	Len(tc, 3, []int{1, 2}, tc.PS("len"))
 }
 
-func TestContains(t *testing.T) {
-	t.Run("people", func(t *testing.T) {
-		tc := newCase(t, `expected slice to contain missing item via cmp.Equal function`)
-		t.Cleanup(tc.assert)
-		a := []*Person{
-			{ID: 100, Name: "Alice"},
-			{ID: 101, Name: "Bob"},
-		}
-		target := &Person{ID: 102, Name: "Carl"}
-		Contains(tc, a, target)
-	})
-}
-
-func TestContains_PS(t *testing.T) {
-	tc := newCapture(t)
-	t.Cleanup(tc.post)
-	s := []string{"one", "two", "three"}
-	target := "four"
-	Contains(tc, s, target, tc.PS("contains"))
-}
-
-func TestContainsOp(t *testing.T) {
+func TestSliceContainsOp(t *testing.T) {
 	t.Run("numbers", func(t *testing.T) {
 		tc := newCase(t, `expected slice to contain missing item via == operator`)
 		t.Cleanup(tc.assert)
-		ContainsOp(tc, []int{3, 4, 5}, 7)
+		SliceContainsOp(tc, []int{3, 4, 5}, 7)
 	})
 
 	t.Run("strings", func(t *testing.T) {
 		tc := newCase(t, `expected slice to contain missing item via == operator`)
 		t.Cleanup(tc.assert)
-		ContainsOp(tc, []string{"alice", "carl"}, "bob")
+		SliceContainsOp(tc, []string{"alice", "carl"}, "bob")
 	})
 }
 
-func TestContainsFunc(t *testing.T) {
+func TestSliceContainsFunc(t *testing.T) {
 	tc := newCase(t, `expected slice to contain missing item via 'eq' function`)
 	t.Cleanup(tc.assert)
 
@@ -597,13 +570,13 @@ func TestContainsFunc(t *testing.T) {
 		{ID: 101, Name: "Bob"},
 	}
 
-	ContainsFunc(tc, s, &Person{ID: 102, Name: "Carl"}, func(a, b *Person) bool {
+	SliceContainsFunc(tc, s, &Person{ID: 102, Name: "Carl"}, func(a, b *Person) bool {
 		return a.ID == b.ID && a.Name == b.Name
 	})
 }
 
-func TestContainsEquals(t *testing.T) {
-	tc := newCase(t, `expected slice to contain missing item via .Equals method`)
+func TestSliceContainsEqual(t *testing.T) {
+	tc := newCase(t, `expected slice to contain missing item via .Equal method`)
 	t.Cleanup(tc.assert)
 
 	s := []*Person{
@@ -611,14 +584,19 @@ func TestContainsEquals(t *testing.T) {
 		{ID: 101, Name: "Bob"},
 	}
 
-	ContainsEquals(tc, s, &Person{ID: 102, Name: "Carl"})
+	SliceContainsEqual(tc, s, &Person{ID: 102, Name: "Carl"})
 }
 
-func TestContainsString(t *testing.T) {
-	tc := newCase(t, `expected to contain substring`)
+func TestSliceContains(t *testing.T) {
+	tc := newCase(t, `expected slice to contain missing item via cmp.Equal method`)
 	t.Cleanup(tc.assert)
 
-	ContainsString(tc, "foobar", "food")
+	s := []*Person{
+		{ID: 100, Name: "Alice"},
+		{ID: 101, Name: "Bob"},
+	}
+
+	SliceContains(tc, s, &Person{ID: 102, Name: "Carl"})
 }
 
 func TestPositive(t *testing.T) {
@@ -927,9 +905,9 @@ func TestMapEqFunc(t *testing.T) {
 	})
 }
 
-func TestMapEquals(t *testing.T) {
+func TestMapEqual(t *testing.T) {
 	t.Run("different value", func(t *testing.T) {
-		tc := newCase(t, `expected maps of same values via .Equals method`)
+		tc := newCase(t, `expected maps of same values via .Equal method`)
 		t.Cleanup(tc.assert)
 
 		a := map[int]*Person{
@@ -942,7 +920,7 @@ func TestMapEquals(t *testing.T) {
 			1: {ID: 200, Name: "Bob"},
 		}
 
-		MapEquals(tc, a, b)
+		MapEqual(tc, a, b)
 	})
 }
 
@@ -997,7 +975,7 @@ func TestMapContainsValuesFunc(t *testing.T) {
 	})
 }
 
-func TestMapContainsValuesEquals(t *testing.T) {
+func TestMapContainsValuesEqual(t *testing.T) {
 	tc := newCase(t, `expected map to contain values`)
 	t.Cleanup(tc.assert)
 
@@ -1006,7 +984,7 @@ func TestMapContainsValuesEquals(t *testing.T) {
 		2: {ID: 200, Name: "Bob"},
 		3: {ID: 300, Name: "Carl"},
 	}
-	MapContainsValuesEquals(tc, m, []*Person{
+	MapContainsValuesEqual(tc, m, []*Person{
 		{ID: 201, Name: "Bob"},
 	})
 }
@@ -1224,4 +1202,75 @@ func Test_UUIDv4(t *testing.T) {
 
 	UUIDv4(tc, "abc123")                              // fail
 	UUIDv4(t, "12345678-abcd-1234-abcd-aabbccdd1122") // pass
+}
+
+type container[T any] struct {
+	contains bool
+	empty    bool
+	size     int
+	length   int
+}
+
+func (c *container[T]) Contains(_ T) bool {
+	return c.contains
+}
+
+func (c *container[T]) Empty() bool {
+	return c.empty
+}
+
+func (c *container[T]) Size() int {
+	return c.size
+}
+
+func (c *container[T]) Len() int {
+	return c.length
+}
+
+func TestEmpty(t *testing.T) {
+	tc := newCase(t, `expected to be empty, but was not`)
+	t.Cleanup(tc.assert)
+
+	c := &container[struct{}]{empty: false}
+	Empty(tc, c)
+}
+
+func TestNotEmpty(t *testing.T) {
+	tc := newCase(t, `expected to not be empty, but is`)
+	t.Cleanup(tc.assert)
+
+	c := &container[struct{}]{empty: true}
+	NotEmpty(tc, c)
+}
+
+func TestContains(t *testing.T) {
+	tc := newCase(t, `expected to contain element, but does not`)
+	t.Cleanup(tc.assert)
+
+	c := &container[string]{contains: false}
+	Contains[string](tc, "apple", c)
+}
+
+func TestNotContains(t *testing.T) {
+	tc := newCase(t, `expected not to contain element, but it does`)
+	t.Cleanup(tc.assert)
+
+	c := &container[string]{contains: true}
+	NotContains[string](tc, "apple", c)
+}
+
+func TestSize(t *testing.T) {
+	tc := newCase(t, `expected different size`)
+	t.Cleanup(tc.assert)
+
+	c := &container[string]{size: 3}
+	Size(tc, 2, c)
+}
+
+func TestLength(t *testing.T) {
+	tc := newCase(t, `expected different length`)
+	t.Cleanup(tc.assert)
+
+	c := &container[string]{length: 3}
+	Length(tc, 4, c)
 }
