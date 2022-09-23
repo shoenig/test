@@ -1063,11 +1063,27 @@ func TestMapContainsValuesEqual(t *testing.T) {
 	})
 }
 
+func TestFileExistsFS(t *testing.T) {
+	tc := newCase(t, `expected file to exist`)
+	t.Cleanup(tc.assert)
+
+	FileExistsFS(tc, os.DirFS("/etc"), "hosts2")
+}
+
 func TestFileExists(t *testing.T) {
 	tc := newCase(t, `expected file to exist`)
 	t.Cleanup(tc.assert)
 
-	FileExists(tc, os.DirFS("/etc"), "hosts2")
+	FileExists(tc, "/etc/hosts2")
+}
+
+func TestFileNotExistsFS(t *testing.T) {
+	needsOS(t, "linux")
+
+	tc := newCase(t, `expected file to not exist`)
+	t.Cleanup(tc.assert)
+
+	FileNotExistsFS(tc, os.DirFS("/etc"), "hosts")
 }
 
 func TestFileNotExists(t *testing.T) {
@@ -1076,14 +1092,30 @@ func TestFileNotExists(t *testing.T) {
 	tc := newCase(t, `expected file to not exist`)
 	t.Cleanup(tc.assert)
 
-	FileNotExists(tc, os.DirFS("/etc"), "hosts")
+	FileNotExists(tc, "/etc/hosts")
+}
+
+func TestDirExistsFS(t *testing.T) {
+	tc := newCase(t, `expected directory to exist`)
+	t.Cleanup(tc.assert)
+
+	DirExistsFS(tc, os.DirFS("/usr/local"), "bin2")
 }
 
 func TestDirExists(t *testing.T) {
 	tc := newCase(t, `expected directory to exist`)
 	t.Cleanup(tc.assert)
 
-	DirExists(tc, os.DirFS("/usr/local"), "bin2")
+	DirExists(tc, "/usr/local/bin2")
+}
+
+func TestDirNotExistsFS(t *testing.T) {
+	needsOS(t, "linux")
+
+	tc := newCase(t, `expected directory to not exist`)
+	t.Cleanup(tc.assert)
+
+	DirNotExistsFS(tc, os.DirFS("/usr"), "local")
 }
 
 func TestDirNotExists(t *testing.T) {
@@ -1092,7 +1124,17 @@ func TestDirNotExists(t *testing.T) {
 	tc := newCase(t, `expected directory to not exist`)
 	t.Cleanup(tc.assert)
 
-	DirNotExists(tc, os.DirFS("/usr"), "local")
+	DirNotExists(tc, "/usr/local")
+}
+
+func TestFileModeFS(t *testing.T) {
+	needsOS(t, "linux")
+
+	tc := newCase(t, `expected different file permissions`)
+	t.Cleanup(tc.assert)
+
+	var unexpected os.FileMode = 0673 // (actual 0655)
+	FileModeFS(tc, os.DirFS("/bin"), "find", unexpected)
 }
 
 func TestFileMode(t *testing.T) {
@@ -1102,7 +1144,16 @@ func TestFileMode(t *testing.T) {
 	t.Cleanup(tc.assert)
 
 	var unexpected os.FileMode = 0673 // (actual 0655)
-	FileMode(tc, os.DirFS("/bin"), "find", unexpected)
+	FileMode(tc, "/bin/find", unexpected)
+}
+
+func TestFileContainsFS(t *testing.T) {
+	needsOS(t, "linux")
+
+	tc := newCase(t, `expected file contents`)
+	t.Cleanup(tc.assert)
+
+	FileContainsFS(tc, os.DirFS("/etc"), "hosts", "127.0.0.999")
 }
 
 func TestFileContains(t *testing.T) {
@@ -1111,7 +1162,7 @@ func TestFileContains(t *testing.T) {
 	tc := newCase(t, `expected file contents`)
 	t.Cleanup(tc.assert)
 
-	FileContains(tc, os.DirFS("/etc"), "hosts", "127.0.0.999")
+	FileContains(tc, "/etc/hosts", "127.0.0.999")
 }
 
 func TestFilePathValid(t *testing.T) {

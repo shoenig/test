@@ -771,7 +771,7 @@ func MapContainsValuesEqual[M ~map[K]V, K comparable, V interfaces.EqualFunc[V]]
 	})
 }
 
-func FileExists(system fs.FS, file string) (s string) {
+func FileExistsFS(system fs.FS, file string) (s string) {
 	info, err := fs.Stat(system, file)
 	if errors.Is(err, fs.ErrNotExist) {
 		s = "expected file to exist\n"
@@ -779,6 +779,7 @@ func FileExists(system fs.FS, file string) (s string) {
 		s += fmt.Sprintf("↪ error: %s\n", err)
 		return
 	}
+
 	// other errors - file probably exists but cannot be read
 	if info.IsDir() {
 		s = "expected file but is a directory\n"
@@ -788,7 +789,7 @@ func FileExists(system fs.FS, file string) (s string) {
 	return
 }
 
-func FileNotExists(system fs.FS, file string) (s string) {
+func FileNotExistsFS(system fs.FS, file string) (s string) {
 	_, err := fs.Stat(system, file)
 	if !errors.Is(err, fs.ErrNotExist) {
 		s = "expected file to not exist\n"
@@ -798,7 +799,7 @@ func FileNotExists(system fs.FS, file string) (s string) {
 	return
 }
 
-func DirExists(system fs.FS, directory string) (s string) {
+func DirExistsFS(system fs.FS, directory string) (s string) {
 	info, err := fs.Stat(system, directory)
 	if os.IsNotExist(err) {
 		s = "expected directory to exist\n"
@@ -815,7 +816,7 @@ func DirExists(system fs.FS, directory string) (s string) {
 	return
 }
 
-func DirNotExists(system fs.FS, directory string) (s string) {
+func DirNotExistsFS(system fs.FS, directory string) (s string) {
 	_, err := fs.Stat(system, directory)
 	if !errors.Is(err, fs.ErrNotExist) {
 		s = "expected directory to not exist\n"
@@ -825,7 +826,7 @@ func DirNotExists(system fs.FS, directory string) (s string) {
 	return
 }
 
-func FileMode(system fs.FS, path string, permissions fs.FileMode) (s string) {
+func FileModeFS(system fs.FS, path string, permissions fs.FileMode) (s string) {
 	info, err := fs.Stat(system, path)
 	if err != nil {
 		s = "expected to stat path\n"
@@ -844,7 +845,7 @@ func FileMode(system fs.FS, path string, permissions fs.FileMode) (s string) {
 	return
 }
 
-func FileContains(system fs.FS, file, content string) (s string) {
+func FileContainsFS(system fs.FS, file, content string) (s string) {
 	b, err := fs.ReadFile(system, file)
 	if err != nil {
 		s = "expected to read file\n"

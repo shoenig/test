@@ -4,7 +4,9 @@ package must
 
 import (
 	"io/fs"
+	"os"
 	"regexp"
+	"strings"
 
 	"github.com/shoenig/test/interfaces"
 	"github.com/shoenig/test/internal/assertions"
@@ -375,65 +377,100 @@ func MapContainsValuesEqual[M ~map[K]V, K comparable, V interfaces.EqualFunc[V]]
 	invoke(t, assertions.MapContainsValuesEqual[M, K, V](m, values), scripts...)
 }
 
-// FileExists asserts file exists on system.
+// FileExistsFS asserts file exists on the fs.FS filesystem.
 //
-// Often os.DirFS is used to interact with the the host filesystem.
 // Example,
-// FileExists(t, os.DirFS("/etc"), "hosts")
-func FileExists(t T, system fs.FS, file string, scripts ...PostScript) {
+// FileExistsFS(t, os.DirFS("/etc"), "hosts")
+func FileExistsFS(t T, system fs.FS, file string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.FileExists(system, file), scripts...)
+	invoke(t, assertions.FileExistsFS(system, file), scripts...)
 }
 
-// FileNotExists asserts file does not exist on system.
+// FileExists asserts file exists on the OS filesystem.
+func FileExists(t T, file string, scripts ...PostScript) {
+	t.Helper()
+	file = strings.TrimPrefix(file, "/")
+	invoke(t, assertions.FileExistsFS(os.DirFS(""), file), scripts...)
+}
+
+// FileNotExistsFS asserts file does not exist on the fs.FS filesystem.
 //
-// Often os.DirFS is used to interact with the host filesystem.
 // Example,
 // FileNotExist(t, os.DirFS("/bin"), "exploit.exe")
-func FileNotExists(t T, system fs.FS, file string, scripts ...PostScript) {
+func FileNotExistsFS(t T, system fs.FS, file string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.FileNotExists(system, file), scripts...)
+	invoke(t, assertions.FileNotExistsFS(system, file), scripts...)
 }
 
-// DirExists asserts directory exists on system.
+// FileNotExists asserts file does not exist on the OS filesystem.
+func FileNotExists(t T, file string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.FileNotExistsFS(os.DirFS(""), file), scripts...)
+}
+
+// DirExistsFS asserts directory exists on the fs.FS filesystem.
+//
+// Example,
+// DirExistsFS(t, os.DirFS("/usr/local"), "bin")
+func DirExistsFS(t T, system fs.FS, directory string, scripts ...PostScript) {
+	t.Helper()
+	directory = strings.TrimPrefix(directory, "/")
+	invoke(t, assertions.DirExistsFS(system, directory), scripts...)
+}
+
+// DirExists asserts directory exists on the OS filesystem.
+func DirExists(t T, directory string, scripts ...PostScript) {
+	t.Helper()
+	directory = strings.TrimPrefix(directory, "/")
+	invoke(t, assertions.DirExistsFS(os.DirFS(""), directory), scripts...)
+}
+
+// DirNotExistsFS asserts directory does not exist on the fs.FS filesystem.
+//
+// Example,
+// DirNotExistsFS(t, os.DirFS("/tmp"), "scratch")
+func DirNotExistsFS(t T, system fs.FS, directory string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.DirNotExistsFS(system, directory), scripts...)
+}
+
+// DirNotExists asserts directory does not exist on the OS filesystem.
+func DirNotExists(t T, directory string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.DirNotExistsFS(os.DirFS(""), directory), scripts...)
+}
+
+// FileModeFS asserts the file or directory at path on fs.FS has exactly the given permission bits.
+//
+// Example,
+// FileModeFS(t, os.DirFS("/bin"), "find", 0655)
+func FileModeFS(t T, system fs.FS, path string, permissions fs.FileMode, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.FileModeFS(system, path, permissions), scripts...)
+}
+
+// FileMode asserts the file or directory at path on the OS filesystem has exactly the given permission bits.
+func FileMode(t T, path string, permissions fs.FileMode, scripts ...PostScript) {
+	t.Helper()
+	path = strings.TrimPrefix(path, "/")
+	invoke(t, assertions.FileModeFS(os.DirFS(""), path, permissions), scripts...)
+}
+
+// FileContainsFS asserts the file on fs.FS contains content as a substring.
 //
 // Often os.DirFS is used to interact with the host filesystem.
 // Example,
-// DirExists(t, os.DirFS("/usr/local"), "bin")
-func DirExists(t T, system fs.FS, directory string, scripts ...PostScript) {
+// FileContainsFS(t, os.DirFS("/etc"), "hosts", "localhost")
+func FileContainsFS(t T, system fs.FS, file, content string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.DirExists(system, directory), scripts...)
+	invoke(t, assertions.FileContainsFS(system, file, content), scripts...)
 }
 
-// DirNotExists asserts directory does not exist on system.
-//
-// Often os.DirFS is used to interact with the host filesystem.
-// Example,
-// DirNotExists(t, os.DirFS("/tmp"), "scratch")
-func DirNotExists(t T, system fs.FS, directory string, scripts ...PostScript) {
+// FileContains asserts the file on the OS filesystem contains content as a substring.
+func FileContains(t T, file, content string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.DirNotExists(system, directory), scripts...)
-}
-
-// FileMode asserts the file or directory at path has exactly
-// the given permission bits.
-//
-// Often os.DirFS is used to interact with the host filesystem.
-// Example,
-// FileMode(t, os.DirFS("/bin"), "find", 0655)
-func FileMode(t T, system fs.FS, path string, permissions fs.FileMode, scripts ...PostScript) {
-	t.Helper()
-	invoke(t, assertions.FileMode(system, path, permissions), scripts...)
-}
-
-// FileContains asserts the file contains content as a substring.
-//
-// Often os.DirFS is used to interact with the host filesystem.
-// Example,
-// FileContains(t, os.DirFS("/etc"), "hosts", "localhost")
-func FileContains(t T, system fs.FS, file, content string, scripts ...PostScript) {
-	t.Helper()
-	invoke(t, assertions.FileContains(system, file, content), scripts...)
+	file = strings.TrimPrefix(file, "/")
+	invoke(t, assertions.FileContainsFS(os.DirFS(""), file, content), scripts...)
 }
 
 // FilePathValid asserts path is a valid file path.
