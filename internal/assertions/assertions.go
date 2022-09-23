@@ -262,23 +262,23 @@ func EqSliceFunc[A any](a, b []A, eq func(a, b A) bool) (s string) {
 	return
 }
 
-func Equals[E interfaces.EqualsFunc[E]](a, b E) (s string) {
-	if !a.Equals(b) {
-		s = "expected equality via .Equals method\n"
+func Equal[E interfaces.EqualFunc[E]](a, b E) (s string) {
+	if !a.Equal(b) {
+		s = "expected equality via .Equal method\n"
 		s += diff(a, b)
 	}
 	return
 }
 
-func NotEquals[E interfaces.EqualsFunc[E]](a, b E) (s string) {
-	if a.Equals(b) {
-		s = "expected inequality via .Equals method\n"
+func NotEqual[E interfaces.EqualFunc[E]](a, b E) (s string) {
+	if a.Equal(b) {
+		s = "expected inequality via .Equal method\n"
 		s += diff(a, b)
 	}
 	return
 }
 
-func EqualsSlice[E interfaces.EqualsFunc[E]](a, b []E) (s string) {
+func SliceEqual[E interfaces.EqualFunc[E]](a, b []E) (s string) {
 	lenA, lenB := len(a), len(b)
 
 	if lenA != lenB {
@@ -290,8 +290,8 @@ func EqualsSlice[E interfaces.EqualsFunc[E]](a, b []E) (s string) {
 	}
 
 	for i := 0; i < lenA; i++ {
-		if !a[i].Equals(b[i]) {
-			s += "expected slice equality via .Equals method\n"
+		if !a[i].Equal(b[i]) {
+			s += "expected slice equality via .Equal method\n"
 			s += diff(a[i], b[i])
 			return
 		}
@@ -307,7 +307,7 @@ func Lesser[L interfaces.LessFunc[L]](a, b L) (s string) {
 	return
 }
 
-func EmptySlice[A any](slice []A) (s string) {
+func SliceEmpty[A any](slice []A) (s string) {
 	if len(slice) != 0 {
 		s = "expected slice to be empty\n"
 		s += fmt.Sprintf("↪ len(slice): %d\n", len(slice))
@@ -315,7 +315,15 @@ func EmptySlice[A any](slice []A) (s string) {
 	return
 }
 
-func LenSlice[A any](n int, slice []A) (s string) {
+func SliceNotEmpty[A any](slice []A) (s string) {
+	if len(slice) == 0 {
+		s = "expected slice to not be empty\n"
+		s += fmt.Sprintf("↪ len(slice): %d\n", len(slice))
+	}
+	return
+}
+
+func SliceLen[A any](n int, slice []A) (s string) {
 	if l := len(slice); l != n {
 		s = "expected slice to be different length\n"
 		s += fmt.Sprintf("↪ len(slice): %d, expected: %d\n", l, n)
@@ -323,17 +331,7 @@ func LenSlice[A any](n int, slice []A) (s string) {
 	return
 }
 
-func Contains[A any](slice []A, item A) (s string) {
-	if !containsFunc(slice, item, func(a, b A) bool {
-		return equal(a, b)
-	}) {
-		s = "expected slice to contain missing item via cmp.Equal function\n"
-		s += fmt.Sprintf("↪ slice is missing %#v\n", item)
-	}
-	return
-}
-
-func ContainsOp[C comparable](slice []C, item C) (s string) {
+func SliceContainsOp[C comparable](slice []C, item C) (s string) {
 	if !contains(slice, item) {
 		s = "expected slice to contain missing item via == operator\n"
 		s += fmt.Sprintf("↪ slice is missing %#v\n", item)
@@ -341,7 +339,7 @@ func ContainsOp[C comparable](slice []C, item C) (s string) {
 	return
 }
 
-func ContainsFunc[A any](slice []A, item A, eq func(a, b A) bool) (s string) {
+func SliceContainsFunc[A any](slice []A, item A, eq func(a, b A) bool) (s string) {
 	if !containsFunc(slice, item, eq) {
 		s = "expected slice to contain missing item via 'eq' function\n"
 		s += fmt.Sprintf("↪ slice is missing %#v\n", item)
@@ -349,11 +347,22 @@ func ContainsFunc[A any](slice []A, item A, eq func(a, b A) bool) (s string) {
 	return
 }
 
-func ContainsEquals[E interfaces.EqualsFunc[E]](slice []E, item E) (s string) {
-	if !containsFunc(slice, item, E.Equals) {
-		s = "expected slice to contain missing item via .Equals method\n"
+func SliceContainsEqual[E interfaces.EqualFunc[E]](slice []E, item E) (s string) {
+	if !containsFunc(slice, item, E.Equal) {
+		s = "expected slice to contain missing item via .Equal method\n"
 		s += fmt.Sprintf("↪ slice is missing %#v\n", item)
 	}
+	return
+}
+
+func SliceContains[A any](slice []A, item A) (s string) {
+	for _, i := range slice {
+		if cmp.Equal(i, item) {
+			return
+		}
+	}
+	s = "expected slice to contain missing item via cmp.Equal method\n"
+	s += fmt.Sprintf("↪ slice is missing %#v\n", item)
 	return
 }
 
@@ -608,7 +617,7 @@ func MapEqFunc[M1, M2 interfaces.Map[K, V], K comparable, V any](a M1, b M2, eq 
 	return
 }
 
-func MapEquals[M interfaces.MapEqualsFunc[K, V], K comparable, V interfaces.EqualsFunc[V]](a, b M) (s string) {
+func MapEqual[M interfaces.MapEqualFunc[K, V], K comparable, V interfaces.EqualFunc[V]](a, b M) (s string) {
 	lenA, lenB := len(a), len(b)
 
 	if lenA != lenB {
@@ -626,8 +635,8 @@ func MapEquals[M interfaces.MapEqualsFunc[K, V], K comparable, V interfaces.Equa
 			return
 		}
 
-		if !(valueB).Equals(valueA) {
-			s = "expected maps of same values via .Equals method\n"
+		if !(valueB).Equal(valueA) {
+			s = "expected maps of same values via .Equal method\n"
 			s += diff(a, b)
 			return
 		}
@@ -703,9 +712,9 @@ func MapContainsValuesFunc[M ~map[K]V, K comparable, V any](m M, values []V, eq 
 	return mapContains[M, K, V](m, values, eq)
 }
 
-func MapContainsValuesEquals[M ~map[K]V, K comparable, V interfaces.EqualsFunc[V]](m M, values []V) (s string) {
+func MapContainsValuesEqual[M ~map[K]V, K comparable, V interfaces.EqualFunc[V]](m M, values []V) (s string) {
 	return mapContains[M, K, V](m, values, func(a, b V) bool {
-		return a.Equals(b)
+		return a.Equal(b)
 	})
 }
 
@@ -972,6 +981,50 @@ func UUIDv4(id string) (s string) {
 		s = "expected well-formed v4 UUID\n"
 		s += "↪ format: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n"
 		s += "↪ actual: " + id + "\n"
+	}
+	return
+}
+
+func Length(n int, length interfaces.LengthFunc) (s string) {
+	if l := length.Len(); l != n {
+		s = "expected different length\n"
+		s += fmt.Sprintf("↪ length:   %d\n↪ expected: %d\n", l, n)
+	}
+	return
+}
+
+func Size(n int, size interfaces.SizeFunc) (s string) {
+	if l := size.Size(); l != n {
+		s = "expected different size\n"
+		s += fmt.Sprintf("↪ size:     %d\n↪ expected: %d\n", l, n)
+	}
+	return
+}
+
+func Empty(e interfaces.EmptyFunc) (s string) {
+	if !e.Empty() {
+		s = "expected to be empty, but was not\n"
+	}
+	return
+}
+
+func NotEmpty(e interfaces.EmptyFunc) (s string) {
+	if e.Empty() {
+		s = "expected to not be empty, but is\n"
+	}
+	return
+}
+
+func Contains[C any](i C, c interfaces.Contains[C]) (s string) {
+	if !c.Contains(i) {
+		s = "expected to contain element, but does not\n"
+	}
+	return
+}
+
+func NotContains[C any](i C, c interfaces.Contains[C]) (s string) {
+	if c.Contains(i) {
+		s = "expected not to contain element, but it does\n"
 	}
 	return
 }

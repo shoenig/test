@@ -105,28 +105,22 @@ func EqJSON(t T, a, b string, scripts ...PostScript) {
 	invoke(t, assertions.EqJSON(a, b), scripts...)
 }
 
-// EqSliceFunc asserts elements of a and b are the same using eq.
-func EqSliceFunc[A any](t T, a, b []A, eq func(a, b A) bool, scripts ...PostScript) {
+// SliceEqFunc asserts elements of a and b are the same using eq.
+func SliceEqFunc[A any](t T, a, b []A, eq func(a, b A) bool, scripts ...PostScript) {
 	t.Helper()
 	invoke(t, assertions.EqSliceFunc(a, b, eq), scripts...)
 }
 
-// Equals asserts a.Equals(b).
-func Equals[E interfaces.EqualsFunc[E]](t T, a, b E, scripts ...PostScript) {
+// Equal asserts a.Equal(b).
+func Equal[E interfaces.EqualFunc[E]](t T, a, b E, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Equals(a, b), scripts...)
+	invoke(t, assertions.Equal(a, b), scripts...)
 }
 
-// NotEquals asserts !a.Equals(b).
-func NotEquals[E interfaces.EqualsFunc[E]](t T, a, b E, scripts ...PostScript) {
+// NotEqual asserts !a.Equal(b).
+func NotEqual[E interfaces.EqualFunc[E]](t T, a, b E, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.NotEquals(a, b), scripts...)
-}
-
-// EqualsSlice asserts a[n].Equals(b[n]) for each element n in slices a and b.
-func EqualsSlice[E interfaces.EqualsFunc[E]](t T, a, b []E, scripts ...PostScript) {
-	t.Helper()
-	invoke(t, assertions.EqualsSlice(a, b), scripts...)
+	invoke(t, assertions.NotEqual(a, b), scripts...)
 }
 
 // Lesser asserts a.Less(b).
@@ -135,64 +129,61 @@ func Lesser[L interfaces.LessFunc[L]](t T, a, b L, scripts ...PostScript) {
 	invoke(t, assertions.Lesser(a, b), scripts...)
 }
 
-// EmptySlice asserts slice is empty.
-func EmptySlice[A any](t T, slice []A, scripts ...PostScript) {
+// SliceEqual asserts a[n].Equal(b[n]) for each element n in slices a and b.
+func SliceEqual[E interfaces.EqualFunc[E]](t T, a, b []E, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.EmptySlice(slice), scripts...)
+	invoke(t, assertions.SliceEqual(a, b), scripts...)
 }
 
-// Empty asserts slice is empty.
-//
-// Convenience function for EmptySlice.
-func Empty[A any](t T, slice []A, scripts ...PostScript) {
+// SliceEmpty asserts slice is empty.
+func SliceEmpty[A any](t T, slice []A, scripts ...PostScript) {
 	t.Helper()
-	EmptySlice(t, slice, scripts...)
+	invoke(t, assertions.SliceEmpty(slice), scripts...)
 }
 
-// LenSlice asserts slice is of length n.
-func LenSlice[A any](t T, n int, slice []A, scripts ...PostScript) {
+// SliceNotEmpty asserts slice is not empty.
+func SliceNotEmpty[A any](t T, slice []A, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.LenSlice(n, slice), scripts...)
+	invoke(t, assertions.SliceNotEmpty(slice), scripts...)
+}
+
+// SliceLen asserts slice is of length n.
+func SliceLen[A any](t T, n int, slice []A, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.SliceLen(n, slice), scripts...)
 }
 
 // Len asserts slice is of length n.
 //
-// Convenience function for LenSlice.
+// Shorthand function for SliceLen. For checking Len() of a struct,
+// use the Length() assertion.
 func Len[A any](t T, n int, slice []A, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.LenSlice(n, slice), scripts...)
+	invoke(t, assertions.SliceLen(n, slice), scripts...)
 }
 
-// Contains asserts item exists in slice using cmp.Equal function.
-func Contains[A any](t T, slice []A, item A, scripts ...PostScript) {
+// SliceContainsOp asserts item exists in slice using == operator.
+func SliceContainsOp[C comparable](t T, slice []C, item C, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Contains(slice, item), scripts...)
+	invoke(t, assertions.SliceContainsOp(slice, item), scripts...)
 }
 
-// ContainsOp asserts item exists in slice using == operator.
-func ContainsOp[C comparable](t T, slice []C, item C, scripts ...PostScript) {
+// SliceContainsFunc asserts item exists in slice, using eq to compare elements.
+func SliceContainsFunc[A any](t T, slice []A, item A, eq func(a, b A) bool, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.ContainsOp(slice, item), scripts...)
+	invoke(t, assertions.SliceContainsFunc(slice, item, eq), scripts...)
 }
 
-// ContainsFunc asserts item exists in slice, using eq to compare elements.
-func ContainsFunc[A any](t T, slice []A, item A, eq func(a, b A) bool, scripts ...PostScript) {
+// SliceContainsEqual asserts item exists in slice, using Equal to compare elements.
+func SliceContainsEqual[E interfaces.EqualFunc[E]](t T, slice []E, item E, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.ContainsFunc(slice, item, eq), scripts...)
+	invoke(t, assertions.SliceContainsEqual(slice, item), scripts...)
 }
 
-// ContainsEquals asserts item exists in slice, using Equals to compare elements.
-func ContainsEquals[E interfaces.EqualsFunc[E]](t T, slice []E, item E, scripts ...PostScript) {
+// SliceContains asserts item exists in slice, using cmp.Equal to compare elements.
+func SliceContains[A any](t T, slice []A, item A, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.ContainsEquals(slice, item), scripts...)
-}
-
-// ContainsString asserts s contains sub.
-//
-// Deprecated: use StrContains instead.
-func ContainsString(t T, s, sub string, scripts ...PostScript) {
-	t.Helper()
-	invoke(t, assertions.ContainsString(s, sub), scripts...)
+	invoke(t, assertions.SliceContains(slice, item), scripts...)
 }
 
 // Positive asserts n > 0.
@@ -311,11 +302,11 @@ func MapEqFunc[M1, M2 interfaces.Map[K, V], K comparable, V any](t T, a M1, b M2
 	invoke(t, assertions.MapEqFunc[M1, M2, K, V](a, b, eq), scripts...)
 }
 
-// MapEquals asserts maps a and b contain the same key/value pairs, using Equals
+// MapEqual asserts maps a and b contain the same key/value pairs, using Equal
 // method to compare values
-func MapEquals[M interfaces.MapEqualsFunc[K, V], K comparable, V interfaces.EqualsFunc[V]](t T, a, b M, scripts ...PostScript) {
+func MapEqual[M interfaces.MapEqualFunc[K, V], K comparable, V interfaces.EqualFunc[V]](t T, a, b M, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapEquals[M, K, V](a, b), scripts...)
+	invoke(t, assertions.MapEqual[M, K, V](a, b), scripts...)
 }
 
 // MapLen asserts map is of size n.
@@ -348,9 +339,9 @@ func MapContainsValuesFunc[M ~map[K]V, K comparable, V any](t T, m M, values []V
 	invoke(t, assertions.MapContainsValuesFunc[M, K, V](m, values, eq), scripts...)
 }
 
-func MapContainsValuesEquals[M ~map[K]V, K comparable, V interfaces.EqualsFunc[V]](t T, m M, values []V, scripts ...PostScript) {
+func MapContainsValuesEqual[M ~map[K]V, K comparable, V interfaces.EqualFunc[V]](t T, m M, values []V, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapContainsValuesEquals[M, K, V](m, values), scripts...)
+	invoke(t, assertions.MapContainsValuesEqual[M, K, V](m, values), scripts...)
 }
 
 // FileExists asserts file exists on system.
@@ -526,4 +517,40 @@ func RegexCompilesPOSIX(t T, expr string, scripts ...PostScript) {
 func UUIDv4(t T, id string, scripts ...PostScript) {
 	t.Helper()
 	invoke(t, assertions.UUIDv4(id), scripts...)
+}
+
+// Size asserts s.Size() is equal to exp.
+func Size(t T, exp int, s interfaces.SizeFunc, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.Size(exp, s), scripts...)
+}
+
+// Length asserts l.Len() is equal to exp.
+func Length(t T, exp int, l interfaces.LengthFunc, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.Length(exp, l), scripts...)
+}
+
+// Empty asserts e.Empty() is true.
+func Empty(t T, e interfaces.EmptyFunc, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.Empty(e), scripts...)
+}
+
+// NotEmpty asserts e.Empty() is false.
+func NotEmpty(t T, e interfaces.EmptyFunc, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.NotEmpty(e), scripts...)
+}
+
+// Contains asserts container.Contains(element) is true.
+func Contains[C any](t T, element C, container interfaces.Contains[C], scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.Contains(element, container), scripts...)
+}
+
+// NotContains asserts container.Contains(element) is false.
+func NotContains[C any](t T, element C, container interfaces.Contains[C], scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.NotContains(element, container), scripts...)
 }
