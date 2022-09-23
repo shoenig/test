@@ -251,6 +251,18 @@ func GreaterEq[O constraints.Ordered](t T, a, b O, scripts ...PostScript) {
 	invoke(t, assertions.GreaterEq(a, b), scripts...)
 }
 
+// Between asserts lower ≤ value ≤ upper.
+func Between[O constraints.Ordered](t T, lower, value, upper O, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.Between(lower, value, upper), scripts...)
+}
+
+// BetweenExclusive asserts lower < value < upper.
+func BetweenExclusive[O constraints.Ordered](t T, lower, value, upper O, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.BetweenExclusive(lower, value, upper), scripts...)
+}
+
 // Ascending asserts slice[n] <= slice[n+1] for each element n.
 func Ascending[O constraints.Ordered](t T, slice []O, scripts ...PostScript) {
 	t.Helper()

@@ -470,6 +470,24 @@ func GreaterEq[O constraints.Ordered](a, b O) (s string) {
 	return
 }
 
+func Between[O constraints.Ordered](lower, value, upper O) (s string) {
+	if value < lower || value > upper {
+		s = fmt.Sprintf("expected value in range (%v ≤ value ≤ %v)\n", lower, upper)
+		s += fmt.Sprintf("↪ value: %v\n", value)
+		return
+	}
+	return
+}
+
+func BetweenExclusive[O constraints.Ordered](lower, value, upper O) (s string) {
+	if value <= lower || value >= upper {
+		s = fmt.Sprintf("expected value in range (%v < value < %v)\n", lower, upper)
+		s += fmt.Sprintf("↪ value: %v\n", value)
+		return
+	}
+	return
+}
+
 func Ascending[O constraints.Ordered](slice []O) (s string) {
 	for i := 0; i < len(slice)-1; i++ {
 		if slice[i] > slice[i+1] {
