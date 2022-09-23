@@ -366,6 +366,33 @@ func SliceContains[A any](slice []A, item A) (s string) {
 	return
 }
 
+func SliceNotContains[A any](slice []A, item A) (s string) {
+	for _, i := range slice {
+		if cmp.Equal(i, item) {
+			s = "expected slice to not contain item but it does\n"
+			s += fmt.Sprintf("↪ unwanted item %#v\n", item)
+			return
+		}
+	}
+	return
+}
+
+func SliceContainsAll[A any](slice, items []A) (s string) {
+OUTER:
+	for _, target := range items {
+		var item A
+		for _, item = range slice {
+			if cmp.Equal(target, item) {
+				continue OUTER
+			}
+		}
+		s = "expected slice to contain missing item\n"
+		s += fmt.Sprintf("↪ slice is missing %#v\n", item)
+		return
+	}
+	return
+}
+
 func ContainsString(original, sub string) (s string) {
 	if !strings.Contains(original, sub) {
 		s = "expected to contain substring\n"
