@@ -978,6 +978,13 @@ func TestMapEmptyCustom(t *testing.T) {
 	MapEmpty(tc, m)
 }
 
+func TestMapNotEmpty(t *testing.T) {
+	tc := newCase(t, `expected map to not be empty`)
+	t.Cleanup(tc.assert)
+	m := make(map[string]string)
+	MapNotEmpty(tc, m)
+}
+
 func TestMapContainsKeys(t *testing.T) {
 	tc := newCase(t, `expected map to contain keys`)
 	t.Cleanup(tc.assert)

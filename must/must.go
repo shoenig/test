@@ -334,6 +334,12 @@ func MapEmpty[M ~map[K]V, K comparable, V any](t T, m M, scripts ...PostScript) 
 	invoke(t, assertions.MapEmpty[M, K, V](m), scripts...)
 }
 
+// MapNotEmpty asserts map is not empty.
+func MapNotEmpty[M ~map[K]V, K comparable, V any](t T, m M, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.MapNotEmpty[M, K, V](m), scripts...)
+}
+
 // MapContainsKeys asserts m contains each key in keys.
 func MapContainsKeys[M ~map[K]V, K comparable, V any](t T, m M, keys []K, scripts ...PostScript) {
 	t.Helper()
