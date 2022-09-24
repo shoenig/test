@@ -67,76 +67,76 @@ func NoError(t T, err error, scripts ...PostScript) {
 	invoke(t, assertions.NoError(err), scripts...)
 }
 
-// Eq asserts a and b are equal using cmp.Equal.
-func Eq[A any](t T, a, b A, scripts ...PostScript) {
+// Eq asserts expectation and value are equal using cmp.Equal.
+func Eq[A any](t T, expectation, value A, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Eq(a, b), scripts...)
+	invoke(t, assertions.Eq(expectation, value), scripts...)
 }
 
-// EqOp asserts a == b.
-func EqOp[C comparable](t T, a, b C, scripts ...PostScript) {
+// EqOp asserts expectation == value.
+func EqOp[C comparable](t T, expectation, value C, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.EqOp(a, b), scripts...)
+	invoke(t, assertions.EqOp(expectation, value), scripts...)
 }
 
-// EqFunc asserts a and b are equal using eq.
-func EqFunc[A any](t T, a, b A, eq func(a, b A) bool, scripts ...PostScript) {
+// EqFunc asserts expectation and value are equal using eq.
+func EqFunc[A any](t T, expectation, value A, eq func(a, b A) bool, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.EqFunc(a, b, eq), scripts...)
+	invoke(t, assertions.EqFunc(expectation, value, eq), scripts...)
 }
 
-// NotEq asserts a and b are not equal using cmp.Equal.
-func NotEq[A any](t T, a, b A, scripts ...PostScript) {
+// NotEq asserts expectation and value are not equal using cmp.Equal.
+func NotEq[A any](t T, expectation, value A, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.NotEq(a, b), scripts...)
+	invoke(t, assertions.NotEq(expectation, value), scripts...)
 }
 
-// NotEqOp asserts a != b.
-func NotEqOp[C comparable](t T, a, b C, scripts ...PostScript) {
+// NotEqOp asserts expectation != value.
+func NotEqOp[C comparable](t T, expectation, value C, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.NotEqOp(a, b), scripts...)
+	invoke(t, assertions.NotEqOp(expectation, value), scripts...)
 }
 
-// NotEqFunc asserts a and b are not equal using eq.
-func NotEqFunc[A any](t T, a, b A, eq func(a, b A) bool, scripts ...PostScript) {
+// NotEqFunc asserts expectation and value are not equal using eq.
+func NotEqFunc[A any](t T, expectation, value A, eq func(a, b A) bool, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.NotEqFunc(a, b, eq), scripts...)
+	invoke(t, assertions.NotEqFunc(expectation, value, eq), scripts...)
 }
 
-// EqJSON asserts a and b are equivalent JSON.
-func EqJSON(t T, a, b string, scripts ...PostScript) {
+// EqJSON asserts expectation and value are equivalent JSON.
+func EqJSON(t T, expectation, value string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.EqJSON(a, b), scripts...)
+	invoke(t, assertions.EqJSON(expectation, value), scripts...)
 }
 
-// SliceEqFunc asserts elements of a and b are the same using eq.
-func SliceEqFunc[A any](t T, a, b []A, eq func(a, b A) bool, scripts ...PostScript) {
+// Equal asserts value.Equal(expectation).
+func Equal[E interfaces.EqualFunc[E]](t T, expectation, value E, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.EqSliceFunc(a, b, eq), scripts...)
+	invoke(t, assertions.Equal(expectation, value), scripts...)
 }
 
-// Equal asserts a.Equal(b).
-func Equal[E interfaces.EqualFunc[E]](t T, a, b E, scripts ...PostScript) {
+// NotEqual asserts !value.Equal(expectation).
+func NotEqual[E interfaces.EqualFunc[E]](t T, expectation, value E, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Equal(a, b), scripts...)
+	invoke(t, assertions.NotEqual(expectation, value), scripts...)
 }
 
-// NotEqual asserts !a.Equal(b).
-func NotEqual[E interfaces.EqualFunc[E]](t T, a, b E, scripts ...PostScript) {
+// Lesser asserts value.Less(expectation).
+func Lesser[L interfaces.LessFunc[L]](t T, expectation, value L, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.NotEqual(a, b), scripts...)
+	invoke(t, assertions.Lesser(expectation, value), scripts...)
 }
 
-// Lesser asserts a.Less(b).
-func Lesser[L interfaces.LessFunc[L]](t T, a, b L, scripts ...PostScript) {
+// SliceEqFunc asserts elements of expectation and value are the same using eq.
+func SliceEqFunc[A any](t T, expectation, value []A, eq func(a, b A) bool, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Lesser(a, b), scripts...)
+	invoke(t, assertions.EqSliceFunc(expectation, value, eq), scripts...)
 }
 
-// SliceEqual asserts a[n].Equal(b[n]) for each element n in slices a and b.
-func SliceEqual[E interfaces.EqualFunc[E]](t T, a, b []E, scripts ...PostScript) {
+// SliceEqual asserts value[n].Equal(expectation[n]) for each element n.
+func SliceEqual[E interfaces.EqualFunc[E]](t T, expectation, value []E, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.SliceEqual(a, b), scripts...)
+	invoke(t, assertions.SliceEqual(expectation, value), scripts...)
 }
 
 // SliceEmpty asserts slice is empty.
@@ -231,28 +231,28 @@ func One[N interfaces.Number](t T, n N, scripts ...PostScript) {
 	invoke(t, assertions.One(n), scripts...)
 }
 
-// Less asserts a < b.
-func Less[O constraints.Ordered](t T, a, b O, scripts ...PostScript) {
+// Less asserts value < expectation.
+func Less[O constraints.Ordered](t T, expectation, value O, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Less(a, b), scripts...)
+	invoke(t, assertions.Less(expectation, value), scripts...)
 }
 
-// LessEq asserts a <= b.
-func LessEq[O constraints.Ordered](t T, a, b O, scripts ...PostScript) {
+// LessEq asserts value ≤ expectation.
+func LessEq[O constraints.Ordered](t T, expectation, value O, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.LessEq(a, b), scripts...)
+	invoke(t, assertions.LessEq(expectation, value), scripts...)
 }
 
-// Greater asserts a > b.
-func Greater[O constraints.Ordered](t T, a, b O, scripts ...PostScript) {
+// Greater asserts value > expectation.
+func Greater[O constraints.Ordered](t T, expectation, value O, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.Greater(a, b), scripts...)
+	invoke(t, assertions.Greater(expectation, value), scripts...)
 }
 
-// GreaterEq asserts a >= b.
-func GreaterEq[O constraints.Ordered](t T, a, b O, scripts ...PostScript) {
+// GreaterEq asserts value ≥ expectation.
+func GreaterEq[O constraints.Ordered](t T, expectation, value O, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.GreaterEq(a, b), scripts...)
+	invoke(t, assertions.GreaterEq(expectation, value), scripts...)
 }
 
 // Between asserts lower ≤ value ≤ upper.
@@ -267,7 +267,7 @@ func BetweenExclusive[O constraints.Ordered](t T, lower, value, upper O, scripts
 	invoke(t, assertions.BetweenExclusive(lower, value, upper), scripts...)
 }
 
-// Ascending asserts slice[n] <= slice[n+1] for each element n.
+// Ascending asserts slice[n] ≤ slice[n+1] for each element n.
 func Ascending[O constraints.Ordered](t T, slice []O, scripts ...PostScript) {
 	t.Helper()
 	invoke(t, assertions.Ascending(slice), scripts...)
@@ -285,7 +285,7 @@ func AscendingLess[L interfaces.LessFunc[L]](t T, slice []L, scripts ...PostScri
 	invoke(t, assertions.AscendingLess(slice), scripts...)
 }
 
-// Descending asserts slice[n] >= slice[n+1] for each element n.
+// Descending asserts slice[n] ≥ slice[n+1] for each element n.
 func Descending[O constraints.Ordered](t T, slice []O, scripts ...PostScript) {
 	t.Helper()
 	invoke(t, assertions.Descending(slice), scripts...)
@@ -315,25 +315,25 @@ func InDeltaSlice[N interfaces.Number](t T, a, b []N, delta N, scripts ...PostSc
 	invoke(t, assertions.InDeltaSlice(a, b, delta), scripts...)
 }
 
-// MapEq asserts maps a and b contain the same key/value pairs, using
+// MapEq asserts maps expectation and value contain the same key/value pairs, using
 // cmp.Equal function to compare values.
-func MapEq[M1, M2 interfaces.Map[K, V], K comparable, V any](t T, a M1, b M2, scripts ...PostScript) {
+func MapEq[M1, M2 interfaces.Map[K, V], K comparable, V any](t T, expectation M1, value M2, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapEq[M1, M2, K, V](a, b), scripts...)
+	invoke(t, assertions.MapEq[M1, M2, K, V](expectation, value), scripts...)
 }
 
-// MapEqFunc asserts maps a and b contain the same key/value pairs, using eq to
+// MapEqFunc asserts maps expectation and value contain the same key/value pairs, using eq to
 // compare values.
-func MapEqFunc[M1, M2 interfaces.Map[K, V], K comparable, V any](t T, a M1, b M2, eq func(V, V) bool, scripts ...PostScript) {
+func MapEqFunc[M1, M2 interfaces.Map[K, V], K comparable, V any](t T, expectation M1, value M2, eq func(V, V) bool, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapEqFunc[M1, M2, K, V](a, b, eq), scripts...)
+	invoke(t, assertions.MapEqFunc[M1, M2, K, V](expectation, value, eq), scripts...)
 }
 
-// MapEqual asserts maps a and b contain the same key/value pairs, using Equal
+// MapEqual asserts maps expectation and value contain the same key/value pairs, using Equal
 // method to compare values
-func MapEqual[M interfaces.MapEqualFunc[K, V], K comparable, V interfaces.EqualFunc[V]](t T, a, b M, scripts ...PostScript) {
+func MapEqual[M interfaces.MapEqualFunc[K, V], K comparable, V interfaces.EqualFunc[V]](t T, expectation, value M, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapEqual[M, K, V](a, b), scripts...)
+	invoke(t, assertions.MapEqual[M, K, V](expectation, value), scripts...)
 }
 
 // MapLen asserts map is of size n.
@@ -479,16 +479,16 @@ func FilePathValid(t T, path string, scripts ...PostScript) {
 	invoke(t, assertions.FilePathValid(path), scripts...)
 }
 
-// StrEqFold asserts first and second are equivalent, ignoring case.
-func StrEqFold(t T, first, second string, scripts ...PostScript) {
+// StrEqFold asserts expectation and value are equivalent, ignoring case.
+func StrEqFold(t T, expectation, value string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.StrEqFold(first, second), scripts...)
+	invoke(t, assertions.StrEqFold(expectation, value), scripts...)
 }
 
-// StrNotEqFold asserts first and second are not equivalent, ignoring case.
-func StrNotEqFold(t T, first, second string, scripts ...PostScript) {
+// StrNotEqFold asserts expectation and value are not equivalent, ignoring case.
+func StrNotEqFold(t T, expectation, value string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.StrNotEqFold(first, second), scripts...)
+	invoke(t, assertions.StrNotEqFold(expectation, value), scripts...)
 }
 
 // StrContains asserts s contains substring sub.

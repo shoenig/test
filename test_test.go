@@ -470,13 +470,13 @@ func TestSliceEqual(t *testing.T) {
 }
 
 func TestLesser(t *testing.T) {
-	tc := newCase(t, `expected to be less via .Less method`)
+	tc := newCase(t, `expected value to be less via .Less method`)
 	t.Cleanup(tc.assert)
 
 	a := &Person{ID: 200, Name: "Alice"}
 	b := &Person{ID: 100, Name: "Bob"}
 
-	Lesser(tc, a, b)
+	Lesser(tc, b, a)
 }
 
 func TestLesser_PS(t *testing.T) {
@@ -486,7 +486,7 @@ func TestLesser_PS(t *testing.T) {
 	a := &Person{ID: 200, Name: "Alice"}
 	b := &Person{ID: 100, Name: "Bob"}
 
-	Lesser(tc, a, b, tc.PS("lesser"))
+	Lesser(tc, b, a, tc.PS("lesser"))
 }
 
 func TestSliceEmpty(t *testing.T) {
@@ -665,19 +665,19 @@ func TestLess(t *testing.T) {
 	t.Run("integers", func(t *testing.T) {
 		tc := newCase(t, `expected 7 < 5`)
 		t.Cleanup(tc.assert)
-		Less(tc, 7, 5)
+		Less(tc, 5, 7)
 	})
 
 	t.Run("floats", func(t *testing.T) {
-		tc := newCase(t, `expected 7.7 < 5.5`)
+		tc := newCase(t, `expected 7.5 < 5.5`)
 		t.Cleanup(tc.assert)
-		Less(tc, 7.7, 5.5)
+		Less(tc, 5.5, 7.5)
 	})
 
 	t.Run("strings", func(t *testing.T) {
 		tc := newCase(t, `expected foo < bar`)
 		t.Cleanup(tc.assert)
-		Less(tc, "foo", "bar")
+		Less(tc, "bar", "foo")
 	})
 
 	t.Run("equal", func(t *testing.T) {
@@ -688,28 +688,28 @@ func TestLess(t *testing.T) {
 }
 
 func TestLessEq(t *testing.T) {
-	tc := newCase(t, `expected 7 <= 5`)
+	tc := newCase(t, `expected 7 ≤ 5`)
 	t.Cleanup(tc.assert)
-	LessEq(tc, 7, 5)
+	LessEq(tc, 5, 7)
 }
 
 func TestGreater(t *testing.T) {
 	t.Run("integer", func(t *testing.T) {
 		tc := newCase(t, `expected 5 > 7`)
 		t.Cleanup(tc.assert)
-		Greater(tc, 5, 7)
+		Greater(tc, 7, 5)
 	})
 
 	t.Run("floats", func(t *testing.T) {
 		tc := newCase(t, `expected 5.5 > 7.7`)
 		t.Cleanup(tc.assert)
-		Greater(tc, 5.5, 7.7)
+		Greater(tc, 7.7, 5.5)
 	})
 
 	t.Run("strings", func(t *testing.T) {
 		tc := newCase(t, `expected bar > foo`)
 		t.Cleanup(tc.assert)
-		Greater(tc, "bar", "foo")
+		Greater(tc, "foo", "bar")
 	})
 
 	t.Run("equal", func(t *testing.T) {
@@ -720,9 +720,9 @@ func TestGreater(t *testing.T) {
 }
 
 func TestGreaterEq(t *testing.T) {
-	tc := newCase(t, `expected 5 >= 7`)
+	tc := newCase(t, `expected 5 ≥ 7`)
 	t.Cleanup(tc.assert)
-	GreaterEq(tc, 5, 7)
+	GreaterEq(tc, 7, 5)
 }
 
 func TestBetween(t *testing.T) {

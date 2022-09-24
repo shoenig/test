@@ -165,60 +165,60 @@ func NoError(err error) (s string) {
 	return
 }
 
-func Eq[A any](a, b A) (s string) {
-	if !equal(a, b) {
+func Eq[A any](expectation, value A) (s string) {
+	if !equal(expectation, value) {
 		s = "expected equality via cmp.Equal function\n"
-		s += diff(a, b)
+		s += diff(expectation, value)
 	}
 	return
 }
 
-func NotEq[A any](a, b A) (s string) {
-	if equal(a, b) {
+func NotEq[A any](expectation, value A) (s string) {
+	if equal(expectation, value) {
 		s = "expected inequality via cmp.Equal function\n"
 	}
 	return
 }
 
-func EqOp[C comparable](a, b C) (s string) {
-	if a != b {
+func EqOp[C comparable](expectation, value C) (s string) {
+	if expectation != value {
 		s = "expected equality via ==\n"
-		s += diff(a, b)
+		s += diff(expectation, value)
 	}
 	return
 }
 
-func EqFunc[A any](a, b A, eq func(a, b A) bool) (s string) {
-	if !eq(a, b) {
+func EqFunc[A any](expectation, value A, eq func(a, b A) bool) (s string) {
+	if !eq(expectation, value) {
 		s = "expected equality via 'eq' function\n"
-		s += diff(a, b)
+		s += diff(expectation, value)
 	}
 	return
 }
 
-func NotEqOp[C comparable](a, b C) (s string) {
-	if a == b {
+func NotEqOp[C comparable](expectation, value C) (s string) {
+	if expectation == value {
 		s = "expected inequality via !="
 	}
 	return
 }
 
-func NotEqFunc[A any](a, b A, eq func(a, b A) bool) (s string) {
-	if eq(a, b) {
+func NotEqFunc[A any](expectation, value A, eq func(a, b A) bool) (s string) {
+	if eq(expectation, value) {
 		s = "expected inequality via 'eq' function"
 	}
 	return
 }
 
-func EqJSON(a, b string) (s string) {
+func EqJSON(expectation, value string) (s string) {
 	var expA, expB any
 
-	if err := json.Unmarshal([]byte(a), &expA); err != nil {
+	if err := json.Unmarshal([]byte(expectation), &expA); err != nil {
 		s = fmt.Sprintf("failed to unmarshal first argument as json: %v", err)
 		return
 	}
 
-	if err := json.Unmarshal([]byte(b), &expB); err != nil {
+	if err := json.Unmarshal([]byte(value), &expB); err != nil {
 		s = fmt.Sprintf("failed to unmarshal second argument as json: %v", err)
 		return
 	}
@@ -234,20 +234,20 @@ func EqJSON(a, b string) (s string) {
 	return
 }
 
-func EqSliceFunc[A any](a, b []A, eq func(a, b A) bool) (s string) {
-	lenA, lenB := len(a), len(b)
+func EqSliceFunc[A any](expectation, value []A, eq func(a, b A) bool) (s string) {
+	lenA, lenB := len(expectation), len(value)
 
 	if lenA != lenB {
 		s = "expected slices of same length\n"
-		s += fmt.Sprintf("↪ len(slice a): %d\n", lenA)
-		s += fmt.Sprintf("↪ len(slice b): %d\n", lenB)
-		s += diff(a, b)
+		s += fmt.Sprintf("↪ len(exp): %d\n", lenA)
+		s += fmt.Sprintf("↪ len(val): %d\n", lenB)
+		s += diff(expectation, value)
 		return
 	}
 
 	miss := false
 	for i := 0; i < lenA; i++ {
-		if !eq(a[i], b[i]) {
+		if !eq(expectation[i], value[i]) {
 			miss = true
 			break
 		}
@@ -255,54 +255,54 @@ func EqSliceFunc[A any](a, b []A, eq func(a, b A) bool) (s string) {
 
 	if miss {
 		s = "expected slice equality via 'eq' function\n"
-		s += diff(a, b)
+		s += diff(expectation, value)
 		return
 	}
 
 	return
 }
 
-func Equal[E interfaces.EqualFunc[E]](a, b E) (s string) {
-	if !a.Equal(b) {
+func Equal[E interfaces.EqualFunc[E]](expectation, value E) (s string) {
+	if !value.Equal(expectation) {
 		s = "expected equality via .Equal method\n"
-		s += diff(a, b)
+		s += diff(expectation, value)
 	}
 	return
 }
 
-func NotEqual[E interfaces.EqualFunc[E]](a, b E) (s string) {
-	if a.Equal(b) {
+func NotEqual[E interfaces.EqualFunc[E]](expectation, value E) (s string) {
+	if value.Equal(expectation) {
 		s = "expected inequality via .Equal method\n"
-		s += diff(a, b)
+		s += diff(expectation, value)
 	}
 	return
 }
 
-func SliceEqual[E interfaces.EqualFunc[E]](a, b []E) (s string) {
-	lenA, lenB := len(a), len(b)
+func SliceEqual[E interfaces.EqualFunc[E]](expectation, value []E) (s string) {
+	lenA, lenB := len(expectation), len(value)
 
 	if lenA != lenB {
 		s = "expected slices of same length\n"
-		s += fmt.Sprintf("↪ len(slice a): %d\n", lenA)
-		s += fmt.Sprintf("↪ len(slice b): %d\n", lenB)
-		s += diff(a, b)
+		s += fmt.Sprintf("↪ len(exp): %d\n", lenA)
+		s += fmt.Sprintf("↪ len(val): %d\n", lenB)
+		s += diff(expectation, value)
 		return
 	}
 
 	for i := 0; i < lenA; i++ {
-		if !a[i].Equal(b[i]) {
+		if !expectation[i].Equal(value[i]) {
 			s += "expected slice equality via .Equal method\n"
-			s += diff(a[i], b[i])
+			s += diff(expectation[i], value[i])
 			return
 		}
 	}
 	return
 }
 
-func Lesser[L interfaces.LessFunc[L]](a, b L) (s string) {
-	if !a.Less(b) {
-		s = "expected to be less via .Less method\n"
-		s += diff(a, b)
+func Lesser[L interfaces.LessFunc[L]](expectation, value L) (s string) {
+	if !value.Less(expectation) {
+		s = "expected value to be less via .Less method\n"
+		s += diff(expectation, value)
 	}
 	return
 }
@@ -442,30 +442,30 @@ func One[N interfaces.Number](n N) (s string) {
 	return
 }
 
-func Less[O constraints.Ordered](a, b O) (s string) {
-	if !(a < b) {
-		s = fmt.Sprintf("expected %v < %v", a, b)
+func Less[O constraints.Ordered](expectation, value O) (s string) {
+	if !(value < expectation) {
+		s = fmt.Sprintf("expected %v < %v", value, expectation)
 	}
 	return
 }
 
-func LessEq[O constraints.Ordered](a, b O) (s string) {
-	if !(a <= b) {
-		s = fmt.Sprintf("expected %v <= %v", a, b)
+func LessEq[O constraints.Ordered](expectation, value O) (s string) {
+	if !(value <= expectation) {
+		s = fmt.Sprintf("expected %v ≤ %v", value, expectation)
 	}
 	return
 }
 
-func Greater[O constraints.Ordered](a, b O) (s string) {
-	if !(a > b) {
-		s = fmt.Sprintf("expected %v > %v", a, b)
+func Greater[O constraints.Ordered](expectation, value O) (s string) {
+	if !(value > expectation) {
+		s = fmt.Sprintf("expected %v > %v", value, expectation)
 	}
 	return
 }
 
-func GreaterEq[O constraints.Ordered](a, b O) (s string) {
-	if !(a >= b) {
-		s = fmt.Sprintf("expected %v >= %v", a, b)
+func GreaterEq[O constraints.Ordered](expectation, value O) (s string) {
+	if !(value >= expectation) {
+		s = fmt.Sprintf("expected %v ≥ %v", value, expectation)
 	}
 	return
 }
@@ -608,81 +608,81 @@ func InDeltaSlice[N interfaces.Number](a, b []N, delta N) (s string) {
 	return
 }
 
-func MapEq[M1, M2 interfaces.Map[K, V], K comparable, V any](a M1, b M2) (s string) {
-	lenA, lenB := len(a), len(b)
+func MapEq[M1, M2 interfaces.Map[K, V], K comparable, V any](expectation M1, value M2) (s string) {
+	lenA, lenB := len(expectation), len(value)
 
 	if lenA != lenB {
 		s = "expected maps of same length\n"
-		s += fmt.Sprintf("↪ len(map a): %d\n", lenA)
-		s += fmt.Sprintf("↪ len(map b): %d\n", lenB)
+		s += fmt.Sprintf("↪ len(exp): %d\n", lenA)
+		s += fmt.Sprintf("↪ len(val): %d\n", lenB)
 		return
 	}
 
-	for key, valueA := range a {
-		valueB, exists := b[key]
+	for key, valueA := range expectation {
+		valueB, exists := value[key]
 		if !exists {
 			s = "expected maps of same keys\n"
-			s += diff(a, b)
+			s += diff(expectation, value)
 			return
 		}
 
 		if !cmp.Equal(valueA, valueB) {
 			s = "expected maps of same values via cmp.Diff function\n"
-			s += diff(a, b)
+			s += diff(expectation, value)
 			return
 		}
 	}
 	return
 }
 
-func MapEqFunc[M1, M2 interfaces.Map[K, V], K comparable, V any](a M1, b M2, eq func(V, V) bool) (s string) {
-	lenA, lenB := len(a), len(b)
+func MapEqFunc[M1, M2 interfaces.Map[K, V], K comparable, V any](expectation M1, value M2, eq func(V, V) bool) (s string) {
+	lenA, lenB := len(expectation), len(value)
 
 	if lenA != lenB {
 		s = "expected maps of same length\n"
-		s += fmt.Sprintf("↪ len(map a): %d\n", lenA)
-		s += fmt.Sprintf("↪ len(map b): %d\n", lenB)
+		s += fmt.Sprintf("↪ len(exp): %d\n", lenA)
+		s += fmt.Sprintf("↪ len(val): %d\n", lenB)
 		return
 	}
 
-	for key, valueA := range a {
-		valueB, exists := b[key]
+	for key, valueA := range expectation {
+		valueB, exists := value[key]
 		if !exists {
 			s = "expected maps of same keys\n"
-			s += diff(a, b)
+			s += diff(expectation, value)
 			return
 		}
 
 		if !eq(valueA, valueB) {
 			s = "expected maps of same values via 'eq' function\n"
-			s += diff(a, b)
+			s += diff(expectation, value)
 			return
 		}
 	}
 	return
 }
 
-func MapEqual[M interfaces.MapEqualFunc[K, V], K comparable, V interfaces.EqualFunc[V]](a, b M) (s string) {
-	lenA, lenB := len(a), len(b)
+func MapEqual[M interfaces.MapEqualFunc[K, V], K comparable, V interfaces.EqualFunc[V]](expectation, value M) (s string) {
+	lenA, lenB := len(expectation), len(value)
 
 	if lenA != lenB {
 		s = "expected maps of same length\n"
-		s += fmt.Sprintf("↪ len(map a): %d\n", lenA)
-		s += fmt.Sprintf("↪ len(map b): %d\n", lenB)
+		s += fmt.Sprintf("↪ len(exp): %d\n", lenA)
+		s += fmt.Sprintf("↪ len(val): %d\n", lenB)
 		return
 	}
 
-	for key, valueA := range a {
-		valueB, exists := b[key]
+	for key, valueA := range expectation {
+		valueB, exists := value[key]
 		if !exists {
 			s = "expected maps of same keys\n"
-			s += diff(a, b)
+			s += diff(expectation, value)
 			return
 		}
 
 		if !(valueB).Equal(valueA) {
 			s = "expected maps of same values via .Equal method\n"
-			s += diff(a, b)
+			s += diff(expectation, value)
 			return
 		}
 	}
@@ -871,20 +871,20 @@ func FilePathValid(path string) (s string) {
 	return
 }
 
-func StrEqFold(first, second string) (s string) {
-	if !strings.EqualFold(first, second) {
+func StrEqFold(expectation, value string) (s string) {
+	if !strings.EqualFold(expectation, value) {
 		s = "expected strings to be equal ignoring case\n"
-		s += fmt.Sprintf("↪  first: %s\n", first)
-		s += fmt.Sprintf("↪ second: %s\n", second)
+		s += fmt.Sprintf("↪ exp: %s\n", expectation)
+		s += fmt.Sprintf("↪ val: %s\n", value)
 	}
 	return
 }
 
-func StrNotEqFold(first, second string) (s string) {
-	if strings.EqualFold(first, second) {
+func StrNotEqFold(expectation, value string) (s string) {
+	if strings.EqualFold(expectation, value) {
 		s = "expected strings to not be equal ignoring case; but they are\n"
-		s += fmt.Sprintf("↪  first: %s\n", first)
-		s += fmt.Sprintf("↪ second: %s\n", second)
+		s += fmt.Sprintf("↪ exp: %s\n", expectation)
+		s += fmt.Sprintf("↪ val: %s\n", value)
 	}
 	return
 }
