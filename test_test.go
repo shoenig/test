@@ -627,35 +627,49 @@ func TestSliceContainsAll(t *testing.T) {
 }
 
 func TestPositive(t *testing.T) {
-	tc := newCase(t, `expected positive val`)
+	tc := newCase(t, `expected positive value`)
 	t.Cleanup(tc.assert)
 
 	Positive(tc, -1)
 }
 
+func TestNonPositive(t *testing.T) {
+	tc := newCase(t, `expected non-positive value`)
+	t.Cleanup(tc.assert)
+
+	NonPositive(tc, 1)
+}
+
 func TestNegative(t *testing.T) {
-	tc := newCase(t, `expected negative val`)
+	tc := newCase(t, `expected negative value`)
 	t.Cleanup(tc.assert)
 
 	Negative(tc, 1)
 }
 
+func TestNonNegative(t *testing.T) {
+	tc := newCase(t, `expected non-negative value`)
+	t.Cleanup(tc.assert)
+
+	NonNegative(tc, -1)
+}
+
 func TestZero(t *testing.T) {
-	tc := newCase(t, `expected zero`)
+	tc := newCase(t, `expected value of 0`)
 	t.Cleanup(tc.assert)
 
 	Zero(tc, 1)
 }
 
 func TestNonZero(t *testing.T) {
-	tc := newCase(t, `expected non-zero`)
+	tc := newCase(t, `expected non-zero value`)
 	t.Cleanup(tc.assert)
 
 	NonZero(tc, 0)
 }
 
 func TestOne(t *testing.T) {
-	tc := newCase(t, `expected one`)
+	tc := newCase(t, `expected value of 1`)
 	t.Cleanup(tc.assert)
 
 	One(tc, 1.1)
