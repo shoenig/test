@@ -62,7 +62,7 @@ type EmptyFunc interface {
 	Empty() bool
 }
 
-// The Contains interface is satisfied by a type that implements Contains(T).
-type Contains[T any] interface {
+// The ContainsFunc interface is satisfied by a type that implements Contains(T).
+type ContainsFunc[T any] interface {
 	Contains(T) bool
 }
