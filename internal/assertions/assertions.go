@@ -165,60 +165,60 @@ func NoError(err error) (s string) {
 	return
 }
 
-func Eq[A any](expectation, value A) (s string) {
-	if !equal(expectation, value) {
+func Eq[A any](exp, val A) (s string) {
+	if !equal(exp, val) {
 		s = "expected equality via cmp.Equal function\n"
-		s += diff(expectation, value)
+		s += diff(exp, val)
 	}
 	return
 }
 
-func NotEq[A any](expectation, value A) (s string) {
-	if equal(expectation, value) {
+func NotEq[A any](exp, val A) (s string) {
+	if equal(exp, val) {
 		s = "expected inequality via cmp.Equal function\n"
 	}
 	return
 }
 
-func EqOp[C comparable](expectation, value C) (s string) {
-	if expectation != value {
+func EqOp[C comparable](exp, val C) (s string) {
+	if exp != val {
 		s = "expected equality via ==\n"
-		s += diff(expectation, value)
+		s += diff(exp, val)
 	}
 	return
 }
 
-func EqFunc[A any](expectation, value A, eq func(a, b A) bool) (s string) {
-	if !eq(expectation, value) {
+func EqFunc[A any](exp, val A, eq func(a, b A) bool) (s string) {
+	if !eq(exp, val) {
 		s = "expected equality via 'eq' function\n"
-		s += diff(expectation, value)
+		s += diff(exp, val)
 	}
 	return
 }
 
-func NotEqOp[C comparable](expectation, value C) (s string) {
-	if expectation == value {
+func NotEqOp[C comparable](exp, val C) (s string) {
+	if exp == val {
 		s = "expected inequality via !="
 	}
 	return
 }
 
-func NotEqFunc[A any](expectation, value A, eq func(a, b A) bool) (s string) {
-	if eq(expectation, value) {
+func NotEqFunc[A any](exp, val A, eq func(a, b A) bool) (s string) {
+	if eq(exp, val) {
 		s = "expected inequality via 'eq' function"
 	}
 	return
 }
 
-func EqJSON(expectation, value string) (s string) {
+func EqJSON(exp, val string) (s string) {
 	var expA, expB any
 
-	if err := json.Unmarshal([]byte(expectation), &expA); err != nil {
+	if err := json.Unmarshal([]byte(exp), &expA); err != nil {
 		s = fmt.Sprintf("failed to unmarshal first argument as json: %v", err)
 		return
 	}
 
-	if err := json.Unmarshal([]byte(value), &expB); err != nil {
+	if err := json.Unmarshal([]byte(val), &expB); err != nil {
 		s = fmt.Sprintf("failed to unmarshal second argument as json: %v", err)
 		return
 	}
@@ -234,20 +234,20 @@ func EqJSON(expectation, value string) (s string) {
 	return
 }
 
-func EqSliceFunc[A any](expectation, value []A, eq func(a, b A) bool) (s string) {
-	lenA, lenB := len(expectation), len(value)
+func EqSliceFunc[A any](exp, val []A, eq func(a, b A) bool) (s string) {
+	lenA, lenB := len(exp), len(val)
 
 	if lenA != lenB {
 		s = "expected slices of same length\n"
 		s += fmt.Sprintf("↪ len(exp): %d\n", lenA)
 		s += fmt.Sprintf("↪ len(val): %d\n", lenB)
-		s += diff(expectation, value)
+		s += diff(exp, val)
 		return
 	}
 
 	miss := false
 	for i := 0; i < lenA; i++ {
-		if !eq(expectation[i], value[i]) {
+		if !eq(exp[i], val[i]) {
 			miss = true
 			break
 		}
@@ -255,54 +255,54 @@ func EqSliceFunc[A any](expectation, value []A, eq func(a, b A) bool) (s string)
 
 	if miss {
 		s = "expected slice equality via 'eq' function\n"
-		s += diff(expectation, value)
+		s += diff(exp, val)
 		return
 	}
 
 	return
 }
 
-func Equal[E interfaces.EqualFunc[E]](expectation, value E) (s string) {
-	if !value.Equal(expectation) {
+func Equal[E interfaces.EqualFunc[E]](exp, val E) (s string) {
+	if !val.Equal(exp) {
 		s = "expected equality via .Equal method\n"
-		s += diff(expectation, value)
+		s += diff(exp, val)
 	}
 	return
 }
 
-func NotEqual[E interfaces.EqualFunc[E]](expectation, value E) (s string) {
-	if value.Equal(expectation) {
+func NotEqual[E interfaces.EqualFunc[E]](exp, val E) (s string) {
+	if val.Equal(exp) {
 		s = "expected inequality via .Equal method\n"
-		s += diff(expectation, value)
+		s += diff(exp, val)
 	}
 	return
 }
 
-func SliceEqual[E interfaces.EqualFunc[E]](expectation, value []E) (s string) {
-	lenA, lenB := len(expectation), len(value)
+func SliceEqual[E interfaces.EqualFunc[E]](exp, val []E) (s string) {
+	lenA, lenB := len(exp), len(val)
 
 	if lenA != lenB {
 		s = "expected slices of same length\n"
 		s += fmt.Sprintf("↪ len(exp): %d\n", lenA)
 		s += fmt.Sprintf("↪ len(val): %d\n", lenB)
-		s += diff(expectation, value)
+		s += diff(exp, val)
 		return
 	}
 
 	for i := 0; i < lenA; i++ {
-		if !expectation[i].Equal(value[i]) {
+		if !exp[i].Equal(val[i]) {
 			s += "expected slice equality via .Equal method\n"
-			s += diff(expectation[i], value[i])
+			s += diff(exp[i], val[i])
 			return
 		}
 	}
 	return
 }
 
-func Lesser[L interfaces.LessFunc[L]](expectation, value L) (s string) {
-	if !value.Less(expectation) {
-		s = "expected value to be less via .Less method\n"
-		s += diff(expectation, value)
+func Lesser[L interfaces.LessFunc[L]](exp, val L) (s string) {
+	if !val.Less(exp) {
+		s = "expected val to be less via .Less method\n"
+		s += diff(exp, val)
 	}
 	return
 }
@@ -393,15 +393,6 @@ OUTER:
 	return
 }
 
-func ContainsString(original, sub string) (s string) {
-	if !strings.Contains(original, sub) {
-		s = "expected to contain substring\n"
-		s += fmt.Sprintf("↪ str: %s\n", original)
-		s += fmt.Sprintf("↪ sub: %s\n", sub)
-	}
-	return
-}
-
 func Positive[N interfaces.Number](n N) (s string) {
 	if !(n > 0) {
 		s = "expected positive value\n"
@@ -442,47 +433,47 @@ func One[N interfaces.Number](n N) (s string) {
 	return
 }
 
-func Less[O constraints.Ordered](expectation, value O) (s string) {
-	if !(value < expectation) {
-		s = fmt.Sprintf("expected %v < %v", value, expectation)
+func Less[O constraints.Ordered](exp, val O) (s string) {
+	if !(val < exp) {
+		s = fmt.Sprintf("expected %v < %v", val, exp)
 	}
 	return
 }
 
-func LessEq[O constraints.Ordered](expectation, value O) (s string) {
-	if !(value <= expectation) {
-		s = fmt.Sprintf("expected %v ≤ %v", value, expectation)
+func LessEq[O constraints.Ordered](exp, val O) (s string) {
+	if !(val <= exp) {
+		s = fmt.Sprintf("expected %v ≤ %v", val, exp)
 	}
 	return
 }
 
-func Greater[O constraints.Ordered](expectation, value O) (s string) {
-	if !(value > expectation) {
-		s = fmt.Sprintf("expected %v > %v", value, expectation)
+func Greater[O constraints.Ordered](exp, val O) (s string) {
+	if !(val > exp) {
+		s = fmt.Sprintf("expected %v > %v", val, exp)
 	}
 	return
 }
 
-func GreaterEq[O constraints.Ordered](expectation, value O) (s string) {
-	if !(value >= expectation) {
-		s = fmt.Sprintf("expected %v ≥ %v", value, expectation)
+func GreaterEq[O constraints.Ordered](exp, val O) (s string) {
+	if !(val >= exp) {
+		s = fmt.Sprintf("expected %v ≥ %v", val, exp)
 	}
 	return
 }
 
-func Between[O constraints.Ordered](lower, value, upper O) (s string) {
-	if value < lower || value > upper {
-		s = fmt.Sprintf("expected value in range (%v ≤ value ≤ %v)\n", lower, upper)
-		s += fmt.Sprintf("↪ value: %v\n", value)
+func Between[O constraints.Ordered](lower, val, upper O) (s string) {
+	if val < lower || val > upper {
+		s = fmt.Sprintf("expected val in range (%v ≤ val ≤ %v)\n", lower, upper)
+		s += fmt.Sprintf("↪ val: %v\n", val)
 		return
 	}
 	return
 }
 
-func BetweenExclusive[O constraints.Ordered](lower, value, upper O) (s string) {
-	if value <= lower || value >= upper {
-		s = fmt.Sprintf("expected value in range (%v < value < %v)\n", lower, upper)
-		s += fmt.Sprintf("↪ value: %v\n", value)
+func BetweenExclusive[O constraints.Ordered](lower, val, upper O) (s string) {
+	if val <= lower || val >= upper {
+		s = fmt.Sprintf("expected val in range (%v < val < %v)\n", lower, upper)
+		s += fmt.Sprintf("↪ val: %v\n", val)
 		return
 	}
 	return
@@ -608,8 +599,8 @@ func InDeltaSlice[N interfaces.Number](a, b []N, delta N) (s string) {
 	return
 }
 
-func MapEq[M1, M2 interfaces.Map[K, V], K comparable, V any](expectation M1, value M2) (s string) {
-	lenA, lenB := len(expectation), len(value)
+func MapEq[M1, M2 interfaces.Map[K, V], K comparable, V any](exp M1, val M2) (s string) {
+	lenA, lenB := len(exp), len(val)
 
 	if lenA != lenB {
 		s = "expected maps of same length\n"
@@ -618,25 +609,25 @@ func MapEq[M1, M2 interfaces.Map[K, V], K comparable, V any](expectation M1, val
 		return
 	}
 
-	for key, valueA := range expectation {
-		valueB, exists := value[key]
+	for key, valA := range exp {
+		valB, exists := val[key]
 		if !exists {
 			s = "expected maps of same keys\n"
-			s += diff(expectation, value)
+			s += diff(exp, val)
 			return
 		}
 
-		if !cmp.Equal(valueA, valueB) {
+		if !cmp.Equal(valA, valB) {
 			s = "expected maps of same values via cmp.Diff function\n"
-			s += diff(expectation, value)
+			s += diff(exp, val)
 			return
 		}
 	}
 	return
 }
 
-func MapEqFunc[M1, M2 interfaces.Map[K, V], K comparable, V any](expectation M1, value M2, eq func(V, V) bool) (s string) {
-	lenA, lenB := len(expectation), len(value)
+func MapEqFunc[M1, M2 interfaces.Map[K, V], K comparable, V any](exp M1, val M2, eq func(V, V) bool) (s string) {
+	lenA, lenB := len(exp), len(val)
 
 	if lenA != lenB {
 		s = "expected maps of same length\n"
@@ -645,25 +636,25 @@ func MapEqFunc[M1, M2 interfaces.Map[K, V], K comparable, V any](expectation M1,
 		return
 	}
 
-	for key, valueA := range expectation {
-		valueB, exists := value[key]
+	for key, valA := range exp {
+		valB, exists := val[key]
 		if !exists {
 			s = "expected maps of same keys\n"
-			s += diff(expectation, value)
+			s += diff(exp, val)
 			return
 		}
 
-		if !eq(valueA, valueB) {
+		if !eq(valA, valB) {
 			s = "expected maps of same values via 'eq' function\n"
-			s += diff(expectation, value)
+			s += diff(exp, val)
 			return
 		}
 	}
 	return
 }
 
-func MapEqual[M interfaces.MapEqualFunc[K, V], K comparable, V interfaces.EqualFunc[V]](expectation, value M) (s string) {
-	lenA, lenB := len(expectation), len(value)
+func MapEqual[M interfaces.MapEqualFunc[K, V], K comparable, V interfaces.EqualFunc[V]](exp, val M) (s string) {
+	lenA, lenB := len(exp), len(val)
 
 	if lenA != lenB {
 		s = "expected maps of same length\n"
@@ -672,17 +663,17 @@ func MapEqual[M interfaces.MapEqualFunc[K, V], K comparable, V interfaces.EqualF
 		return
 	}
 
-	for key, valueA := range expectation {
-		valueB, exists := value[key]
+	for key, valA := range exp {
+		valB, exists := val[key]
 		if !exists {
 			s = "expected maps of same keys\n"
-			s += diff(expectation, value)
+			s += diff(exp, val)
 			return
 		}
 
-		if !(valueB).Equal(valueA) {
+		if !(valB).Equal(valA) {
 			s = "expected maps of same values via .Equal method\n"
-			s += diff(expectation, value)
+			s += diff(exp, val)
 			return
 		}
 	}
@@ -748,25 +739,25 @@ func mapContains[M ~map[K]V, K comparable, V any](m M, values []V, eq func(V, V)
 
 	if len(missing) > 0 {
 		s = "expected map to contain values\n"
-		for _, value := range missing {
-			s += fmt.Sprintf("↪ value: %v\n", value)
+		for _, val := range missing {
+			s += fmt.Sprintf("↪ val: %v\n", val)
 		}
 	}
 	return
 }
 
-func MapContainsValues[M ~map[K]V, K comparable, V any](m M, values []V) (s string) {
-	return mapContains[M, K, V](m, values, func(a, b V) bool {
+func MapContainsValues[M ~map[K]V, K comparable, V any](m M, vals []V) (s string) {
+	return mapContains[M, K, V](m, vals, func(a, b V) bool {
 		return equal(a, b)
 	})
 }
 
-func MapContainsValuesFunc[M ~map[K]V, K comparable, V any](m M, values []V, eq func(V, V) bool) (s string) {
-	return mapContains[M, K, V](m, values, eq)
+func MapContainsValuesFunc[M ~map[K]V, K comparable, V any](m M, vals []V, eq func(V, V) bool) (s string) {
+	return mapContains[M, K, V](m, vals, eq)
 }
 
-func MapContainsValuesEqual[M ~map[K]V, K comparable, V interfaces.EqualFunc[V]](m M, values []V) (s string) {
-	return mapContains[M, K, V](m, values, func(a, b V) bool {
+func MapContainsValuesEqual[M ~map[K]V, K comparable, V interfaces.EqualFunc[V]](m M, vals []V) (s string) {
+	return mapContains[M, K, V](m, vals, func(a, b V) bool {
 		return a.Equal(b)
 	})
 }
@@ -871,20 +862,20 @@ func FilePathValid(path string) (s string) {
 	return
 }
 
-func StrEqFold(expectation, value string) (s string) {
-	if !strings.EqualFold(expectation, value) {
+func StrEqFold(exp, val string) (s string) {
+	if !strings.EqualFold(exp, val) {
 		s = "expected strings to be equal ignoring case\n"
-		s += fmt.Sprintf("↪ exp: %s\n", expectation)
-		s += fmt.Sprintf("↪ val: %s\n", value)
+		s += fmt.Sprintf("↪ exp: %s\n", exp)
+		s += fmt.Sprintf("↪ val: %s\n", val)
 	}
 	return
 }
 
-func StrNotEqFold(expectation, value string) (s string) {
-	if strings.EqualFold(expectation, value) {
+func StrNotEqFold(exp, val string) (s string) {
+	if strings.EqualFold(exp, val) {
 		s = "expected strings to not be equal ignoring case; but they are\n"
-		s += fmt.Sprintf("↪ exp: %s\n", expectation)
-		s += fmt.Sprintf("↪ val: %s\n", value)
+		s += fmt.Sprintf("↪ exp: %s\n", exp)
+		s += fmt.Sprintf("↪ val: %s\n", val)
 	}
 	return
 }

@@ -57,16 +57,16 @@ func Sprint(args ...any) PostScript {
 	}
 }
 
-// Values adds formatted key-value mappings as an annotation to the output of a test case failure.
-func Values(values ...any) PostScript {
+// Values adds formatted key-val mappings as an annotation to the output of a test case failure.
+func Values(vals ...any) PostScript {
 	b := new(strings.Builder)
-	n := len(values)
+	n := len(vals)
 	for i := 0; i < n-1; i += 2 {
-		s := fmt.Sprintf("\t%#v => %#v\n", values[i], values[i+1])
+		s := fmt.Sprintf("\t%#v => %#v\n", vals[i], vals[i+1])
 		b.WriteString(s)
 	}
 	if n%2 != 0 {
-		s := fmt.Sprintf("\t%v => <MISSING ARG>", values[n-1])
+		s := fmt.Sprintf("\t%v => <MISSING ARG>", vals[n-1])
 		b.WriteString(s)
 	}
 	return &script{
