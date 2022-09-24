@@ -401,6 +401,14 @@ func Positive[N interfaces.Number](n N) (s string) {
 	return
 }
 
+func NonPositive[N interfaces.Number](n N) (s string) {
+	if !(n <= 0) {
+		s = "expected non-positive value\n"
+		s += fmt.Sprintf("↪ n: %v\n", n)
+	}
+	return
+}
+
 func Negative[N interfaces.Number](n N) (s string) {
 	if n > 0 {
 		s = "expected negative value\n"
@@ -409,9 +417,17 @@ func Negative[N interfaces.Number](n N) (s string) {
 	return
 }
 
+func NonNegative[N interfaces.Number](n N) (s string) {
+	if !(n >= 0) {
+		s = "expected non-negative value\n"
+		s += fmt.Sprintf("↪ n: %v\n", n)
+	}
+	return
+}
+
 func Zero[N interfaces.Number](n N) (s string) {
 	if n != 0 {
-		s = "expected zero\n"
+		s = "expected value of 0\n"
 		s += fmt.Sprintf("↪ n: %v\n", n)
 	}
 	return
@@ -419,7 +435,7 @@ func Zero[N interfaces.Number](n N) (s string) {
 
 func NonZero[N interfaces.Number](n N) (s string) {
 	if n == 0 {
-		s = "expected non-zero\n"
+		s = "expected non-zero value\n"
 		s += fmt.Sprintf("↪ n: %v\n", n)
 	}
 	return
@@ -427,7 +443,7 @@ func NonZero[N interfaces.Number](n N) (s string) {
 
 func One[N interfaces.Number](n N) (s string) {
 	if n != 1 {
-		s = "expected one\n"
+		s = "expected value of 1\n"
 		s += fmt.Sprintf("↪ n: %v\n", n)
 	}
 	return

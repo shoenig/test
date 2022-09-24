@@ -205,10 +205,22 @@ func Positive[N interfaces.Number](t T, n N, scripts ...PostScript) {
 	invoke(t, assertions.Positive(n), scripts...)
 }
 
+// NonPositive asserts n ≤ 0.
+func NonPositive[N interfaces.Number](t T, n N, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.NonPositive(n), scripts...)
+}
+
 // Negative asserts n < 0.
 func Negative[N interfaces.Number](t T, n N, scripts ...PostScript) {
 	t.Helper()
 	invoke(t, assertions.Negative(n), scripts...)
+}
+
+// NonNegative asserts n >= 0.
+func NonNegative[N interfaces.Number](t T, n N, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.NonNegative(n), scripts...)
 }
 
 // Zero asserts n == 0.
