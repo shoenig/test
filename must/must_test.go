@@ -472,13 +472,13 @@ func TestSliceEqual(t *testing.T) {
 }
 
 func TestLesser(t *testing.T) {
-	tc := newCase(t, `expected to be less via .Less method`)
+	tc := newCase(t, `expected val to be less via .Less method`)
 	t.Cleanup(tc.assert)
 
 	a := &Person{ID: 200, Name: "Alice"}
 	b := &Person{ID: 100, Name: "Bob"}
 
-	Lesser(tc, a, b)
+	Lesser(tc, b, a)
 }
 
 func TestLesser_PS(t *testing.T) {
@@ -488,7 +488,7 @@ func TestLesser_PS(t *testing.T) {
 	a := &Person{ID: 200, Name: "Alice"}
 	b := &Person{ID: 100, Name: "Bob"}
 
-	Lesser(tc, a, b, tc.PS("lesser"))
+	Lesser(tc, b, a, tc.PS("lesser"))
 }
 
 func TestSliceEmpty(t *testing.T) {
@@ -629,14 +629,14 @@ func TestSliceContainsAll(t *testing.T) {
 }
 
 func TestPositive(t *testing.T) {
-	tc := newCase(t, `expected positive value`)
+	tc := newCase(t, `expected positive val`)
 	t.Cleanup(tc.assert)
 
 	Positive(tc, -1)
 }
 
 func TestNegative(t *testing.T) {
-	tc := newCase(t, `expected negative value`)
+	tc := newCase(t, `expected negative val`)
 	t.Cleanup(tc.assert)
 
 	Negative(tc, 1)
@@ -667,19 +667,19 @@ func TestLess(t *testing.T) {
 	t.Run("integers", func(t *testing.T) {
 		tc := newCase(t, `expected 7 < 5`)
 		t.Cleanup(tc.assert)
-		Less(tc, 7, 5)
+		Less(tc, 5, 7)
 	})
 
 	t.Run("floats", func(t *testing.T) {
-		tc := newCase(t, `expected 7.7 < 5.5`)
+		tc := newCase(t, `expected 7.5 < 5.5`)
 		t.Cleanup(tc.assert)
-		Less(tc, 7.7, 5.5)
+		Less(tc, 5.5, 7.5)
 	})
 
 	t.Run("strings", func(t *testing.T) {
 		tc := newCase(t, `expected foo < bar`)
 		t.Cleanup(tc.assert)
-		Less(tc, "foo", "bar")
+		Less(tc, "bar", "foo")
 	})
 
 	t.Run("equal", func(t *testing.T) {
@@ -690,28 +690,28 @@ func TestLess(t *testing.T) {
 }
 
 func TestLessEq(t *testing.T) {
-	tc := newCase(t, `expected 7 <= 5`)
+	tc := newCase(t, `expected 7 ≤ 5`)
 	t.Cleanup(tc.assert)
-	LessEq(tc, 7, 5)
+	LessEq(tc, 5, 7)
 }
 
 func TestGreater(t *testing.T) {
 	t.Run("integer", func(t *testing.T) {
 		tc := newCase(t, `expected 5 > 7`)
 		t.Cleanup(tc.assert)
-		Greater(tc, 5, 7)
+		Greater(tc, 7, 5)
 	})
 
 	t.Run("floats", func(t *testing.T) {
 		tc := newCase(t, `expected 5.5 > 7.7`)
 		t.Cleanup(tc.assert)
-		Greater(tc, 5.5, 7.7)
+		Greater(tc, 7.7, 5.5)
 	})
 
 	t.Run("strings", func(t *testing.T) {
 		tc := newCase(t, `expected bar > foo`)
 		t.Cleanup(tc.assert)
-		Greater(tc, "bar", "foo")
+		Greater(tc, "foo", "bar")
 	})
 
 	t.Run("equal", func(t *testing.T) {
@@ -722,20 +722,20 @@ func TestGreater(t *testing.T) {
 }
 
 func TestGreaterEq(t *testing.T) {
-	tc := newCase(t, `expected 5 >= 7`)
+	tc := newCase(t, `expected 5 ≥ 7`)
 	t.Cleanup(tc.assert)
-	GreaterEq(tc, 5, 7)
+	GreaterEq(tc, 7, 5)
 }
 
 func TestBetween(t *testing.T) {
 	t.Run("too high", func(t *testing.T) {
-		tc := newCase(t, `expected value in range (3 ≤ value ≤ 5)`)
+		tc := newCase(t, `expected val in range (3 ≤ val ≤ 5)`)
 		t.Cleanup(tc.assert)
 		Between(tc, 3, 7, 5)
 	})
 
 	t.Run("too low", func(t *testing.T) {
-		tc := newCase(t, `expected value in range (3 ≤ value ≤ 5)`)
+		tc := newCase(t, `expected val in range (3 ≤ val ≤ 5)`)
 		t.Cleanup(tc.assert)
 		Between(tc, 3, 1, 5)
 	})
@@ -743,25 +743,25 @@ func TestBetween(t *testing.T) {
 
 func TestBetweenExclusive(t *testing.T) {
 	t.Run("too high", func(t *testing.T) {
-		tc := newCase(t, `expected value in range (3 < value < 5)`)
+		tc := newCase(t, `expected val in range (3 < val < 5)`)
 		t.Cleanup(tc.assert)
 		BetweenExclusive(tc, 3, 7, 5)
 	})
 
 	t.Run("too high fence", func(t *testing.T) {
-		tc := newCase(t, `expected value in range (3 < value < 5)`)
+		tc := newCase(t, `expected val in range (3 < val < 5)`)
 		t.Cleanup(tc.assert)
 		BetweenExclusive(tc, 3, 5, 5)
 	})
 
 	t.Run("too low", func(t *testing.T) {
-		tc := newCase(t, `expected value in range (3 < value < 5)`)
+		tc := newCase(t, `expected val in range (3 < val < 5)`)
 		t.Cleanup(tc.assert)
 		BetweenExclusive(tc, 3, 1, 5)
 	})
 
 	t.Run("too low fence", func(t *testing.T) {
-		tc := newCase(t, `expected value in range (3 < value < 5)`)
+		tc := newCase(t, `expected val in range (3 < val < 5)`)
 		t.Cleanup(tc.assert)
 		BetweenExclusive(tc, 3, 3, 5)
 	})
@@ -954,7 +954,7 @@ func TestMapEq(t *testing.T) {
 }
 
 func TestMapEqFunc(t *testing.T) {
-	t.Run("different value", func(t *testing.T) {
+	t.Run("different values", func(t *testing.T) {
 		tc := newCase(t, `expected maps of same values via 'eq' function`)
 		t.Cleanup(tc.assert)
 
@@ -975,7 +975,7 @@ func TestMapEqFunc(t *testing.T) {
 }
 
 func TestMapEqual(t *testing.T) {
-	t.Run("different value", func(t *testing.T) {
+	t.Run("different values", func(t *testing.T) {
 		tc := newCase(t, `expected maps of same values via .Equal method`)
 		t.Cleanup(tc.assert)
 

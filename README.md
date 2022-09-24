@@ -14,7 +14,11 @@ There are two packages, `test` and `must`.
 
 ### Changes
 
-:warning: v0.4.0 contains breaking changes - Slice functions are renamed to be more consistent and to make room for interface based variants.
+:warning: v0.4.0 contains breaking changes
+
+ - Slice functions are renamed to be more consistent and to make room for interface based variants.
+ - Filesystem assertions now use OS by default, FS interface methods are renamed.
+ - Comparison assertions now have the expectation parameter first.
 
 ### Requirements
 
