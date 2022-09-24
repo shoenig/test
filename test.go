@@ -621,14 +621,14 @@ func NotEmpty(t T, e interfaces.EmptyFunc, scripts ...PostScript) {
 	invoke(t, assertions.NotEmpty(e), scripts...)
 }
 
-// Contains asserts container.Contains(element) is true.
-func Contains[C any](t T, element C, container interfaces.Contains[C], scripts ...PostScript) {
+// Contains asserts container.ContainsFunc(element) is true.
+func Contains[C any](t T, element C, container interfaces.ContainsFunc[C], scripts ...PostScript) {
 	t.Helper()
 	invoke(t, assertions.Contains(element, container), scripts...)
 }
 
-// NotContains asserts container.Contains(element) is false.
-func NotContains[C any](t T, element C, container interfaces.Contains[C], scripts ...PostScript) {
+// NotContains asserts container.ContainsFunc(element) is false.
+func NotContains[C any](t T, element C, container interfaces.ContainsFunc[C], scripts ...PostScript) {
 	t.Helper()
 	invoke(t, assertions.NotContains(element, container), scripts...)
 }

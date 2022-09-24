@@ -1076,14 +1076,14 @@ func NotEmpty(e interfaces.EmptyFunc) (s string) {
 	return
 }
 
-func Contains[C any](i C, c interfaces.Contains[C]) (s string) {
+func Contains[C any](i C, c interfaces.ContainsFunc[C]) (s string) {
 	if !c.Contains(i) {
 		s = "expected to contain element, but does not\n"
 	}
 	return
 }
 
-func NotContains[C any](i C, c interfaces.Contains[C]) (s string) {
+func NotContains[C any](i C, c interfaces.ContainsFunc[C]) (s string) {
 	if c.Contains(i) {
 		s = "expected not to contain element, but it does\n"
 	}
