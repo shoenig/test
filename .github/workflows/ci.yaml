@@ -1,13 +1,13 @@
 name: Run CI Tests
 on: [push]
 env:
-  GO_VERSION: 1.18.5
+  GO_VERSION: ~1.19
 jobs:
   changes:
     runs-on: [ubuntu-22.04]
     steps:
       - uses: actions/checkout@v3
-      - uses: magnetikonline/action-golang-cache@v1
+      - uses: actions/setup-go@v3
         with:
           go-version: ${{env.GO_VERSION}}
       - name: Check for changes
@@ -21,7 +21,7 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v3
-      - uses: magnetikonline/action-golang-cache@v1
+      - uses: actions/setup-go@v3
         with:
           go-version: ${{env.GO_VERSION}}
       - name: Run Go Vet
