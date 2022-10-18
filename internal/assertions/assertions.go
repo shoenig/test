@@ -378,6 +378,16 @@ func SliceNotContains[A any](slice []A, item A) (s string) {
 }
 
 func SliceContainsAll[A any](slice, items []A) (s string) {
+	if len(slice) != len(items) {
+		s = "expected slice and items to contain same number of elements\n"
+		s += fmt.Sprintf("↪ len(slice): %d\n", len(slice))
+		s += fmt.Sprintf("↪ len(items): %d\n", len(slice))
+		return s
+	}
+	return SliceContainsSubset(slice, items)
+}
+
+func SliceContainsSubset[A any](slice, items []A) (s string) {
 OUTER:
 	for _, target := range items {
 		var item A
