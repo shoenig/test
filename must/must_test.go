@@ -615,6 +615,38 @@ func TestSliceNotContains(t *testing.T) {
 }
 
 func TestSliceContainsAll(t *testing.T) {
+	t.Run("wrong element", func(t *testing.T) {
+		tc := newCase(t, `expected slice to contain missing item`)
+		s := []*Person{
+			{ID: 100, Name: "Alice"},
+			{ID: 101, Name: "Bob"},
+		}
+		SliceContainsAll(tc, s, []*Person{{ID: 101, Name: "Bob"}, {ID: 105, Name: "Eve"}})
+		t.Cleanup(tc.assert)
+	})
+
+	t.Run("too large", func(t *testing.T) {
+		tc := newCase(t, `expected slice and items to contain same number of elements`)
+		s := []*Person{
+			{ID: 100, Name: "Alice"},
+			{ID: 101, Name: "Bob"},
+			{ID: 102, Name: "Carl"},
+		}
+		SliceContainsAll(tc, s, []*Person{{ID: 101, Name: "Bob"}, {ID: 100, Name: "Alice"}})
+		t.Cleanup(tc.assert)
+	})
+
+	t.Run("too small", func(t *testing.T) {
+		tc := newCase(t, `expected slice and items to contain same number of elements`)
+		s := []*Person{
+			{ID: 101, Name: "Bob"},
+		}
+		SliceContainsAll(tc, s, []*Person{{ID: 101, Name: "Bob"}, {ID: 100, Name: "Alice"}})
+		t.Cleanup(tc.assert)
+	})
+}
+
+func TestSliceContainsSubset(t *testing.T) {
 	tc := newCase(t, `expected slice to contain missing item`)
 	t.Cleanup(tc.assert)
 
@@ -625,7 +657,7 @@ func TestSliceContainsAll(t *testing.T) {
 		{ID: 104, Name: "Dora"},
 	}
 
-	SliceContainsAll(tc, s, []*Person{{ID: 101, Name: "Bob"}, {ID: 105, Name: "Eve"}})
+	SliceContainsSubset(tc, s, []*Person{{ID: 101, Name: "Bob"}, {ID: 105, Name: "Eve"}})
 }
 
 func TestPositive(t *testing.T) {

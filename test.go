@@ -188,15 +188,26 @@ func SliceContains[A any](t T, slice []A, item A, scripts ...PostScript) {
 	invoke(t, assertions.SliceContains(slice, item), scripts...)
 }
 
+// SliceNotContains asserts item does not exist in slice, using cmp.Equal to
+// compare elements.
 func SliceNotContains[A any](t T, slice []A, item A, scripts ...PostScript) {
 	t.Helper()
 	invoke(t, assertions.SliceNotContains(slice, item), scripts...)
 }
 
-// SliceContainsAll asserts each item in items is contained in slice.
+// SliceContainsAll asserts slice and items contain the same elements, but in
+// no particular order. The number of elements in slice and items must be the
+// same.
 func SliceContainsAll[A any](t T, slice, items []A, scripts ...PostScript) {
 	t.Helper()
 	invoke(t, assertions.SliceContainsAll(slice, items), scripts...)
+}
+
+// SliceContainsSubset asserts slice contains each item in items, in no particular
+// order. There could be additional elements in slice not in items.
+func SliceContainsSubset[A any](t T, slice, items []A, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.SliceContainsSubset(slice, items), scripts...)
 }
 
 // Positive asserts n > 0.
