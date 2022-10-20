@@ -563,7 +563,7 @@ func StrContainsFields(t T, s string, fields []string, scripts ...PostScript) {
 // StrHasPrefix asserts that s starts with prefix.
 func StrHasPrefix(t T, prefix, s string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.StrHasPrefix(s, prefix), scripts...)
+	invoke(t, assertions.StrHasPrefix(prefix, s), scripts...)
 }
 
 // StrNotHasPrefix asserts that s does not start with prefix.
