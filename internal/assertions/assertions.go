@@ -981,7 +981,7 @@ func StrContainsFields(str string, fields []string) (s string) {
 	return
 }
 
-func StrHasPrefix(str, prefix string) (s string) {
+func StrHasPrefix(prefix, str string) (s string) {
 	if !strings.HasPrefix(str, prefix) {
 		s = "expected string to have prefix\n"
 		s += fmt.Sprintf("↪ prefix: %s\n", prefix)
@@ -990,7 +990,7 @@ func StrHasPrefix(str, prefix string) (s string) {
 	return
 }
 
-func StrNotHasPrefix(str, prefix string) (s string) {
+func StrNotHasPrefix(prefix, str string) (s string) {
 	if strings.HasPrefix(str, prefix) {
 		s = "expected string to not have prefix; but it does\n"
 		s += fmt.Sprintf("↪ prefix: %s\n", prefix)
@@ -999,7 +999,7 @@ func StrNotHasPrefix(str, prefix string) (s string) {
 	return
 }
 
-func StrHasSuffix(str, suffix string) (s string) {
+func StrHasSuffix(suffix, str string) (s string) {
 	if !strings.HasSuffix(str, suffix) {
 		s = "expected string to have suffix\n"
 		s += fmt.Sprintf("↪ suffix: %s\n", suffix)
@@ -1008,7 +1008,7 @@ func StrHasSuffix(str, suffix string) (s string) {
 	return
 }
 
-func StrNotHasSuffix(str, suffix string) (s string) {
+func StrNotHasSuffix(suffix, str string) (s string) {
 	if strings.HasSuffix(str, suffix) {
 		s = "expected string to not have suffix; but it does\n"
 		s += fmt.Sprintf("↪ suffix: %s\n", suffix)
