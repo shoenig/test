@@ -1292,28 +1292,28 @@ func TestStrHasPrefix(t *testing.T) {
 	tc := newCase(t, `expected string to have prefix`)
 	t.Cleanup(tc.assert)
 
-	StrHasPrefix(tc, "mr. biggles", "mrs.")
+	StrHasPrefix(tc, "mrs.", "mr. biggles")
 }
 
 func TestStrNotHasPrefix(t *testing.T) {
 	tc := newCase(t, `expected string to not have prefix; but it does`)
 	t.Cleanup(tc.assert)
 
-	StrNotHasPrefix(tc, "mr. biggles", "mr.")
+	StrNotHasPrefix(tc, "mr.", "mr. biggles")
 }
 
 func TestStrHasSuffix(t *testing.T) {
 	tc := newCase(t, `expected string to have suffix`)
 	t.Cleanup(tc.assert)
 
-	StrHasSuffix(tc, "mr. biggles", "wiggles")
+	StrHasSuffix(tc, "wiggles", "mr. biggles")
 }
 
 func TestStringNotHasSuffix(t *testing.T) {
 	tc := newCase(t, `expected string to not have suffix; but it does`)
 	t.Cleanup(tc.assert)
 
-	StrNotHasSuffix(tc, "mr. biggles", "biggles")
+	StrNotHasSuffix(tc, "biggles", "mr. biggles")
 }
 
 func TestRegexMatch(t *testing.T) {

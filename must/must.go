@@ -563,27 +563,27 @@ func StrContainsFields(t T, s string, fields []string, scripts ...PostScript) {
 }
 
 // StrHasPrefix asserts that s starts with prefix.
-func StrHasPrefix(t T, s, prefix string, scripts ...PostScript) {
+func StrHasPrefix(t T, prefix, s string, scripts ...PostScript) {
 	t.Helper()
 	invoke(t, assertions.StrHasPrefix(s, prefix), scripts...)
 }
 
 // StrNotHasPrefix asserts that s does not start with prefix.
-func StrNotHasPrefix(t T, s, prefix string, scripts ...PostScript) {
+func StrNotHasPrefix(t T, prefix, s string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.StrNotHasPrefix(s, prefix), scripts...)
+	invoke(t, assertions.StrNotHasPrefix(prefix, s), scripts...)
 }
 
 // StrHasSuffix asserts that s ends with suffix.
-func StrHasSuffix(t T, s, suffix string, scripts ...PostScript) {
+func StrHasSuffix(t T, suffix, s string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.StrHasSuffix(s, suffix), scripts...)
+	invoke(t, assertions.StrHasSuffix(suffix, s), scripts...)
 }
 
 // StrNotHasSuffix asserts that s does not end with suffix.
-func StrNotHasSuffix(t T, s, suffix string, scripts ...PostScript) {
+func StrNotHasSuffix(t T, suffix, s string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.StrNotHasSuffix(s, suffix), scripts...)
+	invoke(t, assertions.StrNotHasSuffix(suffix, s), scripts...)
 }
 
 // RegexMatch asserts regular expression re matches string s.
