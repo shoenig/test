@@ -152,7 +152,7 @@ func ErrorIs(err error, target error) (s string) {
 	if !errors.Is(err, target) {
 		s = "expected errors.Is match\n"
 		s += fmt.Sprintf("↪ error: %v\n", err)
-		s += fmt.Sprintf("↪ target: %v\n", err)
+		s += fmt.Sprintf("↪ target: %v\n", target)
 	}
 	return
 }
