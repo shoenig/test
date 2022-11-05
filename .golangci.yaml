@@ -8,7 +8,5 @@ linters:
    - errorlint
    - bodyclose
    - durationcheck
-   - exhaustive
-   - goconst
    - whitespace
 

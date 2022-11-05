@@ -975,7 +975,7 @@ func StrContainsFields(str string, fields []string) (s string) {
 		}
 	}
 	if len(missing) > 0 {
-		s = fmt.Sprintf("expected fields of string to contain subset of values\n")
+		s = "expected fields of string to contain subset of values\n"
 		s += fmt.Sprintf("↪ missing: %s\n", strings.Join(missing, ", "))
 	}
 	return
