@@ -1,0 +1,14 @@
+run:
+  timeout: 5m
+linters:
+  enable:
+   - gofmt
+   - errcheck
+   - errname
+   - errorlint
+   - bodyclose
+   - durationcheck
+   - exhaustive
+   - goconst
+   - whitespace
+
