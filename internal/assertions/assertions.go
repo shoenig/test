@@ -92,47 +92,47 @@ func isNil(a any) bool {
 
 func Nil(a any) (s string) {
 	if !isNil(a) {
-		s = "expected to be nil; is not nil"
+		s = "expected to be nil; is not nil\n"
 	}
 	return
 }
 
 func NotNil(a any) (s string) {
 	if isNil(a) {
-		s = "expected to not be nil; is nil"
+		s = "expected to not be nil; is nil\n"
 	}
 	return
 }
 
 func True(condition bool) (s string) {
 	if !condition {
-		s = "expected condition to be true; is false"
+		s = "expected condition to be true; is false\n"
 	}
 	return
 }
 
 func False(condition bool) (s string) {
 	if condition {
-		s = "expected condition to be false; is true"
+		s = "expected condition to be false; is true\n"
 	}
 	return
 }
 
 func Unreachable() (s string) {
-	s = "expected not to execute this code path"
+	s = "expected not to execute this code path\n"
 	return
 }
 
 func Error(err error) (s string) {
 	if err == nil {
-		s = "expected non-nil error; is nil"
+		s = "expected non-nil error; is nil\n"
 	}
 	return
 }
 
 func EqError(err error, msg string) (s string) {
 	if err == nil {
-		s = "expected error; got nil"
+		s = "expected error; got nil\n"
 		return
 	}
 	e := err.Error()
@@ -146,7 +146,7 @@ func EqError(err error, msg string) (s string) {
 
 func ErrorIs(err error, target error) (s string) {
 	if err == nil {
-		s = "expected error; got nil"
+		s = "expected error; got nil\n"
 		return
 	}
 	if !errors.Is(err, target) {
@@ -160,7 +160,7 @@ func ErrorIs(err error, target error) (s string) {
 func NoError(err error) (s string) {
 	if err != nil {
 		s = "expected nil error\n"
-		s += fmt.Sprintf("↪ error: %v", err)
+		s += fmt.Sprintf("↪ error: %v\n", err)
 	}
 	return
 }
@@ -198,14 +198,14 @@ func EqFunc[A any](exp, val A, eq func(a, b A) bool) (s string) {
 
 func NotEqOp[C comparable](exp, val C) (s string) {
 	if exp == val {
-		s = "expected inequality via !="
+		s = "expected inequality via !=\n"
 	}
 	return
 }
 
 func NotEqFunc[A any](exp, val A, eq func(a, b A) bool) (s string) {
 	if eq(exp, val) {
-		s = "expected inequality via 'eq' function"
+		s = "expected inequality via 'eq' function\n"
 	}
 	return
 }
@@ -214,12 +214,12 @@ func EqJSON(exp, val string) (s string) {
 	var expA, expB any
 
 	if err := json.Unmarshal([]byte(exp), &expA); err != nil {
-		s = fmt.Sprintf("failed to unmarshal first argument as json: %v", err)
+		s = fmt.Sprintf("failed to unmarshal first argument as json: %v\n", err)
 		return
 	}
 
 	if err := json.Unmarshal([]byte(val), &expB); err != nil {
-		s = fmt.Sprintf("failed to unmarshal second argument as json: %v", err)
+		s = fmt.Sprintf("failed to unmarshal second argument as json: %v\n", err)
 		return
 	}
 
@@ -461,28 +461,28 @@ func One[N interfaces.Number](n N) (s string) {
 
 func Less[O constraints.Ordered](exp, val O) (s string) {
 	if !(val < exp) {
-		s = fmt.Sprintf("expected %v < %v", val, exp)
+		s = fmt.Sprintf("expected %v < %v\n", val, exp)
 	}
 	return
 }
 
 func LessEq[O constraints.Ordered](exp, val O) (s string) {
 	if !(val <= exp) {
-		s = fmt.Sprintf("expected %v ≤ %v", val, exp)
+		s = fmt.Sprintf("expected %v ≤ %v\n", val, exp)
 	}
 	return
 }
 
 func Greater[O constraints.Ordered](exp, val O) (s string) {
 	if !(val > exp) {
-		s = fmt.Sprintf("expected %v > %v", val, exp)
+		s = fmt.Sprintf("expected %v > %v\n", val, exp)
 	}
 	return
 }
 
 func GreaterEq[O constraints.Ordered](exp, val O) (s string) {
 	if !(val >= exp) {
-		s = fmt.Sprintf("expected %v ≥ %v", val, exp)
+		s = fmt.Sprintf("expected %v ≥ %v\n", val, exp)
 	}
 	return
 }
@@ -581,28 +581,28 @@ func InDelta[N interfaces.Number](a, b, delta N) (s string) {
 	var zero N
 
 	if !interfaces.Numeric(delta) {
-		s = fmt.Sprintf("delta must be numeric; got %v", delta)
+		s = fmt.Sprintf("delta must be numeric; got %v\n", delta)
 		return
 	}
 
 	if delta <= zero {
-		s = fmt.Sprintf("delta must be positive; got %v", delta)
+		s = fmt.Sprintf("delta must be positive; got %v\n", delta)
 		return
 	}
 
 	if !interfaces.Numeric(a) {
-		s = fmt.Sprintf("first argument must be numeric; got %v", a)
+		s = fmt.Sprintf("first argument must be numeric; got %v\n", a)
 		return
 	}
 
 	if !interfaces.Numeric(b) {
-		s = fmt.Sprintf("second argument must be numeric; got %v", b)
+		s = fmt.Sprintf("second argument must be numeric; got %v\n", b)
 		return
 	}
 
 	difference := a - b
 	if difference < -delta || difference > delta {
-		s = fmt.Sprintf("%v and %v not within %v", a, b, delta)
+		s = fmt.Sprintf("%v and %v not within %v\n", a, b, delta)
 		return
 	}
 
