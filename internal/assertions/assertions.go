@@ -381,7 +381,7 @@ func SliceContainsAll[A any](slice, items []A) (s string) {
 	if len(slice) != len(items) {
 		s = "expected slice and items to contain same number of elements\n"
 		s += fmt.Sprintf("↪ len(slice): %d\n", len(slice))
-		s += fmt.Sprintf("↪ len(items): %d\n", len(slice))
+		s += fmt.Sprintf("↪ len(items): %d\n", len(items))
 		return s
 	}
 	return SliceContainsSubset(slice, items)
