@@ -768,7 +768,7 @@ func mapContains[M ~map[K]V, K comparable, V any](m M, values []V, eq func(V, V)
 	for _, wanted := range values {
 		found := false
 		for _, v := range m {
-			if equal[V](wanted, v) {
+			if equal(wanted, v) {
 				found = true
 				break
 			}
@@ -811,7 +811,7 @@ func mapNotContains[M ~map[K]V, K comparable, V any](m M, values []V, eq func(V,
 }
 
 func MapContainsValues[M ~map[K]V, K comparable, V any](m M, vals []V) (s string) {
-	return mapContains[M, K, V](m, vals, func(a, b V) bool {
+	return mapContains(m, vals, func(a, b V) bool {
 		return equal(a, b)
 	})
 }
@@ -823,7 +823,7 @@ func MapNotContainsValues[M ~map[K]V, K comparable, V any](m M, vals []V) (s str
 }
 
 func MapContainsValuesFunc[M ~map[K]V, K comparable, V any](m M, vals []V, eq func(V, V) bool) (s string) {
-	return mapContains[M, K, V](m, vals, eq)
+	return mapContains(m, vals, eq)
 }
 
 func MapNotContainsValuesFunc[M ~map[K]V, K comparable, V any](m M, vals []V, eq func(V, V) bool) (s string) {
@@ -831,7 +831,7 @@ func MapNotContainsValuesFunc[M ~map[K]V, K comparable, V any](m M, vals []V, eq
 }
 
 func MapContainsValuesEqual[M ~map[K]V, K comparable, V interfaces.EqualFunc[V]](m M, vals []V) (s string) {
-	return mapContains[M, K, V](m, vals, func(a, b V) bool {
+	return mapContains(m, vals, func(a, b V) bool {
 		return a.Equal(b)
 	})
 }

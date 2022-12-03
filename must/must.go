@@ -342,69 +342,69 @@ func InDeltaSlice[N interfaces.Number](t T, a, b []N, delta N, scripts ...PostSc
 // cmp.Equal function to compare vals.
 func MapEq[M1, M2 interfaces.Map[K, V], K comparable, V any](t T, exp M1, val M2, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapEq[M1, M2, K, V](exp, val), scripts...)
+	invoke(t, assertions.MapEq(exp, val), scripts...)
 }
 
 // MapEqFunc asserts maps exp and val contain the same key/val pairs, using eq to
 // compare vals.
 func MapEqFunc[M1, M2 interfaces.Map[K, V], K comparable, V any](t T, exp M1, val M2, eq func(V, V) bool, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapEqFunc[M1, M2, K, V](exp, val, eq), scripts...)
+	invoke(t, assertions.MapEqFunc(exp, val, eq), scripts...)
 }
 
 // MapEqual asserts maps exp and val contain the same key/val pairs, using Equal
 // method to compare vals
 func MapEqual[M interfaces.MapEqualFunc[K, V], K comparable, V interfaces.EqualFunc[V]](t T, exp, val M, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapEqual[M, K, V](exp, val), scripts...)
+	invoke(t, assertions.MapEqual(exp, val), scripts...)
 }
 
 // MapLen asserts map is of size n.
 func MapLen[M ~map[K]V, K comparable, V any](t T, n int, m M, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapLen[M, K, V](n, m), scripts...)
+	invoke(t, assertions.MapLen(n, m), scripts...)
 }
 
 // MapEmpty asserts map is empty.
 func MapEmpty[M ~map[K]V, K comparable, V any](t T, m M, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapEmpty[M, K, V](m), scripts...)
+	invoke(t, assertions.MapEmpty(m), scripts...)
 }
 
 // MapNotEmpty asserts map is not empty.
 func MapNotEmpty[M ~map[K]V, K comparable, V any](t T, m M, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapNotEmpty[M, K, V](m), scripts...)
+	invoke(t, assertions.MapNotEmpty(m), scripts...)
 }
 
 // MapContainsKeys asserts m contains each key in keys.
 func MapContainsKeys[M ~map[K]V, K comparable, V any](t T, m M, keys []K, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapContainsKeys[M, K, V](m, keys), scripts...)
+	invoke(t, assertions.MapContainsKeys(m, keys), scripts...)
 }
 
 // MapNotContainsKeys asserts m does not contain any key in keys.
 func MapNotContainsKeys[M ~map[K]V, K comparable, V any](t T, m M, keys []K, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapNotContainsKeys[M, K, V](m, keys), scripts...)
+	invoke(t, assertions.MapNotContainsKeys(m, keys), scripts...)
 }
 
 // MapContainsValues asserts m contains each val in vals.
 func MapContainsValues[M ~map[K]V, K comparable, V any](t T, m M, vals []V, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapContainsValues[M, K, V](m, vals), scripts...)
+	invoke(t, assertions.MapContainsValues(m, vals), scripts...)
 }
 
 // MapNotContainsValues asserts m does not contain any value in vals.
 func MapNotContainsValues[M ~map[K]V, K comparable, V any](t T, m M, vals []V, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapNotContainsValues[M, K, V](m, vals), scripts...)
+	invoke(t, assertions.MapNotContainsValues(m, vals), scripts...)
 }
 
 // MapContainsValuesFunc asserts m contains each val in vals using the eq function.
 func MapContainsValuesFunc[M ~map[K]V, K comparable, V any](t T, m M, vals []V, eq func(V, V) bool, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapContainsValuesFunc[M, K, V](m, vals, eq), scripts...)
+	invoke(t, assertions.MapContainsValuesFunc(m, vals, eq), scripts...)
 }
 
 // MapNotContainsValuesFunc asserts m does not contain any value in vals using the eq function.
@@ -416,7 +416,7 @@ func MapNotContainsValuesFunc[M ~map[K]V, K comparable, V any](t T, m M, vals []
 // MapContainsValuesEqual asserts m contains each val in vals using the V.Equal method.
 func MapContainsValuesEqual[M ~map[K]V, K comparable, V interfaces.EqualFunc[V]](t T, m M, vals []V, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.MapContainsValuesEqual[M, K, V](m, vals), scripts...)
+	invoke(t, assertions.MapContainsValuesEqual(m, vals), scripts...)
 }
 
 // MapNotContainsValuesEqual asserts m does not contain any value in vals using the V.Equal method.
