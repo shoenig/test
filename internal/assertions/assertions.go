@@ -738,10 +738,25 @@ func MapContainsKeys[M ~map[K]V, K comparable, V any](m M, keys []K) (s string) 
 			missing = append(missing, key)
 		}
 	}
-
 	if len(missing) > 0 {
 		s = "expected map to contain keys\n"
 		for _, key := range missing {
+			s += fmt.Sprintf("↪ key: %v\n", key)
+		}
+	}
+	return
+}
+
+func MapNotContainsKeys[M ~map[K]V, K comparable, V any](m M, keys []K) (s string) {
+	var unwanted []K
+	for _, key := range keys {
+		if _, exists := m[key]; exists {
+			unwanted = append(unwanted, key)
+		}
+	}
+	if len(unwanted) > 0 {
+		s = "expected map to not contain keys\n"
+		for _, key := range unwanted {
 			s += fmt.Sprintf("↪ key: %v\n", key)
 		}
 	}
@@ -772,8 +787,37 @@ func mapContains[M ~map[K]V, K comparable, V any](m M, values []V, eq func(V, V)
 	return
 }
 
+func mapNotContains[M ~map[K]V, K comparable, V any](m M, values []V, eq func(V, V) bool) (s string) {
+	var unexpected []V
+	for _, target := range values {
+		found := false
+		for _, v := range m {
+			if equal(target, v) {
+				found = true
+				break
+			}
+		}
+		if found {
+			unexpected = append(unexpected, target)
+		}
+	}
+	if len(unexpected) > 0 {
+		s = "expected map to not contain values\n"
+		for _, val := range unexpected {
+			s += fmt.Sprintf("↪ val: %v\n", val)
+		}
+	}
+	return
+}
+
 func MapContainsValues[M ~map[K]V, K comparable, V any](m M, vals []V) (s string) {
 	return mapContains[M, K, V](m, vals, func(a, b V) bool {
+		return equal(a, b)
+	})
+}
+
+func MapNotContainsValues[M ~map[K]V, K comparable, V any](m M, vals []V) (s string) {
+	return mapNotContains(m, vals, func(a, b V) bool {
 		return equal(a, b)
 	})
 }
@@ -782,8 +826,18 @@ func MapContainsValuesFunc[M ~map[K]V, K comparable, V any](m M, vals []V, eq fu
 	return mapContains[M, K, V](m, vals, eq)
 }
 
+func MapNotContainsValuesFunc[M ~map[K]V, K comparable, V any](m M, vals []V, eq func(V, V) bool) (s string) {
+	return mapNotContains(m, vals, eq)
+}
+
 func MapContainsValuesEqual[M ~map[K]V, K comparable, V interfaces.EqualFunc[V]](m M, vals []V) (s string) {
 	return mapContains[M, K, V](m, vals, func(a, b V) bool {
+		return a.Equal(b)
+	})
+}
+
+func MapNotContainsValuesEqual[M ~map[K]V, K comparable, V interfaces.EqualFunc[V]](m M, vals []V) (s string) {
+	return mapNotContains(m, vals, func(a, b V) bool {
 		return a.Equal(b)
 	})
 }
