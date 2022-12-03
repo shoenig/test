@@ -381,10 +381,22 @@ func MapContainsKeys[M ~map[K]V, K comparable, V any](t T, m M, keys []K, script
 	invoke(t, assertions.MapContainsKeys[M, K, V](m, keys), scripts...)
 }
 
+// MapNotContainsKeys asserts m does not contain any key in keys.
+func MapNotContainsKeys[M ~map[K]V, K comparable, V any](t T, m M, keys []K, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.MapNotContainsKeys[M, K, V](m, keys), scripts...)
+}
+
 // MapContainsValues asserts m contains each val in vals.
 func MapContainsValues[M ~map[K]V, K comparable, V any](t T, m M, vals []V, scripts ...PostScript) {
 	t.Helper()
 	invoke(t, assertions.MapContainsValues[M, K, V](m, vals), scripts...)
+}
+
+// MapNotContainsValues asserts m does not contain any value in vals.
+func MapNotContainsValues[M ~map[K]V, K comparable, V any](t T, m M, vals []V, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.MapNotContainsValues[M, K, V](m, vals), scripts...)
 }
 
 // MapContainsValuesFunc asserts m contains each val in vals using the eq function.
@@ -393,9 +405,22 @@ func MapContainsValuesFunc[M ~map[K]V, K comparable, V any](t T, m M, vals []V, 
 	invoke(t, assertions.MapContainsValuesFunc[M, K, V](m, vals, eq), scripts...)
 }
 
+// MapNotContainsValuesFunc asserts m does not contain any value in vals using the eq function.
+func MapNotContainsValuesFunc[M ~map[K]V, K comparable, V any](t T, m M, vals []V, eq func(V, V) bool, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.MapNotContainsValuesFunc(m, vals, eq), scripts...)
+}
+
+// MapContainsValuesEqual asserts m contains each val in vals using the V.Equal method.
 func MapContainsValuesEqual[M ~map[K]V, K comparable, V interfaces.EqualFunc[V]](t T, m M, vals []V, scripts ...PostScript) {
 	t.Helper()
 	invoke(t, assertions.MapContainsValuesEqual[M, K, V](m, vals), scripts...)
+}
+
+// MapNotContainsValuesEqual asserts m does not contain any value in vals using the V.Equal method.
+func MapNotContainsValuesEqual[M ~map[K]V, K comparable, V interfaces.EqualFunc[V]](t T, m M, vals []V, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.MapNotContainsValuesEqual(m, vals), scripts...)
 }
 
 // FileExistsFS asserts file exists on the fs.FS filesystem.
