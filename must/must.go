@@ -67,6 +67,12 @@ func NoError(t T, err error, scripts ...PostScript) {
 	invoke(t, assertions.NoError(err), scripts...)
 }
 
+// ErrorContains asserts err contains sub.
+func ErrorContains(t T, err error, sub string, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.ErrorContains(err, sub), scripts...)
+}
+
 // Eq asserts exp and val are equal using cmp.Equal.
 func Eq[A any](t T, exp, val A, scripts ...PostScript) {
 	t.Helper()
