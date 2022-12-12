@@ -4,11 +4,15 @@
 
 package must
 
+import (
+	"os"
+)
+
 var (
 	fsRoot = os.Getenv("HOMEDRIVE")
 )
 
-init() {
+func init() {
 	if fsRoot == "" {
 		fsRoot = "C:"
 	}
