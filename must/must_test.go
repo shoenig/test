@@ -172,6 +172,13 @@ func TestNoError_PS(t *testing.T) {
 	NoError(tc, errors.New("hello"), tc.PS("no error"))
 }
 
+func TestErrorContains(t *testing.T) {
+	tc := newCase(t, `expected error to contain substring`)
+	t.Cleanup(tc.assert)
+
+	ErrorContains(tc, errors.New("something bad"), "oops")
+}
+
 func TestEq(t *testing.T) {
 	t.Run("number", func(t *testing.T) {
 		tc := newCase(t, `expected equality via cmp.Equal function`)

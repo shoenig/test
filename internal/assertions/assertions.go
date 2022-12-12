@@ -165,6 +165,20 @@ func NoError(err error) (s string) {
 	return
 }
 
+func ErrorContains(err error, sub string) (s string) {
+	if err == nil {
+		s = "expected non-nil error\n"
+		return
+	}
+	actual := err.Error()
+	if !strings.Contains(actual, sub) {
+		s = "expected error to contain substring\n"
+		s += fmt.Sprintf("↪ substring: %s\n", sub)
+		s += fmt.Sprintf("↪       err: %s\n", actual)
+	}
+	return
+}
+
 func Eq[A any](exp, val A) (s string) {
 	if !equal(exp, val) {
 		s = "expected equality via cmp.Equal function\n"
