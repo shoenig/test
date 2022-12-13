@@ -20,6 +20,11 @@ There are four key packages,
 
 :rocket: v0.5.0 contains new packages `wait` and `portal`
 
+ - Package for waiting on conditionals
+ - Package for allocating free ports
+ - Additional Map assertions
+ - Additional `Not*` assertion variants
+
 :warning: v0.4.0 contains breaking changes
 
  - Slice functions are renamed to be more consistent and to make room for interface based variants.
