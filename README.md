@@ -9,12 +9,16 @@
 
 `test` is a generics based testing assertions library for Go.
 
-There are two packages, `test` and `must`.
+There are four key packages,
 
-- `test` - assertions that mark the test for failure and allow the test case to continue
 - `must` - assertions that mark the test for failure and halt the test case immediately
+- `test` - assertions that mark the test for failure and allow the test case to continue
+- `wait` - utilities for waiting on conditionals in tests
+- `portal` - utilities for allocating free ports for network listeners in tests
 
 ### Changes
+
+:rocket: v0.5.0 contains new packages `wait` and `portal`
 
 :warning: v0.4.0 contains breaking changes
 
