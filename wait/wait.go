@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"time"
 )
 
@@ -15,9 +16,8 @@ var (
 )
 
 const (
-	defaultTimeout    = 3 * time.Second
-	defaultGap        = 250 * time.Millisecond
-	defaultIterations = 13
+	defaultTimeout = 3 * time.Second
+	defaultGap     = 250 * time.Millisecond
 )
 
 type Option func(*Control)
@@ -39,20 +39,26 @@ type result struct {
 // Timeout sets the maximum amount of time to allow before giving up and marking
 // the result as a failure.
 //
+// If set, the max attempts constraint is disabled.
+//
 // Default 3 seconds.
 func Timeout(duration time.Duration) Option {
 	return func(c *Control) {
 		c.deadline = time.Now().Add(duration)
+		c.iterations = math.MaxInt64
 	}
 }
 
 // Attempts sets the maximum number of attempts to allow before giving up and
 // marking the result as a failure.
 //
-// Default 12 attempts.
+// If set, the timeout constraint is disabled.
+//
+// By default a max timeout is used and the number of attempts is unlimited.
 func Attempts(max int) Option {
 	return func(c *Control) {
 		c.iterations = max
+		c.deadline = time.Date(9999, 0, 0, 0, 0, 0, 0, time.UTC)
 	}
 }
 
@@ -197,7 +203,6 @@ func On(opts ...Option) *Control {
 	c := &Control{now: time.Now()}
 	for _, opt := range append([]Option{
 		Timeout(defaultTimeout),
-		Attempts(defaultIterations),
 		Gap(defaultGap),
 	}, opts...) {
 		opt(c)

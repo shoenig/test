@@ -18,6 +18,8 @@ var (
 )
 
 func eqErr(t *testing.T, exp, err error) {
+	t.Helper()
+
 	if exp == nil || err == nil {
 		if !errors.Is(exp, err) {
 			t.Fatalf("exp: %v, err: %v", exp, err)
@@ -70,7 +72,6 @@ func TestBoolFunc(t *testing.T) {
 			name: "short timeout",
 			opts: []Option{
 				BoolFunc(boolFnFalse),
-				Attempts(1000),
 				Timeout(100 * time.Millisecond),
 			},
 			exp: ErrTimeoutExceeded,
@@ -80,7 +81,6 @@ func TestBoolFunc(t *testing.T) {
 			opts: []Option{
 				BoolFunc(boolFnFalse),
 				Attempts(10),
-				Timeout(10 * time.Second),
 				Gap(1 * time.Millisecond),
 			},
 			exp: ErrAttemptsExceeded,
@@ -135,7 +135,6 @@ func TestErrorFunc(t *testing.T) {
 			opts: []Option{
 				ErrorFunc(errFnNotNil),
 				Attempts(10),
-				Timeout(10 * time.Second),
 				Gap(1 * time.Millisecond),
 			},
 			exp: fmt.Errorf("%v: %w", ErrAttemptsExceeded, oops),
@@ -199,7 +198,6 @@ func TestTestFunc(t *testing.T) {
 			opts: []Option{
 				TestFunc(tFnNotNil),
 				Attempts(10),
-				Timeout(10 * time.Second),
 				Gap(1 * time.Millisecond),
 			},
 			exp: fmt.Errorf("%v: %w", ErrAttemptsExceeded, oops),
