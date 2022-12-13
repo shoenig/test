@@ -80,7 +80,7 @@ func TestBoolFunc(t *testing.T) {
 			opts: []Option{
 				BoolFunc(boolFnFalse),
 				Attempts(10),
-				Timeout(100 * time.Millisecond),
+				Timeout(10 * time.Second),
 				Gap(1 * time.Millisecond),
 			},
 			exp: ErrAttemptsExceeded,
@@ -135,7 +135,7 @@ func TestErrorFunc(t *testing.T) {
 			opts: []Option{
 				ErrorFunc(errFnNotNil),
 				Attempts(10),
-				Timeout(100 * time.Millisecond),
+				Timeout(10 * time.Second),
 				Gap(1 * time.Millisecond),
 			},
 			exp: fmt.Errorf("%v: %w", ErrAttemptsExceeded, oops),
@@ -199,7 +199,7 @@ func TestTestFunc(t *testing.T) {
 			opts: []Option{
 				TestFunc(tFnNotNil),
 				Attempts(10),
-				Timeout(100 * time.Millisecond),
+				Timeout(10 * time.Second),
 				Gap(1 * time.Millisecond),
 			},
 			exp: fmt.Errorf("%v: %w", ErrAttemptsExceeded, oops),
