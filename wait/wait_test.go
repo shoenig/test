@@ -19,7 +19,7 @@ var (
 
 func eqErr(t *testing.T, exp, err error) {
 	if exp == nil || err == nil {
-		if exp != err {
+		if !errors.Is(exp, err) {
 			t.Fatalf("exp: %v, err: %v", exp, err)
 		}
 		return
