@@ -15,6 +15,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/shoenig/test/interfaces"
 	"github.com/shoenig/test/internal/constraints"
+	"github.com/shoenig/test/wait"
 )
 
 const depth = 4
@@ -1164,6 +1165,16 @@ func Contains[C any](i C, c interfaces.ContainsFunc[C]) (s string) {
 func NotContains[C any](i C, c interfaces.ContainsFunc[C]) (s string) {
 	if c.Contains(i) {
 		s = "expected not to contain element, but it does\n"
+	}
+	return
+}
+
+func Wait(wc *wait.Context) (s string) {
+	err := wc.Run()
+	if err != nil {
+		s = "expected condition to pass within wait context\n"
+		s += fmt.Sprintf("↪ error: %v\n", err)
+		// context info?
 	}
 	return
 }

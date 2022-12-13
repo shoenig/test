@@ -8,6 +8,8 @@ import (
 	"runtime"
 	"testing"
 	"time"
+
+	"github.com/shoenig/test/wait"
 )
 
 func needsOS(t *testing.T, os string) {
@@ -1491,4 +1493,34 @@ func TestLength(t *testing.T) {
 
 	c := &container[string]{length: 3}
 	Length(tc, 4, c)
+}
+
+func TestWait_BoolFunc(t *testing.T) {
+	tc := newCase(t, `expected condition to pass within wait context`)
+	t.Cleanup(tc.assert)
+
+	Wait(tc, wait.On(
+		wait.BoolFunc(func() bool { return false }),
+		wait.Timeout(100*time.Millisecond),
+	))
+}
+
+func TestWait_ErrorFunc(t *testing.T) {
+	tc := newCase(t, `expected condition to pass within wait context`)
+	t.Cleanup(tc.assert)
+
+	Wait(tc, wait.On(
+		wait.ErrorFunc(func() error { return errors.New("fail") }),
+		wait.Timeout(100*time.Millisecond),
+	))
+}
+
+func TestWait_TestFunc(t *testing.T) {
+	tc := newCase(t, `expected condition to pass within wait context`)
+	t.Cleanup(tc.assert)
+
+	Wait(tc, wait.On(
+		wait.TestFunc(func() (bool, error) { return false, errors.New("fail") }),
+		wait.Timeout(100*time.Millisecond),
+	))
 }

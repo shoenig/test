@@ -9,6 +9,7 @@ import (
 	"github.com/shoenig/test/interfaces"
 	"github.com/shoenig/test/internal/assertions"
 	"github.com/shoenig/test/internal/constraints"
+	"github.com/shoenig/test/wait"
 )
 
 // Nil asserts a is nil.
@@ -673,4 +674,10 @@ func Contains[C any](t T, element C, container interfaces.ContainsFunc[C], scrip
 func NotContains[C any](t T, element C, container interfaces.ContainsFunc[C], scripts ...PostScript) {
 	t.Helper()
 	invoke(t, assertions.NotContains(element, container), scripts...)
+}
+
+// Wait asserts wc.
+func Wait(t T, wc *wait.Context, scripts ...PostScript) {
+	t.Helper()
+	invoke(t, assertions.Wait(wc), scripts...)
 }
