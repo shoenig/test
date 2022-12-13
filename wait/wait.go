@@ -1,3 +1,5 @@
+// Package wait provides constructs for waiting on conditionals within specified
+// constraints.
 package wait
 
 import (
