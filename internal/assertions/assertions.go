@@ -1169,7 +1169,7 @@ func NotContains[C any](i C, c interfaces.ContainsFunc[C]) (s string) {
 	return
 }
 
-func Wait(wc *wait.Context) (s string) {
+func Wait(wc *wait.Control) (s string) {
 	err := wc.Run()
 	if err != nil {
 		s = "expected condition to pass within wait context\n"
