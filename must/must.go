@@ -680,7 +680,7 @@ func NotContains[C any](t T, element C, container interfaces.ContainsFunc[C], sc
 }
 
 // Wait asserts wc.
-func Wait(t T, wc *wait.Control, scripts ...PostScript) {
+func Wait(t T, wc *wait.Constraint, scripts ...PostScript) {
 	t.Helper()
 	invoke(t, assertions.Wait(wc), scripts...)
 }
