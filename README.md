@@ -11,8 +11,8 @@
 
 There are four key packages,
 
-- `must` - assertions that mark the test for failure and halt the test case immediately
-- `test` - assertions that mark the test for failure and allow the test case to continue
+- `must` - assertions causing test failure and halt the test case immediately
+- `test` - assertions causing test failure and allow the test case to continue
 - `wait` - utilities for waiting on conditionals in tests
 - `portal` - utilities for allocating free ports for network listeners in tests
 
