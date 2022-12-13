@@ -3,6 +3,7 @@ package wait
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"testing"
 	"time"
 )
@@ -85,6 +86,15 @@ func TestBoolFunc(t *testing.T) {
 			},
 			exp: ErrAttemptsExceeded,
 		},
+		{
+			name: "randomly pass",
+			opts: []Option{
+				BoolFunc(func() bool {
+					return rand.Int()%3 == 0
+				}),
+				Gap(1 * time.Millisecond),
+			},
+		},
 	}
 
 	for _, tc := range cases {
@@ -138,6 +148,18 @@ func TestErrorFunc(t *testing.T) {
 				Gap(1 * time.Millisecond),
 			},
 			exp: fmt.Errorf("%v: %w", ErrAttemptsExceeded, oops),
+		},
+		{
+			name: "randomly pass",
+			opts: []Option{
+				ErrorFunc(func() error {
+					if rand.Int()%3 != 0 {
+						return errors.New("not divisible by 3")
+					}
+					return nil
+				}),
+				Gap(1 * time.Millisecond),
+			},
 		},
 	}
 
@@ -201,6 +223,17 @@ func TestTestFunc(t *testing.T) {
 				Gap(1 * time.Millisecond),
 			},
 			exp: fmt.Errorf("%v: %w", ErrAttemptsExceeded, oops),
+		},
+		{
+			name: "randomly pass",
+			opts: []Option{
+				TestFunc(func() (bool, error) {
+					if rand.Int()%3 != 0 {
+						return false, errors.New("not divisible by 3")
+					}
+					return true, nil
+				}),
+			},
 		},
 	}
 
