@@ -10,6 +10,7 @@ import (
 
 	"github.com/shoenig/test/interfaces"
 	"github.com/shoenig/test/internal/assertions"
+	"github.com/shoenig/test/internal/brokenfs"
 	"github.com/shoenig/test/internal/constraints"
 	"github.com/shoenig/test/wait"
 )
@@ -445,7 +446,7 @@ func FileExistsFS(t T, system fs.FS, file string, scripts ...PostScript) {
 func FileExists(t T, file string, scripts ...PostScript) {
 	t.Helper()
 	file = strings.TrimPrefix(file, "/")
-	invoke(t, assertions.FileExistsFS(os.DirFS(fsRoot), file), scripts...)
+	invoke(t, assertions.FileExistsFS(os.DirFS(brokenfs.Root), file), scripts...)
 }
 
 // FileNotExistsFS asserts file does not exist on the fs.FS filesystem.
@@ -460,7 +461,7 @@ func FileNotExistsFS(t T, system fs.FS, file string, scripts ...PostScript) {
 // FileNotExists asserts file does not exist on the OS filesystem.
 func FileNotExists(t T, file string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.FileNotExistsFS(os.DirFS(fsRoot), file), scripts...)
+	invoke(t, assertions.FileNotExistsFS(os.DirFS(brokenfs.Root), file), scripts...)
 }
 
 // DirExistsFS asserts directory exists on the fs.FS filesystem.
@@ -477,7 +478,7 @@ func DirExistsFS(t T, system fs.FS, directory string, scripts ...PostScript) {
 func DirExists(t T, directory string, scripts ...PostScript) {
 	t.Helper()
 	directory = strings.TrimPrefix(directory, "/")
-	invoke(t, assertions.DirExistsFS(os.DirFS(fsRoot), directory), scripts...)
+	invoke(t, assertions.DirExistsFS(os.DirFS(brokenfs.Root), directory), scripts...)
 }
 
 // DirNotExistsFS asserts directory does not exist on the fs.FS filesystem.
@@ -492,7 +493,7 @@ func DirNotExistsFS(t T, system fs.FS, directory string, scripts ...PostScript) 
 // DirNotExists asserts directory does not exist on the OS filesystem.
 func DirNotExists(t T, directory string, scripts ...PostScript) {
 	t.Helper()
-	invoke(t, assertions.DirNotExistsFS(os.DirFS(fsRoot), directory), scripts...)
+	invoke(t, assertions.DirNotExistsFS(os.DirFS(brokenfs.Root), directory), scripts...)
 }
 
 // FileModeFS asserts the file or directory at path on fs.FS has exactly the given permission bits.
@@ -508,7 +509,7 @@ func FileModeFS(t T, system fs.FS, path string, permissions fs.FileMode, scripts
 func FileMode(t T, path string, permissions fs.FileMode, scripts ...PostScript) {
 	t.Helper()
 	path = strings.TrimPrefix(path, "/")
-	invoke(t, assertions.FileModeFS(os.DirFS(fsRoot), path, permissions), scripts...)
+	invoke(t, assertions.FileModeFS(os.DirFS(brokenfs.Root), path, permissions), scripts...)
 }
 
 // FileContainsFS asserts the file on fs.FS contains content as a substring.
@@ -525,7 +526,7 @@ func FileContainsFS(t T, system fs.FS, file, content string, scripts ...PostScri
 func FileContains(t T, file, content string, scripts ...PostScript) {
 	t.Helper()
 	file = strings.TrimPrefix(file, "/")
-	invoke(t, assertions.FileContainsFS(os.DirFS(fsRoot), file, content), scripts...)
+	invoke(t, assertions.FileContainsFS(os.DirFS(brokenfs.Root), file, content), scripts...)
 }
 
 // FilePathValid asserts path is a valid file path.
