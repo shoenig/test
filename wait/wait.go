@@ -20,12 +20,12 @@ const (
 	defaultIterations = 13
 )
 
-type Option func(*Context)
+type Option func(*Control)
 
 type runnable func(*runner) *result
 
 type runner struct {
-	ctx      *Context
+	ctrl     *Control
 	attempts int
 }
 
@@ -34,14 +34,14 @@ type result struct {
 	Success bool
 }
 
-// todo: Context parent
+// todo: Control parent
 
 // Timeout sets the maximum amount of time to allow before giving up and marking
 // the result as a failure.
 //
 // Default 3 seconds.
 func Timeout(duration time.Duration) Option {
-	return func(c *Context) {
+	return func(c *Control) {
 		c.deadline = time.Now().Add(duration)
 	}
 }
@@ -51,7 +51,7 @@ func Timeout(duration time.Duration) Option {
 //
 // Default 12 attempts.
 func Attempts(max int) Option {
-	return func(c *Context) {
+	return func(c *Control) {
 		c.iterations = max
 	}
 }
@@ -60,7 +60,7 @@ func Attempts(max int) Option {
 //
 // Default 250 milliseconds.
 func Gap(duration time.Duration) Option {
-	return func(c *Context) {
+	return func(c *Control) {
 		c.gap = duration
 	}
 }
@@ -68,7 +68,7 @@ func Gap(duration time.Duration) Option {
 // BoolFunc will retry f while it returns false, or a wait context threshold is
 // exceeded.
 func BoolFunc(f func() bool) Option {
-	return func(c *Context) {
+	return func(c *Control) {
 		c.r = boolFunc(f)
 	}
 }
@@ -76,7 +76,7 @@ func BoolFunc(f func() bool) Option {
 func boolFunc(f func() bool) runnable {
 	bg := context.Background()
 	return func(r *runner) *result {
-		ctx, cancel := context.WithDeadline(bg, r.ctx.deadline)
+		ctx, cancel := context.WithDeadline(bg, r.ctrl.deadline)
 		defer cancel()
 
 		for {
@@ -89,7 +89,7 @@ func boolFunc(f func() bool) runnable {
 			r.attempts++
 
 			// check iterations
-			if r.attempts > r.ctx.iterations {
+			if r.attempts > r.ctrl.iterations {
 				return &result{Err: ErrAttemptsExceeded}
 			}
 
@@ -97,7 +97,7 @@ func boolFunc(f func() bool) runnable {
 			select {
 			case <-ctx.Done():
 				return &result{Err: ErrTimeoutExceeded}
-			case <-time.After(r.ctx.gap):
+			case <-time.After(r.ctrl.gap):
 				// continue
 			}
 		}
@@ -105,7 +105,7 @@ func boolFunc(f func() bool) runnable {
 }
 
 func ErrorFunc(f func() error) Option {
-	return func(c *Context) {
+	return func(c *Control) {
 		c.r = errorFunc(f)
 	}
 }
@@ -113,7 +113,7 @@ func ErrorFunc(f func() error) Option {
 func errorFunc(f func() error) runnable {
 	bg := context.Background()
 	return func(r *runner) *result {
-		ctx, cancel := context.WithDeadline(bg, r.ctx.deadline)
+		ctx, cancel := context.WithDeadline(bg, r.ctrl.deadline)
 		defer cancel()
 
 		for {
@@ -127,7 +127,7 @@ func errorFunc(f func() error) runnable {
 			r.attempts++
 
 			// check iterations
-			if r.attempts > r.ctx.iterations {
+			if r.attempts > r.ctrl.iterations {
 				return &result{
 					Err: fmt.Errorf("%v: %w", ErrAttemptsExceeded, err),
 				}
@@ -139,7 +139,7 @@ func errorFunc(f func() error) runnable {
 				return &result{
 					Err: fmt.Errorf("%v: %w", ErrTimeoutExceeded, err),
 				}
-			case <-time.After(r.ctx.gap):
+			case <-time.After(r.ctrl.gap):
 				// continue
 			}
 		}
@@ -147,7 +147,7 @@ func errorFunc(f func() error) runnable {
 }
 
 func TestFunc(f func() (bool, error)) Option {
-	return func(c *Context) {
+	return func(c *Control) {
 		c.r = testFunc(f)
 	}
 }
@@ -155,7 +155,7 @@ func TestFunc(f func() (bool, error)) Option {
 func testFunc(f func() (bool, error)) runnable {
 	bg := context.Background()
 	return func(r *runner) *result {
-		ctx, cancel := context.WithDeadline(bg, r.ctx.deadline)
+		ctx, cancel := context.WithDeadline(bg, r.ctrl.deadline)
 		defer cancel()
 
 		for {
@@ -174,7 +174,7 @@ func testFunc(f func() (bool, error)) runnable {
 			r.attempts++
 
 			// check iterations
-			if r.attempts > r.ctx.iterations {
+			if r.attempts > r.ctrl.iterations {
 				return &result{
 					Err: fmt.Errorf("%v: %w", ErrAttemptsExceeded, err),
 				}
@@ -186,15 +186,15 @@ func testFunc(f func() (bool, error)) runnable {
 				return &result{
 					Err: fmt.Errorf("%v: %w", ErrTimeoutExceeded, err),
 				}
-			case <-time.After(r.ctx.gap):
+			case <-time.After(r.ctrl.gap):
 				// continue
 			}
 		}
 	}
 }
 
-func On(opts ...Option) *Context {
-	c := &Context{now: time.Now()}
+func On(opts ...Option) *Control {
+	c := &Control{now: time.Now()}
 	for _, opt := range append([]Option{
 		Timeout(defaultTimeout),
 		Attempts(defaultIterations),
@@ -205,7 +205,7 @@ func On(opts ...Option) *Context {
 	return c
 }
 
-type Context struct {
+type Control struct {
 	now        time.Time
 	deadline   time.Time
 	gap        time.Duration
@@ -213,12 +213,12 @@ type Context struct {
 	r          runnable
 }
 
-func (ctx *Context) Run() error {
-	if ctx.r == nil {
+func (ctrl *Control) Run() error {
+	if ctrl.r == nil {
 		return ErrNoFunction
 	}
-	return ctx.r(&runner{
-		ctx:      ctx,
+	return ctrl.r(&runner{
+		ctrl:     ctrl,
 		attempts: 0,
 	}).Err
 }
