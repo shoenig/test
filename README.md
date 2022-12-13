@@ -127,6 +127,44 @@ must.Eq(t, exp, result, must.Func(func() string {
 })
 ```
 
+### Wait
+
+Sometimes a test needs to wait on a condition for an undeterministic amount of time.
+For these cases, the `wait` package provides utilities for waiting on conditionals.
+
+The `wait` package provides constructs to create a constraint that can wait on a 
+specified timeout or maximum number of attempts. There are three function types that
+can be waited on.
+
+- `BoolFunc` - of type `func() bool`, retry until function returns true
+- `ErrorFunc` - of type `func() error`, retry until function returns non-nil
+- `TestFunc` of type `func() (bool, error)`, retry until function returns true
+
+The options for configuring a `wait.Constraint` include
+
+- `Timeout(time.Duration)` - maximum amount of time to wait for condition to be satisfied
+- `Attempts(int)` - maximum number of attempts to retry for condition to be satisfied
+- `Gap(time.Duration)` - amount of time to wait between retry attempts
+
+#### Fundamental form
+
+```go
+c := wait.On(
+    BoolFunc(f),
+    Timeout(10 * time.Seconds),
+    Gap(1 * time.Second),
+)
+err := c.Run()
+```
+
+#### Assertions form
+
+The `test` and `must` package implement an assertion helper for using the `wait` package.
+
+```go
+must.Wait(t, wait.On(wait.ErrorFunc(f)))
+```
+
 ### Examples (equality)
 
 ```go
