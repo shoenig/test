@@ -3,6 +3,7 @@ package wait
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 )
 
@@ -128,7 +129,7 @@ func errorFunc(f func() error) runnable {
 			// check iterations
 			if r.attempts > r.ctx.iterations {
 				return &result{
-					Err: errors.Join(ErrAttemptsExceeded, err),
+					Err: fmt.Errorf("%v: %w", ErrAttemptsExceeded, err),
 				}
 			}
 
@@ -136,7 +137,7 @@ func errorFunc(f func() error) runnable {
 			select {
 			case <-ctx.Done():
 				return &result{
-					Err: errors.Join(ErrTimeoutExceeded, err),
+					Err: fmt.Errorf("%v: %w", ErrTimeoutExceeded, err),
 				}
 			case <-time.After(r.ctx.gap):
 				// continue
@@ -175,7 +176,7 @@ func testFunc(f func() (bool, error)) runnable {
 			// check iterations
 			if r.attempts > r.ctx.iterations {
 				return &result{
-					Err: errors.Join(ErrAttemptsExceeded, err),
+					Err: fmt.Errorf("%v: %w", ErrAttemptsExceeded, err),
 				}
 			}
 
@@ -183,7 +184,7 @@ func testFunc(f func() (bool, error)) runnable {
 			select {
 			case <-ctx.Done():
 				return &result{
-					Err: errors.Join(ErrTimeoutExceeded, err),
+					Err: fmt.Errorf("%v: %w", ErrTimeoutExceeded, err),
 				}
 			case <-time.After(r.ctx.gap):
 				// continue

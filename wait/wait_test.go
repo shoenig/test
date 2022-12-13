@@ -2,6 +2,7 @@ package wait
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 	"time"
 )
@@ -110,7 +111,7 @@ func TestErrorFunc(t *testing.T) {
 		{
 			name: "defaults fail",
 			opts: []Option{ErrorFunc(errFnNotNil)},
-			exp:  errors.Join(ErrTimeoutExceeded, oops),
+			exp:  fmt.Errorf("%v: %w", ErrTimeoutExceeded, oops),
 		},
 		{
 			name: "attempts exceeded",
@@ -118,7 +119,7 @@ func TestErrorFunc(t *testing.T) {
 				ErrorFunc(errFnNotNil),
 				Attempts(3),
 			},
-			exp: errors.Join(ErrAttemptsExceeded, oops),
+			exp: fmt.Errorf("%v: %w", ErrAttemptsExceeded, oops),
 		},
 		{
 			name: "short timeout",
@@ -127,7 +128,7 @@ func TestErrorFunc(t *testing.T) {
 				Attempts(1000),
 				Timeout(100 * time.Millisecond),
 			},
-			exp: errors.Join(ErrTimeoutExceeded, oops),
+			exp: fmt.Errorf("%v: %w", ErrTimeoutExceeded, oops),
 		},
 		{
 			name: "short gap",
@@ -137,7 +138,7 @@ func TestErrorFunc(t *testing.T) {
 				Timeout(100 * time.Millisecond),
 				Gap(1 * time.Millisecond),
 			},
-			exp: errors.Join(ErrAttemptsExceeded, oops),
+			exp: fmt.Errorf("%v: %w", ErrAttemptsExceeded, oops),
 		},
 	}
 
@@ -165,7 +166,7 @@ func TestTestFunc(t *testing.T) {
 		{
 			name: "defaults fail",
 			opts: []Option{TestFunc(tFnNotNil)},
-			exp:  errors.Join(ErrTimeoutExceeded, oops),
+			exp:  fmt.Errorf("%v: %w", ErrTimeoutExceeded, oops),
 		},
 		{
 			name: "default fail without error",
@@ -174,7 +175,7 @@ func TestTestFunc(t *testing.T) {
 					return false, nil
 				}),
 			},
-			exp: errors.Join(ErrTimeoutExceeded, ErrConditionUnsatisfied),
+			exp: fmt.Errorf("%v: %w", ErrTimeoutExceeded, ErrConditionUnsatisfied),
 		},
 		{
 			name: "attempts exceeded",
@@ -182,7 +183,7 @@ func TestTestFunc(t *testing.T) {
 				TestFunc(tFnNotNil),
 				Attempts(3),
 			},
-			exp: errors.Join(ErrAttemptsExceeded, oops),
+			exp: fmt.Errorf("%v: %w", ErrAttemptsExceeded, oops),
 		},
 		{
 			name: "short timeout",
@@ -191,7 +192,7 @@ func TestTestFunc(t *testing.T) {
 				Attempts(1000),
 				Timeout(100 * time.Millisecond),
 			},
-			exp: errors.Join(ErrTimeoutExceeded, oops),
+			exp: fmt.Errorf("%v: %w", ErrTimeoutExceeded, oops),
 		},
 		{
 			name: "short gap",
@@ -201,7 +202,7 @@ func TestTestFunc(t *testing.T) {
 				Timeout(100 * time.Millisecond),
 				Gap(1 * time.Millisecond),
 			},
-			exp: errors.Join(ErrAttemptsExceeded, oops),
+			exp: fmt.Errorf("%v: %w", ErrAttemptsExceeded, oops),
 		},
 	}
 
