@@ -9,8 +9,10 @@
 package portal
 
 import (
+	"io"
 	"net"
 	"strconv"
+	"sync"
 )
 
 const (
@@ -45,8 +47,9 @@ func New(t FatalTester, opts ...Option) Grabber {
 }
 
 type grabber struct {
-	t  FatalTester
-	ip net.IP
+	t    FatalTester
+	ip   net.IP
+	lock sync.Mutex
 }
 
 type Option func(Grabber)
@@ -59,14 +62,38 @@ func WithAddress(address string) Option {
 }
 
 func (g *grabber) Grab(n int) []int {
-	ports := make([]int, 0, n)
+	g.lock.Lock()
+	defer g.lock.Unlock()
+
+	ports := make([]int, n)
+	closers := make([]io.Closer, n)
+
 	for i := 0; i < n; i++ {
-		ports = append(ports, g.One())
+		p, c := g.one()
+		ports[i] = p
+		closers[i] = c
 	}
+
+	for _, c := range closers {
+		_ = c.Close()
+	}
+
 	return ports
 }
 
 func (g *grabber) One() int {
+	g.lock.Lock()
+	defer g.lock.Unlock()
+
+	p, c := g.one()
+	_ = c.Close()
+	return p
+}
+
+// one will acquire one port; the caller must hold the lock and also close
+// the returned listener - this minimized the chances of reallocating the same
+// port
+func (g *grabber) one() (int, io.Closer) {
 	tcpAddr := &net.TCPAddr{IP: g.ip, Port: 0}
 	l, listenErr := net.ListenTCP("tcp", tcpAddr)
 	if listenErr != nil {
@@ -87,10 +114,5 @@ func (g *grabber) One() int {
 		g.t.Fatalf("failed to parse port: %v", parseErr)
 	}
 
-	closeErr := l.Close()
-	if closeErr != nil {
-		g.t.Fatalf("failed to close port: %v", closeErr)
-	}
-
-	return p
+	return p, l
 }
