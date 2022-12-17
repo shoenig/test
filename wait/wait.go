@@ -153,6 +153,9 @@ func boolFuncContinual(f func() bool) runnable {
 		ctx, cancel := context.WithDeadline(bg, r.c.deadline)
 		defer cancel()
 
+		timer := time.NewTimer(0)
+		defer timer.Stop()
+
 		for {
 			// make an attempt
 			if !f() {
@@ -167,11 +170,14 @@ func boolFuncContinual(f func() bool) runnable {
 				return &result{Err: nil}
 			}
 
+			// reset timer to gap interval
+			timer.Reset(r.c.gap)
+
 			// wait for gap or time
 			select {
 			case <-ctx.Done():
 				return &result{Err: nil}
-			case <-time.After(r.c.gap):
+			case <-timer.C:
 				// continue
 			}
 		}
@@ -183,6 +189,9 @@ func boolFuncInitial(f func() bool) runnable {
 	return func(r *runner) *result {
 		ctx, cancel := context.WithDeadline(bg, r.c.deadline)
 		defer cancel()
+
+		timer := time.NewTimer(0)
+		defer timer.Stop()
 
 		for {
 			// make an attempt
@@ -198,11 +207,14 @@ func boolFuncInitial(f func() bool) runnable {
 				return &result{Err: ErrAttemptsExceeded}
 			}
 
+			// reset timer to gap interval
+			timer.Reset(r.c.gap)
+
 			// wait for gap or timeout
 			select {
 			case <-ctx.Done():
 				return &result{Err: ErrTimeoutExceeded}
-			case <-time.After(r.c.gap):
+			case <-timer.C:
 				// continue
 			}
 		}
@@ -227,6 +239,9 @@ func errFuncContinual(f func() error) runnable {
 		ctx, cancel := context.WithDeadline(bg, r.c.deadline)
 		defer cancel()
 
+		timer := time.NewTimer(0)
+		defer timer.Stop()
+
 		for {
 			// make an attempt
 			if err := f(); err != nil {
@@ -241,11 +256,14 @@ func errFuncContinual(f func() error) runnable {
 				return &result{Err: nil}
 			}
 
+			// reset timer to gap interval
+			timer.Reset(r.c.gap)
+
 			// wait for gap or time
 			select {
 			case <-ctx.Done():
 				return &result{Err: nil}
-			case <-time.After(r.c.gap):
+			case <-timer.C:
 				// continue
 			}
 		}
@@ -257,6 +275,9 @@ func errFuncInitial(f func() error) runnable {
 	return func(r *runner) *result {
 		ctx, cancel := context.WithDeadline(bg, r.c.deadline)
 		defer cancel()
+
+		timer := time.NewTimer(0)
+		defer timer.Stop()
 
 		for {
 			// make an attempt
@@ -275,13 +296,16 @@ func errFuncInitial(f func() error) runnable {
 				}
 			}
 
+			// reset timer to gap interval
+			timer.Reset(r.c.gap)
+
 			// wait for gap or timeout
 			select {
 			case <-ctx.Done():
 				return &result{
 					Err: fmt.Errorf("%v: %w", ErrTimeoutExceeded, err),
 				}
-			case <-time.After(r.c.gap):
+			case <-timer.C:
 				// continue
 			}
 		}
@@ -307,6 +331,9 @@ func testFuncContinual(f func() (bool, error)) runnable {
 		ctx, cancel := context.WithDeadline(bg, r.c.deadline)
 		defer cancel()
 
+		timer := time.NewTimer(0)
+		defer timer.Stop()
+
 		for {
 			// make an attempt
 			ok, err := f()
@@ -322,11 +349,14 @@ func testFuncContinual(f func() (bool, error)) runnable {
 				return &result{Err: nil}
 			}
 
+			// reset timer to gap interval
+			timer.Reset(r.c.gap)
+
 			// wait for gap or time
 			select {
 			case <-ctx.Done():
 				return &result{Err: nil}
-			case <-time.After(r.c.gap):
+			case <-timer.C:
 				// continue
 			}
 		}
@@ -338,6 +368,9 @@ func testFuncInitial(f func() (bool, error)) runnable {
 	return func(r *runner) *result {
 		ctx, cancel := context.WithDeadline(bg, r.c.deadline)
 		defer cancel()
+
+		timer := time.NewTimer(0)
+		defer timer.Stop()
 
 		for {
 			// make an attempt
@@ -361,13 +394,16 @@ func testFuncInitial(f func() (bool, error)) runnable {
 				}
 			}
 
+			// reset timer to gap interval
+			timer.Reset(r.c.gap)
+
 			// wait for gap or timeout
 			select {
 			case <-ctx.Done():
 				return &result{
 					Err: fmt.Errorf("%v: %w", ErrTimeoutExceeded, err),
 				}
-			case <-time.After(r.c.gap):
+			case <-timer.C:
 				// continue
 			}
 		}
