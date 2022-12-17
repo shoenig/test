@@ -229,14 +229,14 @@ test_test.go:779: expected different file permissions
 ```text
 tests_test.go:569: expected maps of same values via 'eq' function
 ↪ difference:
-  map[int]test.Person{
-  	0: {ID: 100, Name: "Alice"},
-  	1: {
-  		ID:   101,
-- 		Name: "Bob",
-+ 		Name: "Bob B.",
-  	},
-  }
+map[int]test.Person{
+0: {ID: 100, Name: "Alice"},
+  	1: {
+  		ID:   101,
+-  		Name: "Bob",
++  		Name: "Bob B.",
+    	},
+    }
 ```
 
 ```text
