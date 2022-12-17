@@ -73,15 +73,49 @@ func Gap(duration time.Duration) Option {
 	}
 }
 
-// BoolFunc will retry f while it returns false, or until a wait constraint
-// threshold is exceeded.
+// BoolFunc executes f under the thresholds of a Constraint.
 func BoolFunc(f func() bool) Option {
 	return func(c *Constraint) {
-		c.r = boolFunc(f)
+		if c.continual {
+			c.r = boolFuncContinual(f)
+		} else {
+			c.r = boolFuncInitial(f)
+		}
 	}
 }
 
-func boolFunc(f func() bool) runnable {
+func boolFuncContinual(f func() bool) runnable {
+	bg := context.Background()
+	return func(r *runner) *result {
+		ctx, cancel := context.WithDeadline(bg, r.c.deadline)
+		defer cancel()
+
+		for {
+			// make an attempt
+			if !f() {
+				return &result{Err: ErrConditionUnsatisfied}
+			}
+
+			// used another attempt
+			r.attempts++
+
+			// reached the desired attempts
+			if r.attempts >= r.c.iterations {
+				return &result{Err: nil}
+			}
+
+			// wait for gap or time
+			select {
+			case <-ctx.Done():
+				return &result{Err: nil}
+			case <-time.After(r.c.gap):
+				// continue
+			}
+		}
+	}
+}
+
+func boolFuncInitial(f func() bool) runnable {
 	bg := context.Background()
 	return func(r *runner) *result {
 		ctx, cancel := context.WithDeadline(bg, r.c.deadline)
@@ -116,11 +150,46 @@ func boolFunc(f func() bool) runnable {
 // constraint threshold is exceeded.
 func ErrorFunc(f func() error) Option {
 	return func(c *Constraint) {
-		c.r = errorFunc(f)
+		if c.continual {
+			c.r = errFuncContinual(f)
+		} else {
+			c.r = errFuncInitial(f)
+		}
 	}
 }
 
-func errorFunc(f func() error) runnable {
+func errFuncContinual(f func() error) runnable {
+	bg := context.Background()
+	return func(r *runner) *result {
+		ctx, cancel := context.WithDeadline(bg, r.c.deadline)
+		defer cancel()
+
+		for {
+			// make an attempt
+			if err := f(); err != nil {
+				return &result{Err: err}
+			}
+
+			// used another attempt
+			r.attempts++
+
+			// reached the desired attempts
+			if r.attempts >= r.c.iterations {
+				return &result{Err: nil}
+			}
+
+			// wait for gap or time
+			select {
+			case <-ctx.Done():
+				return &result{Err: nil}
+			case <-time.After(r.c.gap):
+				// continue
+			}
+		}
+	}
+}
+
+func errFuncInitial(f func() error) runnable {
 	bg := context.Background()
 	return func(r *runner) *result {
 		ctx, cancel := context.WithDeadline(bg, r.c.deadline)
@@ -161,11 +230,47 @@ func errorFunc(f func() error) runnable {
 // wrapped into the result.
 func TestFunc(f func() (bool, error)) Option {
 	return func(c *Constraint) {
-		c.r = testFunc(f)
+		if c.continual {
+			c.r = testFuncContinual(f)
+		} else {
+			c.r = testFuncInitial(f)
+		}
 	}
 }
 
-func testFunc(f func() (bool, error)) runnable {
+func testFuncContinual(f func() (bool, error)) runnable {
+	bg := context.Background()
+	return func(r *runner) *result {
+		ctx, cancel := context.WithDeadline(bg, r.c.deadline)
+		defer cancel()
+
+		for {
+			// make an attempt
+			ok, err := f()
+			if !ok {
+				return &result{Err: fmt.Errorf("%v: %w", ErrConditionUnsatisfied, err)}
+			}
+
+			// used another attempt
+			r.attempts++
+
+			// reached the desired attempts
+			if r.attempts >= r.c.iterations {
+				return &result{Err: nil}
+			}
+
+			// wait for gap or time
+			select {
+			case <-ctx.Done():
+				return &result{Err: nil}
+			case <-time.After(r.c.gap):
+				// continue
+			}
+		}
+	}
+}
+
+func testFuncInitial(f func() (bool, error)) runnable {
 	bg := context.Background()
 	return func(r *runner) *result {
 		ctx, cancel := context.WithDeadline(bg, r.c.deadline)
@@ -206,20 +311,38 @@ func testFunc(f func() (bool, error)) runnable {
 	}
 }
 
-// On creates a new Constraint with configuration set by opts.
+// InitialSuccess creates a new Constraint configured by opts that will wait for a
+// positive result upon calling Constraint.Run. If the threshold of the Constraint
+// is exceeded before reaching a positive result, an error is returned from the
+// call to Constraint.Run.
 //
 // Timeout is used to set a maximum amount of time to wait for success.
 // Attempts is used to set a maximum number of attempts to wait for success.
 // Gap is used to control the amount of time to wait between retries.
-func On(opts ...Option) *Constraint {
+//
+// One of ErrorFunc, BoolFunc, or TestFunc represents the function that will
+// be run under the constraint.
+func InitialSuccess(opts ...Option) *Constraint {
 	c := &Constraint{now: time.Now()}
+	c.setup(opts...)
+	return c
+}
+
+// ContinualSuccess creates a new Constraint configured by opts that will assert
+// a positive result is r
+func ContinualSuccess(opts ...Option) *Constraint {
+	c := &Constraint{now: time.Now(), continual: true}
+	c.setup(opts...)
+	return c
+}
+
+func (c *Constraint) setup(opts ...Option) {
 	for _, opt := range append([]Option{
 		Timeout(defaultTimeout),
 		Gap(defaultGap),
 	}, opts...) {
 		opt(c)
 	}
-	return c
 }
 
 // A Constraint is something a test assertions can wait on before marking the
@@ -228,6 +351,7 @@ func On(opts ...Option) *Constraint {
 // until the number of attempts is exhausted. The interval between retry attempts
 // can be configured with Gap.
 type Constraint struct {
+	continual  bool // (initial || continual) success
 	now        time.Time
 	deadline   time.Time
 	gap        time.Duration
