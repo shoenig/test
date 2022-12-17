@@ -1,5 +1,4 @@
-// Package wait provides constructs for waiting on conditionals within specified
-// constraints.
+// Package wait provides constructs for waiting on conditionals within specified constraints.
 package wait
 
 import (
@@ -22,26 +21,74 @@ const (
 	defaultGap     = 250 * time.Millisecond
 )
 
-// Option is used to configure a Constraint.
-type Option func(*Constraint)
-
-type runnable func(*runner) *result
-
-type runner struct {
-	c        *Constraint
-	attempts int
-}
-
-type result struct {
-	Err error
-}
-
-// todo: Context parent
-
-// Timeout sets the maximum amount of time to allow before giving up and marking
-// the result as a failure.
+// A Constraint is something a test assertion can wait on before marking the
+// result to be a failure. A Constraint is used in conjunction with either the
+// InitialSuccess or ContinualSuccess option. A call to Run will execute the given
+// function, returning nil or error depending on the Constraint configuration and
+// the results of the function.
 //
-// If set, the max attempts constraint is disabled.
+// InitialSuccess - retry a function until it returns a positive result. If the
+// function never returns a positive result before the Constraint threshold is
+// exceeded, an error is returned from Run().
+//
+// ContinualSuccess - retry a function asserting it returns a positive result until
+// the Constraint threshold is exceeded. If at any point the function returns a
+// negative result, an error is returned from Run().
+//
+// A Constraint threshold is configured via either Timeout or Attempts (not both).
+//
+// Timeout - Constraint is time bound.
+//
+// Attempts - Constraint is iteration bound.
+//
+// The use of Gap controls the pace of attempts by setting the amount of time to
+// wait in between each attempt.
+type Constraint struct {
+	continual  bool // (initial || continual) success
+	now        time.Time
+	deadline   time.Time
+	gap        time.Duration
+	iterations int
+	r          runnable
+}
+
+// InitialSuccess creates a new Constraint configured by opts that will wait for a
+// positive result upon calling Constraint.Run. If the threshold of the Constraint
+// is exceeded before reaching a positive result, an error is returned from the
+// call to Constraint.Run.
+//
+// Timeout is used to set a maximum amount of time to wait for success.
+// Attempts is used to set a maximum number of attempts to wait for success.
+// Gap is used to control the amount of time to wait between retries.
+//
+// One of ErrorFunc, BoolFunc, or TestFunc represents the function that will
+// be run under the constraint.
+func InitialSuccess(opts ...Option) *Constraint {
+	c := &Constraint{now: time.Now()}
+	c.setup(opts...)
+	return c
+}
+
+// ContinualSuccess creates a new Constraint configured by opts that will assert
+// a positive result upon calling Constraint.Run, repeating the call until the
+// Constraint reaches its threshold. If the result is negative, an error is
+// returned from the call to Constraint.Run.
+//
+// Timeout is used to set the amount of time to assert success.
+// Attempts is used to set the number of iterations to assert success.
+// Gap is used to control the amount of time to wait between iterations.
+//
+// One of ErrorFunc, BoolFunc, or TestFunc represents the function that will
+// be run under the constraint.
+func ContinualSuccess(opts ...Option) *Constraint {
+	c := &Constraint{now: time.Now(), continual: true}
+	c.setup(opts...)
+	return c
+}
+
+// Timeout sets a time bound on a Constraint.
+//
+// If set, the Attempts constraint configuration is disabled.
 //
 // Default 3 seconds.
 func Timeout(duration time.Duration) Option {
@@ -51,12 +98,11 @@ func Timeout(duration time.Duration) Option {
 	}
 }
 
-// Attempts sets the maximum number of attempts to allow before giving up and
-// marking the result as a failure.
+// Attempts sets an iteration bound on a Constraint.
 //
-// If set, the timeout constraint is disabled.
+// If set, the Timeout constraint configuration is disabled.
 //
-// By default a max timeout is used and the number of attempts is unlimited.
+// By default a Timeout constraint is set and the Attempts bound is disabled.
 func Attempts(max int) Option {
 	return func(c *Constraint) {
 		c.iterations = max
@@ -82,6 +128,23 @@ func BoolFunc(f func() bool) Option {
 			c.r = boolFuncInitial(f)
 		}
 	}
+}
+
+// Option is used to configure a Constraint.
+//
+// Understood Option functions include Timeout, Attempts, Gap, InitialSuccess,
+// and ContinualSuccess.
+type Option func(*Constraint)
+
+type runnable func(*runner) *result
+
+type runner struct {
+	c        *Constraint
+	attempts int
+}
+
+type result struct {
+	Err error
 }
 
 func boolFuncContinual(f func() bool) runnable {
@@ -311,31 +374,6 @@ func testFuncInitial(f func() (bool, error)) runnable {
 	}
 }
 
-// InitialSuccess creates a new Constraint configured by opts that will wait for a
-// positive result upon calling Constraint.Run. If the threshold of the Constraint
-// is exceeded before reaching a positive result, an error is returned from the
-// call to Constraint.Run.
-//
-// Timeout is used to set a maximum amount of time to wait for success.
-// Attempts is used to set a maximum number of attempts to wait for success.
-// Gap is used to control the amount of time to wait between retries.
-//
-// One of ErrorFunc, BoolFunc, or TestFunc represents the function that will
-// be run under the constraint.
-func InitialSuccess(opts ...Option) *Constraint {
-	c := &Constraint{now: time.Now()}
-	c.setup(opts...)
-	return c
-}
-
-// ContinualSuccess creates a new Constraint configured by opts that will assert
-// a positive result is r
-func ContinualSuccess(opts ...Option) *Constraint {
-	c := &Constraint{now: time.Now(), continual: true}
-	c.setup(opts...)
-	return c
-}
-
 func (c *Constraint) setup(opts ...Option) {
 	for _, opt := range append([]Option{
 		Timeout(defaultTimeout),
@@ -343,20 +381,6 @@ func (c *Constraint) setup(opts ...Option) {
 	}, opts...) {
 		opt(c)
 	}
-}
-
-// A Constraint is something a test assertions can wait on before marking the
-// result to be a failure. A Constraint that uses Timeout will retry a function
-// until the timeout expires. A Constraint that uses Attempts will retry a function
-// until the number of attempts is exhausted. The interval between retry attempts
-// can be configured with Gap.
-type Constraint struct {
-	continual  bool // (initial || continual) success
-	now        time.Time
-	deadline   time.Time
-	gap        time.Duration
-	iterations int
-	r          runnable
 }
 
 // Run the Constraint and produce an error result.

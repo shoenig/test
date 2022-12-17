@@ -140,40 +140,54 @@ must.Eq(t, exp, result, must.Func(func() string {
 
 ### Wait
 
-Sometimes a test needs to wait on a condition for an undeterministic amount of time.
-For these cases, the `wait` package provides utilities for waiting on conditionals.
+Sometimes a test needs to wait on a condition for a non-deterministic amount of time.
+For these cases, the `wait` package provides utilities for configuring conditionals
+that can assert some condition becomes true, or that some condition remains true -
+whether for a specified amount time, or a specific number of iterations.
 
-The `wait` package provides constructs to create a constraint that can wait on a 
-specified timeout or maximum number of attempts. There are three function types that
-can be waited on.
+A `Constraint` is created in one of two forms
 
-- `BoolFunc` - of type `func() bool`, retry until function returns true
-- `ErrorFunc` - of type `func() error`, retry until function returns non-nil
-- `TestFunc` of type `func() (bool, error)`, retry until function returns true
+- `InitialSuccess` - assert a function eventually returns a positive result
+- `ContinualSuccess` - assert a function continually returns a positive result
 
-The options for configuring a `wait.Constraint` include
+A `Constraint` may be configured with a few Option functions.
 
-- `Timeout(time.Duration)` - maximum amount of time to wait for condition to be satisfied
-- `Attempts(int)` - maximum number of attempts to retry for condition to be satisfied
-- `Gap(time.Duration)` - amount of time to wait between retry attempts
-
-#### Fundamental form
-
-```go
-c := wait.On(
-    BoolFunc(f),
-    Timeout(10 * time.Seconds),
-    Gap(1 * time.Second),
-)
-err := c.Run()
-```
+- `Timeout` - set a time bound on the constraint
+- `Attempts` - set an iteration bound on the constraint
+- `Gap` - set the iteration interval pace
+- `BoolFunc` - set a predicate function of type `func() bool`
+- `ErrorFunc` - set a predicate function of type `func() error`
+- `TestFunc` - set a predicate function of type `func() (bool, error)`
 
 #### Assertions form
 
 The `test` and `must` package implement an assertion helper for using the `wait` package.
 
 ```go
-must.Wait(t, wait.On(wait.ErrorFunc(f)))
+must.Wait(t, wait.InitialSuccess(wait.ErrorFunc(f)))
+```
+
+```go
+must.Wait(t, wait.ContinualSuccess(
+    wait.ErrorFunc(f),
+    wait.Attempts(100),
+    wait.Gap(10 * time.Millisecond),
+))
+```
+
+#### Fundamental form
+
+Although the 99% use case is via the `test` or `must` packages as described above,
+the `wait` package can also be used in isolation by calling `Run()` directly. An
+error is returned if the conditional failed, and nil otherwise.
+
+```go
+c := wait.InitialSuccess(
+    BoolFunc(f),
+    Timeout(10 * time.Seconds),
+    Gap(1 * time.Second),
+)
+err := c.Run()
 ```
 
 ### Examples (equality)
