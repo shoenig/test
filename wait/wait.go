@@ -155,7 +155,6 @@ func ErrorFunc(f func() error) Option {
 		} else {
 			c.r = errFuncInitial(f)
 		}
-
 	}
 }
 
