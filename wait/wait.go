@@ -94,7 +94,7 @@ func ContinualSuccess(opts ...Option) *Constraint {
 func Timeout(duration time.Duration) Option {
 	return func(c *Constraint) {
 		c.deadline = time.Now().Add(duration)
-		c.iterations = math.MaxInt64
+		c.iterations = math.MaxInt
 	}
 }
 
