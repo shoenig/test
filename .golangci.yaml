@@ -9,4 +9,5 @@ linters:
    - bodyclose
    - durationcheck
    - whitespace
-
+output:
+  format: json
