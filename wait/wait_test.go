@@ -65,10 +65,7 @@ func TestContinual_BoolFunc(t *testing.T) {
 			name: "randomly fail",
 			opts: []Option{
 				BoolFunc(func() bool {
-					if rand.Int()%3 != 0 {
-						return true
-					}
-					return false
+					return rand.Int()%3 != 0
 				}),
 				Gap(1 * time.Millisecond),
 			},
