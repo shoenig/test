@@ -37,14 +37,55 @@ func eqErr(t *testing.T, exp, err error) {
 func TestNoFunction(t *testing.T) {
 	t.Parallel()
 
-	ctx := On()
+	ctx := InitialSuccess()
 	err := ctx.Run()
 	if !errors.Is(err, ErrNoFunction) {
 		t.Fatalf("exp: %v, err: %v", ErrNoFunction, err)
 	}
 }
 
-func TestBoolFunc(t *testing.T) {
+func TestContinual_BoolFunc(t *testing.T) {
+	t.Parallel()
+
+	cases := []struct {
+		name string
+		opts []Option
+		exp  error
+	}{
+		{
+			name: "defaults ok",
+			opts: []Option{BoolFunc(boolFnTrue)},
+		},
+		{
+			name: "defaults fail",
+			opts: []Option{BoolFunc(boolFnFalse)},
+			exp:  ErrConditionUnsatisfied,
+		},
+		{
+			name: "randomly fail",
+			opts: []Option{
+				BoolFunc(func() bool {
+					if rand.Int()%3 != 0 {
+						return true
+					}
+					return false
+				}),
+				Gap(1 * time.Millisecond),
+			},
+			exp: ErrConditionUnsatisfied,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			c := ContinualSuccess(tc.opts...)
+			err := c.Run()
+			eqErr(t, tc.exp, err)
+		})
+	}
+}
+
+func TestInitial_BoolFunc(t *testing.T) {
 	t.Parallel()
 
 	cases := []struct {
@@ -99,14 +140,55 @@ func TestBoolFunc(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			c := On(tc.opts...)
+			c := InitialSuccess(tc.opts...)
 			err := c.Run()
 			eqErr(t, tc.exp, err)
 		})
 	}
 }
 
-func TestErrorFunc(t *testing.T) {
+func TestContinual_ErrorFunc(t *testing.T) {
+	t.Parallel()
+
+	cases := []struct {
+		name string
+		opts []Option
+		exp  error
+	}{
+		{
+			name: "defaults ok",
+			opts: []Option{ErrorFunc(errFnNil)},
+		},
+		{
+			name: "defaults fail",
+			opts: []Option{ErrorFunc(errFnNotNil)},
+			exp:  oops,
+		},
+		{
+			name: "randomly fail",
+			opts: []Option{
+				ErrorFunc(func() error {
+					if rand.Int()%3 != 0 {
+						return nil
+					}
+					return oops
+				}),
+				Gap(1 * time.Millisecond),
+			},
+			exp: oops,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			c := ContinualSuccess(tc.opts...)
+			err := c.Run()
+			eqErr(t, tc.exp, err)
+		})
+	}
+}
+
+func TestInitial_ErrorFunc(t *testing.T) {
 	t.Parallel()
 
 	cases := []struct {
@@ -165,14 +247,55 @@ func TestErrorFunc(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			c := On(tc.opts...)
+			c := InitialSuccess(tc.opts...)
 			err := c.Run()
 			eqErr(t, tc.exp, err)
 		})
 	}
 }
 
-func TestTestFunc(t *testing.T) {
+func TestContinual_TestFunc(t *testing.T) {
+	t.Parallel()
+
+	cases := []struct {
+		name string
+		opts []Option
+		exp  error
+	}{
+		{
+			name: "defaults ok",
+			opts: []Option{TestFunc(tFnNil)},
+		},
+		{
+			name: "defaults fail",
+			opts: []Option{TestFunc(tFnNotNil)},
+			exp:  fmt.Errorf("%v: %w", ErrConditionUnsatisfied, oops),
+		},
+		{
+			name: "randomly fail",
+			opts: []Option{
+				TestFunc(func() (bool, error) {
+					if rand.Int()%3 != 0 {
+						return true, nil
+					}
+					return false, oops
+				}),
+				Gap(1 * time.Millisecond),
+			},
+			exp: fmt.Errorf("%v: %w", ErrConditionUnsatisfied, oops),
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			c := ContinualSuccess(tc.opts...)
+			err := c.Run()
+			eqErr(t, tc.exp, err)
+		})
+	}
+}
+
+func TestInitial_TestFunc(t *testing.T) {
 	t.Parallel()
 
 	cases := []struct {
@@ -239,7 +362,7 @@ func TestTestFunc(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			c := On(tc.opts...)
+			c := InitialSuccess(tc.opts...)
 			err := c.Run()
 			eqErr(t, tc.exp, err)
 		})

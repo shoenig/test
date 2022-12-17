@@ -1499,7 +1499,7 @@ func TestWait_BoolFunc(t *testing.T) {
 	tc := newCase(t, `expected condition to pass within wait context`)
 	t.Cleanup(tc.assert)
 
-	Wait(tc, wait.On(
+	Wait(tc, wait.InitialSuccess(
 		wait.BoolFunc(func() bool { return false }),
 		wait.Timeout(100*time.Millisecond),
 	))
@@ -1509,7 +1509,7 @@ func TestWait_ErrorFunc(t *testing.T) {
 	tc := newCase(t, `expected condition to pass within wait context`)
 	t.Cleanup(tc.assert)
 
-	Wait(tc, wait.On(
+	Wait(tc, wait.InitialSuccess(
 		wait.ErrorFunc(func() error { return errors.New("fail") }),
 		wait.Timeout(100*time.Millisecond),
 	))
@@ -1519,7 +1519,7 @@ func TestWait_TestFunc(t *testing.T) {
 	tc := newCase(t, `expected condition to pass within wait context`)
 	t.Cleanup(tc.assert)
 
-	Wait(tc, wait.On(
+	Wait(tc, wait.InitialSuccess(
 		wait.TestFunc(func() (bool, error) { return false, errors.New("fail") }),
 		wait.Timeout(100*time.Millisecond),
 	))
