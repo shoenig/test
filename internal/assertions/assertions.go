@@ -746,6 +746,22 @@ func MapNotEmpty[M ~map[K]V, K comparable, V any](m M) (s string) {
 	return
 }
 
+func MapContainsKey[M ~map[K]V, K comparable, V any](m M, key K) (s string) {
+	if _, exists := m[key]; !exists {
+		s = "expected map to contain key\n"
+		s += fmt.Sprintf("↪ key: %v\n", key)
+	}
+	return
+}
+
+func MapNotContainsKey[M ~map[K]V, K comparable, V any](m M, key K) (s string) {
+	if _, exists := m[key]; exists {
+		s = "expected map to not contain key\n"
+		s += fmt.Sprintf("↪ key: %v\n", key)
+	}
+	return
+}
+
 func MapContainsKeys[M ~map[K]V, K comparable, V any](m M, keys []K) (s string) {
 	var missing []K
 	for _, key := range keys {

@@ -1080,6 +1080,20 @@ func TestMapNotEmpty(t *testing.T) {
 	MapNotEmpty(tc, m)
 }
 
+func TestMapContainsKey(t *testing.T) {
+	tc := newCase(t, `expected map to contain key`)
+	t.Cleanup(tc.assert)
+	m := map[string]int{"a": 1, "b": 2}
+	MapContainsKey(tc, m, "c")
+}
+
+func TestMapNotContainsKey(t *testing.T) {
+	tc := newCase(t, `expected map to not contain key`)
+	t.Cleanup(tc.assert)
+	m := map[string]int{"a": 1, "b": 2}
+	MapNotContainsKey(tc, m, "b")
+}
+
 func TestMapContainsKeys(t *testing.T) {
 	tc := newCase(t, `expected map to contain keys`)
 	t.Cleanup(tc.assert)
