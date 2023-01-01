@@ -418,58 +418,58 @@ OUTER:
 	return
 }
 
-func Positive[N interfaces.Number](n N) (s string) {
-	if !(n > 0) {
+func Positive[N interfaces.Number](value N) (s string) {
+	if !(value > 0) {
 		s = "expected positive value\n"
-		s += fmt.Sprintf("↪ n: %v\n", n)
+		s += fmt.Sprintf("↪ value: %v\n", value)
 	}
 	return
 }
 
-func NonPositive[N interfaces.Number](n N) (s string) {
-	if !(n <= 0) {
+func NonPositive[N interfaces.Number](value N) (s string) {
+	if !(value <= 0) {
 		s = "expected non-positive value\n"
-		s += fmt.Sprintf("↪ n: %v\n", n)
+		s += fmt.Sprintf("↪ value: %v\n", value)
 	}
 	return
 }
 
-func Negative[N interfaces.Number](n N) (s string) {
-	if n > 0 {
+func Negative[N interfaces.Number](value N) (s string) {
+	if value > 0 {
 		s = "expected negative value\n"
-		s += fmt.Sprintf("↪ n: %v\n", n)
+		s += fmt.Sprintf("↪ value: %v\n", value)
 	}
 	return
 }
 
-func NonNegative[N interfaces.Number](n N) (s string) {
-	if !(n >= 0) {
+func NonNegative[N interfaces.Number](value N) (s string) {
+	if !(value >= 0) {
 		s = "expected non-negative value\n"
-		s += fmt.Sprintf("↪ n: %v\n", n)
+		s += fmt.Sprintf("↪ value: %v\n", value)
 	}
 	return
 }
 
-func Zero[N interfaces.Number](n N) (s string) {
-	if n != 0 {
+func Zero[N interfaces.Number](value N) (s string) {
+	if value != 0 {
 		s = "expected value of 0\n"
-		s += fmt.Sprintf("↪ n: %v\n", n)
+		s += fmt.Sprintf("↪ value: %v\n", value)
 	}
 	return
 }
 
-func NonZero[N interfaces.Number](n N) (s string) {
-	if n == 0 {
+func NonZero[N interfaces.Number](value N) (s string) {
+	if value == 0 {
 		s = "expected non-zero value\n"
-		s += fmt.Sprintf("↪ n: %v\n", n)
+		s += fmt.Sprintf("↪ value: %v\n", value)
 	}
 	return
 }
 
-func One[N interfaces.Number](n N) (s string) {
-	if n != 1 {
+func One[N interfaces.Number](value N) (s string) {
+	if value != 1 {
 		s = "expected value of 1\n"
-		s += fmt.Sprintf("↪ n: %v\n", n)
+		s += fmt.Sprintf("↪ value: %v\n", value)
 	}
 	return
 }
