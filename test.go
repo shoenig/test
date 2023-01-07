@@ -344,6 +344,13 @@ func InDeltaSlice[N interfaces.Number](t T, a, b []N, delta N, settings ...Setti
 	invoke(t, assertions.InDeltaSlice(a, b, delta), settings...)
 }
 
+// MapEq asserts maps exp and val contain the same key/val pairs, using
+// cmp.Equal function to compare vals.
+func MapEq[M1, M2 interfaces.Map[K, V], K comparable, V any](t T, exp M1, val M2, settings ...Setting) {
+	t.Helper()
+	invoke(t, assertions.MapEq(exp, val, options(settings...)), settings...)
+}
+
 // MapEqFunc asserts maps exp and val contain the same key/val pairs, using eq to
 // compare vals.
 func MapEqFunc[M1, M2 interfaces.Map[K, V], K comparable, V any](t T, exp M1, val M2, eq func(V, V) bool, settings ...Setting) {

@@ -969,6 +969,43 @@ func TestInDeltaSlice(t *testing.T) {
 	})
 }
 
+func TestMapEq(t *testing.T) {
+	t.Run("different length", func(t *testing.T) {
+		tc := newCase(t, `expected maps of same length`)
+		t.Cleanup(tc.assert)
+		a := map[string]int{"a": 1}
+		b := map[string]int{"a": 1, "b": 2}
+		MapEq(tc, a, b)
+	})
+
+	t.Run("different keys", func(t *testing.T) {
+		tc := newCase(t, `expected maps of same keys`)
+		t.Cleanup(tc.assert)
+		a := map[int]string{1: "a", 2: "b"}
+		b := map[int]string{1: "a", 3: "c"}
+		MapEq(tc, a, b)
+	})
+
+	t.Run("different values", func(t *testing.T) {
+		tc := newCase(t, `expected maps of same values via cmp.Equal function`)
+		t.Cleanup(tc.assert)
+		a := map[string]string{"a": "amp", "b": "bar"}
+		b := map[string]string{"a": "amp", "b": "foo"}
+		MapEq(tc, a, b)
+	})
+
+	t.Run("custom types", func(t *testing.T) {
+		tc := newCase(t, `expected maps of same values via cmp.Equal function`)
+		t.Cleanup(tc.assert)
+
+		type custom1 map[string]int
+		a := custom1{"key": 1}
+		type custom2 map[string]int
+		b := custom2{"key": 2}
+		MapEq(tc, a, b)
+	})
+}
+
 func TestMapEqFunc(t *testing.T) {
 	t.Run("different values", func(t *testing.T) {
 		tc := newCase(t, `expected maps of same values via 'eq' function`)
