@@ -17,6 +17,14 @@ func run(posts ...PostScript) string {
 	return s.String()
 }
 
+func scripts(settings ...Setting) []PostScript {
+	s := new(Settings)
+	for _, setting := range settings {
+		setting(s)
+	}
+	return s.postScripts
+}
+
 // A PostScript is used to annotate a test failure with additional information.
 //
 // Can be useful in large e2e style test cases, where adding additional context
@@ -42,23 +50,27 @@ func (s *script) Content() string {
 }
 
 // Sprintf appends a Sprintf-string as an annotation to the output of a test case failure.
-func Sprintf(msg string, args ...any) PostScript {
-	return &script{
-		label:   "annotation",
-		content: fmt.Sprintf(msg, args...),
+func Sprintf(msg string, args ...any) Setting {
+	return func(s *Settings) {
+		s.postScripts = append(s.postScripts, &script{
+			label:   "annotation",
+			content: fmt.Sprintf(msg, args...),
+		})
 	}
 }
 
 // Sprint appends a Sprint-string as an annotation to the output of a test case failure.
-func Sprint(args ...any) PostScript {
-	return &script{
-		label:   "annotation",
-		content: strings.TrimSpace(fmt.Sprintln(args...)),
+func Sprint(args ...any) Setting {
+	return func(s *Settings) {
+		s.postScripts = append(s.postScripts, &script{
+			label:   "annotation",
+			content: strings.TrimSpace(fmt.Sprintln(args...)),
+		})
 	}
 }
 
 // Values adds formatted key-val mappings as an annotation to the output of a test case failure.
-func Values(vals ...any) PostScript {
+func Values(vals ...any) Setting {
 	b := new(strings.Builder)
 	n := len(vals)
 	for i := 0; i < n-1; i += 2 {
@@ -69,16 +81,21 @@ func Values(vals ...any) PostScript {
 		s := fmt.Sprintf("\t%v => <MISSING ARG>", vals[n-1])
 		b.WriteString(s)
 	}
-	return &script{
-		label:   "mapping",
-		content: b.String(),
+	content := b.String()
+	return func(s *Settings) {
+		s.postScripts = append(s.postScripts, &script{
+			label:   "mapping",
+			content: content,
+		})
 	}
 }
 
 // Func adds the string produced by f as an annotation to the output of a test case failure.
-func Func(f func() string) PostScript {
-	return &script{
-		label:   "function",
-		content: f(),
+func Func(f func() string) Setting {
+	return func(s *Settings) {
+		s.postScripts = append(s.postScripts, &script{
+			label:   "function",
+			content: f(),
+		})
 	}
 }

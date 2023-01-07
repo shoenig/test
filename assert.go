@@ -24,9 +24,9 @@ func fail(t T, msg string, scripts ...PostScript) {
 	t.Errorf("\n" + strings.TrimSpace(s) + "\n")
 }
 
-func invoke(t T, result string, scripts ...PostScript) {
+func invoke(t T, result string, settings ...Setting) {
 	result = strings.TrimSpace(result)
 	if !passing(result) {
-		fail(t, result, scripts...)
+		fail(t, result, scripts(settings...)...)
 	}
 }

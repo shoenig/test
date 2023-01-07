@@ -27,10 +27,12 @@ type internalTest struct {
 	capture string
 }
 
-func (it *internalTest) PS(s string) PostScript {
-	return &testScript{
-		label:   "label: " + s,
-		content: "content: " + s,
+func (it *internalTest) TestPostScript(value string) Setting {
+	return func(s *Settings) {
+		s.postScripts = append(s.postScripts, &testScript{
+			label:   "label: " + value,
+			content: "content: " + value,
+		})
 	}
 }
 

@@ -43,13 +43,13 @@ func diff[A, B any](a A, b B) (s string) {
 
 // equal compares a and b using cmp.Equal if possible, falling back to reflect.DeepEqual
 // (e.g. contains unexported fields).
-func equal[A, B any](a A, b B) (result bool) {
+func equal[A, B any](a A, b B, opts ...cmp.Option) (result bool) {
 	defer func() {
 		if r := recover(); r != nil {
 			result = reflect.DeepEqual(a, b)
 		}
 	}()
-	result = cmp.Equal(a, b)
+	result = cmp.Equal(a, b, opts...)
 	return
 }
 
@@ -180,16 +180,16 @@ func ErrorContains(err error, sub string) (s string) {
 	return
 }
 
-func Eq[A any](exp, val A) (s string) {
-	if !equal(exp, val) {
+func Eq[A any](exp, val A, opts ...cmp.Option) (s string) {
+	if !equal(exp, val, opts...) {
 		s = "expected equality via cmp.Equal function\n"
 		s += diff(exp, val)
 	}
 	return
 }
 
-func NotEq[A any](exp, val A) (s string) {
-	if equal(exp, val) {
+func NotEq[A any](exp, val A, opts ...cmp.Option) (s string) {
+	if equal(exp, val, opts...) {
 		s = "expected inequality via cmp.Equal function\n"
 	}
 	return
@@ -799,7 +799,7 @@ func mapContains[M ~map[K]V, K comparable, V any](m M, values []V, eq func(V, V)
 	for _, wanted := range values {
 		found := false
 		for _, v := range m {
-			if equal(wanted, v) {
+			if eq(wanted, v) {
 				found = true
 				break
 			}
@@ -823,7 +823,7 @@ func mapNotContains[M ~map[K]V, K comparable, V any](m M, values []V, eq func(V,
 	for _, target := range values {
 		found := false
 		for _, v := range m {
-			if equal(target, v) {
+			if eq(target, v) {
 				found = true
 				break
 			}
@@ -841,15 +841,15 @@ func mapNotContains[M ~map[K]V, K comparable, V any](m M, values []V, eq func(V,
 	return
 }
 
-func MapContainsValues[M ~map[K]V, K comparable, V any](m M, vals []V) (s string) {
+func MapContainsValues[M ~map[K]V, K comparable, V any](m M, vals []V, opts ...cmp.Option) (s string) {
 	return mapContains(m, vals, func(a, b V) bool {
-		return equal(a, b)
+		return equal(a, b, opts...)
 	})
 }
 
-func MapNotContainsValues[M ~map[K]V, K comparable, V any](m M, vals []V) (s string) {
+func MapNotContainsValues[M ~map[K]V, K comparable, V any](m M, vals []V, opts ...cmp.Option) (s string) {
 	return mapNotContains(m, vals, func(a, b V) bool {
-		return equal(a, b)
+		return equal(a, b, opts...)
 	})
 }
 
