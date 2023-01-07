@@ -35,7 +35,7 @@ func TestNil_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
 
-	Nil(tc, 42, tc.PS("nil"))
+	Nil(tc, 42, tc.TestPostScript("nil"))
 }
 
 func TestNotNil(t *testing.T) {
@@ -54,7 +54,7 @@ func TestNotNil_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
 
-	NotNil(tc, nil, tc.PS("not nil"))
+	NotNil(tc, nil, tc.TestPostScript("not nil"))
 }
 
 func TestTrue(t *testing.T) {
@@ -68,7 +68,7 @@ func TestTrue_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
 
-	True(tc, false, tc.PS("true"))
+	True(tc, false, tc.TestPostScript("true"))
 }
 
 func TestFalse(t *testing.T) {
@@ -82,7 +82,7 @@ func TestFalse_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
 
-	False(tc, true, tc.PS("false"))
+	False(tc, true, tc.TestPostScript("false"))
 }
 
 func TestUnreachable(t *testing.T) {
@@ -96,7 +96,7 @@ func TestUnreachable_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
 
-	Unreachable(tc, tc.PS("unreachable"))
+	Unreachable(tc, tc.TestPostScript("unreachable"))
 }
 
 func TestError(t *testing.T) {
@@ -110,7 +110,7 @@ func TestError_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
 
-	Error(tc, nil, tc.PS("error"))
+	Error(tc, nil, tc.TestPostScript("error"))
 }
 
 func TestEqError(t *testing.T) {
@@ -124,7 +124,7 @@ func TestEqError_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
 
-	EqError(tc, errors.New("oops"), "blah", tc.PS("eq error"))
+	EqError(tc, errors.New("oops"), "blah", tc.TestPostScript("eq error"))
 }
 
 func TestEqError_nil(t *testing.T) {
@@ -149,7 +149,7 @@ func TestErrorIs_PS(t *testing.T) {
 
 	e1 := errors.New("foo")
 	e2 := errors.New("bar")
-	ErrorIs(tc, e1, e2, tc.PS("error is"))
+	ErrorIs(tc, e1, e2, tc.TestPostScript("error is"))
 }
 
 func TestErrorIs_nil(t *testing.T) {
@@ -171,7 +171,7 @@ func TestNoError_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
 
-	NoError(tc, errors.New("hello"), tc.PS("no error"))
+	NoError(tc, errors.New("hello"), tc.TestPostScript("no error"))
 }
 
 func TestErrorContains(t *testing.T) {
@@ -228,7 +228,7 @@ func TestEq_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
 
-	Eq(tc, 1, 2, tc.PS("eq"))
+	Eq(tc, 1, 2, tc.TestPostScript("eq"))
 }
 
 func TestEqOp(t *testing.T) {
@@ -243,7 +243,7 @@ func TestEqOp_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
 
-	EqOp(tc, "foo", "bar", tc.PS("eq op"))
+	EqOp(tc, "foo", "bar", tc.TestPostScript("eq op"))
 }
 
 func TestEqFunc(t *testing.T) {
@@ -264,7 +264,7 @@ func TestEqFunc_PS(t *testing.T) {
 
 	EqFunc(tc, "hello", "world", func(a, b string) bool {
 		return a == b
-	}, tc.PS("eq func"))
+	}, tc.TestPostScript("eq func"))
 }
 
 func TestNotEq(t *testing.T) {
@@ -281,7 +281,7 @@ func TestNotEq_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
 
-	NotEq(tc, 1, 1, tc.PS("not eq"))
+	NotEq(tc, 1, 1, tc.TestPostScript("not eq"))
 }
 
 func TestNotEqOp(t *testing.T) {
@@ -308,7 +308,7 @@ func TestNotEqOp_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
 
-	NotEqOp(tc, 1, 1, tc.PS("not eq op"))
+	NotEqOp(tc, 1, 1, tc.TestPostScript("not eq op"))
 }
 
 func TestNotEqFunc(t *testing.T) {
@@ -329,7 +329,7 @@ func TestNotEqFunc_PS(t *testing.T) {
 
 	NotEqFunc(tc, 1, 1, func(a, b int) bool {
 		return a == b
-	}, tc.PS("not eq func"))
+	}, tc.TestPostScript("not eq func"))
 }
 
 func TestEqJSON(t *testing.T) {
@@ -343,7 +343,7 @@ func TestEqJSON_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
 
-	EqJSON(tc, `"one"`, `"two"`, tc.PS("eq json"))
+	EqJSON(tc, `"one"`, `"two"`, tc.TestPostScript("eq json"))
 }
 
 func TestSliceEqFunc(t *testing.T) {
@@ -387,7 +387,7 @@ func TestSliceEqFunc_PS(t *testing.T) {
 	b := []int{1, 2}
 	SliceEqFunc(tc, a, b, func(a, b int) bool {
 		return false
-	}, tc.PS("eq slice func"))
+	}, tc.TestPostScript("eq slice func"))
 }
 
 // Person implements the Equal and Less functions.
@@ -421,7 +421,7 @@ func TestEqual_PS(t *testing.T) {
 	a := &Person{ID: 100, Name: "Alice"}
 	b := &Person{ID: 150, Name: "Alice"}
 
-	Equal(tc, a, b, tc.PS("equal"))
+	Equal(tc, a, b, tc.TestPostScript("equal"))
 }
 
 func TestNotEqual(t *testing.T) {
@@ -441,7 +441,7 @@ func TestNotEqual_PS(t *testing.T) {
 	a := &Person{ID: 100, Name: "Alice"}
 	b := &Person{ID: 100, Name: "Alice"}
 
-	NotEqual(tc, a, b, tc.PS("not equal"))
+	NotEqual(tc, a, b, tc.TestPostScript("not equal"))
 }
 
 func TestSliceEqual(t *testing.T) {
@@ -497,7 +497,7 @@ func TestLesser_PS(t *testing.T) {
 	a := &Person{ID: 200, Name: "Alice"}
 	b := &Person{ID: 100, Name: "Bob"}
 
-	Lesser(tc, b, a, tc.PS("lesser"))
+	Lesser(tc, b, a, tc.TestPostScript("lesser"))
 }
 
 func TestSliceEmpty(t *testing.T) {
@@ -509,7 +509,7 @@ func TestSliceEmpty(t *testing.T) {
 func TestSliceEmpty_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
-	SliceEmpty(tc, []int{1, 2}, tc.PS("empty slice"))
+	SliceEmpty(tc, []int{1, 2}, tc.TestPostScript("empty slice"))
 }
 
 func TestSliceNotEmpty(t *testing.T) {
@@ -535,7 +535,7 @@ func TestSliceLen(t *testing.T) {
 func TestSliceLen_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
-	SliceLen(tc, 3, []int{1, 2}, tc.PS("len slice"))
+	SliceLen(tc, 3, []int{1, 2}, tc.TestPostScript("len slice"))
 }
 
 func TestLen(t *testing.T) {
@@ -555,7 +555,7 @@ func TestLen(t *testing.T) {
 func TestLen_PS(t *testing.T) {
 	tc := newCapture(t)
 	t.Cleanup(tc.post)
-	Len(tc, 3, []int{1, 2}, tc.PS("len"))
+	Len(tc, 3, []int{1, 2}, tc.TestPostScript("len"))
 }
 
 func TestSliceContainsOp(t *testing.T) {
@@ -989,7 +989,7 @@ func TestMapEq(t *testing.T) {
 	})
 
 	t.Run("different values", func(t *testing.T) {
-		tc := newCase(t, `expected maps of same values via cmp.Diff function`)
+		tc := newCase(t, `expected maps of same values via cmp.Equal function`)
 		t.Cleanup(tc.assert)
 		a := map[string]string{"a": "amp", "b": "bar"}
 		b := map[string]string{"a": "amp", "b": "foo"}
@@ -997,7 +997,7 @@ func TestMapEq(t *testing.T) {
 	})
 
 	t.Run("custom types", func(t *testing.T) {
-		tc := newCase(t, `expected maps of same values via cmp.Diff function`)
+		tc := newCase(t, `expected maps of same values via cmp.Equal function`)
 		t.Cleanup(tc.assert)
 
 		type custom1 map[string]int

@@ -18,6 +18,12 @@ There are four key packages,
 
 ### Changes
 
+:crown: v0.6.0 adds support for custom `cmp.Option` values
+
+ - Adds ability to customize cmp.Equal behavior via cmp.Option arguments
+ - Adds assertions for existence of single map key
+ - Fixes some error outputs
+
 :rocket: v0.5.0 contains new packages `wait` and `portal`
 
  - Package for waiting on conditionals
@@ -85,7 +91,8 @@ Functions like `Eq` and `Contains` work on any type, using the `cmp.Equal` or `r
 functions to determine equivalence. Although this is the easiest / most compatible way
 to "just compare stuff", it the least deterministic way of comparing instances of a type.
 Changes to the underlying types may cause unexpected changes in their equivalence (e.g.
-the addition of unexported fields, function field types, etc.).
+the addition of unexported fields, function field types, etc.). Assertions that make
+use of `cmp.Equal` configured with custom `cmp.Option` values.
 
 #### output
 
@@ -102,6 +109,25 @@ The `test` and `must` packages are identical, except for how test cases behave w
 a failure. Sometimes it is helpful for a test case to continue running even though a failure has
 occurred (e.g. contains cleanup logic not captured via a `t.Cleanup` function). Other times it
 make sense to fail immediately and stop the test case execution.
+
+### go-cmp Options
+
+The test assertions that rely on `cmp.Equal` can be customized in how objects
+are compared by [specifying custom](https://github.com/google/go-cmp/blob/master/cmp/options.go#L16)
+`cmp.Option` values. These can be configured through `test.Cmp` and `must.Cmp` helpers.
+Google provides some common custom behaviors in the [cmdopts](https://github.com/google/go-cmp/tree/master/cmp/cmpopts)
+package.
+
+Here is an example of comparing two slices, but using a custom Option to sort
+the slices so that the order of elements does not matter.
+
+```go
+a := []int{3, 5, 1, 6, 7}
+b := []int{1, 7, 6, 3, 5}
+must.Eq(t, a, b, must.Cmp(cmpopts.SortSlices(func(i, j int) bool {
+  return i < j
+})))
+```
 
 ### PostScripts
 

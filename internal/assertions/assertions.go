@@ -31,25 +31,25 @@ func Caller() string {
 
 // diff creates a diff of a and b using cmp.Diff if possible, falling back to printing
 // the Go string values of both types (e.g. contains unexported fields).
-func diff[A, B any](a A, b B) (s string) {
+func diff[A, B any](a A, b B, opts cmp.Options) (s string) {
 	defer func() {
 		if r := recover(); r != nil {
 			s = fmt.Sprintf("↪ Assertion | comparison ↷\na: %#v\nb: %#v\n", a, b)
 		}
 	}()
-	s = "↪ Assertion | differential ↷\n" + cmp.Diff(a, b)
+	s = "↪ Assertion | differential ↷\n" + cmp.Diff(a, b, opts)
 	return
 }
 
 // equal compares a and b using cmp.Equal if possible, falling back to reflect.DeepEqual
 // (e.g. contains unexported fields).
-func equal[A, B any](a A, b B) (result bool) {
+func equal[A, B any](a A, b B, opts cmp.Options) (result bool) {
 	defer func() {
 		if r := recover(); r != nil {
 			result = reflect.DeepEqual(a, b)
 		}
 	}()
-	result = cmp.Equal(a, b)
+	result = cmp.Equal(a, b, opts)
 	return
 }
 
@@ -180,16 +180,16 @@ func ErrorContains(err error, sub string) (s string) {
 	return
 }
 
-func Eq[A any](exp, val A) (s string) {
-	if !equal(exp, val) {
+func Eq[A any](exp, val A, opts ...cmp.Option) (s string) {
+	if !equal(exp, val, opts) {
 		s = "expected equality via cmp.Equal function\n"
-		s += diff(exp, val)
+		s += diff(exp, val, opts)
 	}
 	return
 }
 
-func NotEq[A any](exp, val A) (s string) {
-	if equal(exp, val) {
+func NotEq[A any](exp, val A, opts ...cmp.Option) (s string) {
+	if equal(exp, val, opts) {
 		s = "expected inequality via cmp.Equal function\n"
 	}
 	return
@@ -198,7 +198,7 @@ func NotEq[A any](exp, val A) (s string) {
 func EqOp[C comparable](exp, val C) (s string) {
 	if exp != val {
 		s = "expected equality via ==\n"
-		s += diff(exp, val)
+		s += diff(exp, val, nil)
 	}
 	return
 }
@@ -206,7 +206,7 @@ func EqOp[C comparable](exp, val C) (s string) {
 func EqFunc[A any](exp, val A, eq func(a, b A) bool) (s string) {
 	if !eq(exp, val) {
 		s = "expected equality via 'eq' function\n"
-		s += diff(exp, val)
+		s += diff(exp, val, nil)
 	}
 	return
 }
@@ -242,7 +242,7 @@ func EqJSON(exp, val string) (s string) {
 		jsonA, _ := json.Marshal(expA)
 		jsonB, _ := json.Marshal(expB)
 		s = "expected equality via json marshalling\n"
-		s += diff(string(jsonA), string(jsonB))
+		s += diff(string(jsonA), string(jsonB), nil)
 		return
 	}
 
@@ -256,7 +256,7 @@ func EqSliceFunc[A any](exp, val []A, eq func(a, b A) bool) (s string) {
 		s = "expected slices of same length\n"
 		s += fmt.Sprintf("↪ len(exp): %d\n", lenA)
 		s += fmt.Sprintf("↪ len(val): %d\n", lenB)
-		s += diff(exp, val)
+		s += diff(exp, val, nil)
 		return
 	}
 
@@ -270,7 +270,7 @@ func EqSliceFunc[A any](exp, val []A, eq func(a, b A) bool) (s string) {
 
 	if miss {
 		s = "expected slice equality via 'eq' function\n"
-		s += diff(exp, val)
+		s += diff(exp, val, nil)
 		return
 	}
 
@@ -280,7 +280,7 @@ func EqSliceFunc[A any](exp, val []A, eq func(a, b A) bool) (s string) {
 func Equal[E interfaces.EqualFunc[E]](exp, val E) (s string) {
 	if !val.Equal(exp) {
 		s = "expected equality via .Equal method\n"
-		s += diff(exp, val)
+		s += diff(exp, val, nil)
 	}
 	return
 }
@@ -288,7 +288,7 @@ func Equal[E interfaces.EqualFunc[E]](exp, val E) (s string) {
 func NotEqual[E interfaces.EqualFunc[E]](exp, val E) (s string) {
 	if val.Equal(exp) {
 		s = "expected inequality via .Equal method\n"
-		s += diff(exp, val)
+		s += diff(exp, val, nil)
 	}
 	return
 }
@@ -300,14 +300,14 @@ func SliceEqual[E interfaces.EqualFunc[E]](exp, val []E) (s string) {
 		s = "expected slices of same length\n"
 		s += fmt.Sprintf("↪ len(exp): %d\n", lenA)
 		s += fmt.Sprintf("↪ len(val): %d\n", lenB)
-		s += diff(exp, val)
+		s += diff(exp, val, nil)
 		return
 	}
 
 	for i := 0; i < lenA; i++ {
 		if !exp[i].Equal(val[i]) {
 			s += "expected slice equality via .Equal method\n"
-			s += diff(exp[i], val[i])
+			s += diff(exp[i], val[i], nil)
 			return
 		}
 	}
@@ -317,7 +317,7 @@ func SliceEqual[E interfaces.EqualFunc[E]](exp, val []E) (s string) {
 func Lesser[L interfaces.LessFunc[L]](exp, val L) (s string) {
 	if !val.Less(exp) {
 		s = "expected val to be less via .Less method\n"
-		s += diff(exp, val)
+		s += diff(exp, val, nil)
 	}
 	return
 }
@@ -370,9 +370,9 @@ func SliceContainsEqual[E interfaces.EqualFunc[E]](slice []E, item E) (s string)
 	return
 }
 
-func SliceContains[A any](slice []A, item A) (s string) {
+func SliceContains[A any](slice []A, item A, opts ...cmp.Option) (s string) {
 	for _, i := range slice {
-		if cmp.Equal(i, item) {
+		if cmp.Equal(i, item, opts...) {
 			return
 		}
 	}
@@ -381,9 +381,9 @@ func SliceContains[A any](slice []A, item A) (s string) {
 	return
 }
 
-func SliceNotContains[A any](slice []A, item A) (s string) {
+func SliceNotContains[A any](slice []A, item A, opts ...cmp.Option) (s string) {
 	for _, i := range slice {
-		if cmp.Equal(i, item) {
+		if cmp.Equal(i, item, opts...) {
 			s = "expected slice to not contain item but it does\n"
 			s += fmt.Sprintf("↪ unwanted item %#v\n", item)
 			return
@@ -640,7 +640,7 @@ func InDeltaSlice[N interfaces.Number](a, b []N, delta N) (s string) {
 	return
 }
 
-func MapEq[M1, M2 interfaces.Map[K, V], K comparable, V any](exp M1, val M2) (s string) {
+func MapEq[M1, M2 interfaces.Map[K, V], K comparable, V any](exp M1, val M2, opts cmp.Options) (s string) {
 	lenA, lenB := len(exp), len(val)
 
 	if lenA != lenB {
@@ -654,13 +654,13 @@ func MapEq[M1, M2 interfaces.Map[K, V], K comparable, V any](exp M1, val M2) (s 
 		valB, exists := val[key]
 		if !exists {
 			s = "expected maps of same keys\n"
-			s += diff(exp, val)
+			s += diff(exp, val, opts)
 			return
 		}
 
-		if !cmp.Equal(valA, valB) {
-			s = "expected maps of same values via cmp.Diff function\n"
-			s += diff(exp, val)
+		if !cmp.Equal(valA, valB, opts) {
+			s = "expected maps of same values via cmp.Equal function\n"
+			s += diff(exp, val, opts)
 			return
 		}
 	}
@@ -681,13 +681,13 @@ func MapEqFunc[M1, M2 interfaces.Map[K, V], K comparable, V any](exp M1, val M2,
 		valB, exists := val[key]
 		if !exists {
 			s = "expected maps of same keys\n"
-			s += diff(exp, val)
+			s += diff(exp, val, nil)
 			return
 		}
 
 		if !eq(valA, valB) {
 			s = "expected maps of same values via 'eq' function\n"
-			s += diff(exp, val)
+			s += diff(exp, val, nil)
 			return
 		}
 	}
@@ -708,13 +708,13 @@ func MapEqual[M interfaces.MapEqualFunc[K, V], K comparable, V interfaces.EqualF
 		valB, exists := val[key]
 		if !exists {
 			s = "expected maps of same keys\n"
-			s += diff(exp, val)
+			s += diff(exp, val, nil)
 			return
 		}
 
 		if !(valB).Equal(valA) {
 			s = "expected maps of same values via .Equal method\n"
-			s += diff(exp, val)
+			s += diff(exp, val, nil)
 			return
 		}
 	}
@@ -799,7 +799,7 @@ func mapContains[M ~map[K]V, K comparable, V any](m M, values []V, eq func(V, V)
 	for _, wanted := range values {
 		found := false
 		for _, v := range m {
-			if equal(wanted, v) {
+			if eq(wanted, v) {
 				found = true
 				break
 			}
@@ -823,7 +823,7 @@ func mapNotContains[M ~map[K]V, K comparable, V any](m M, values []V, eq func(V,
 	for _, target := range values {
 		found := false
 		for _, v := range m {
-			if equal(target, v) {
+			if eq(target, v) {
 				found = true
 				break
 			}
@@ -841,15 +841,15 @@ func mapNotContains[M ~map[K]V, K comparable, V any](m M, values []V, eq func(V,
 	return
 }
 
-func MapContainsValues[M ~map[K]V, K comparable, V any](m M, vals []V) (s string) {
+func MapContainsValues[M ~map[K]V, K comparable, V any](m M, vals []V, opts cmp.Options) (s string) {
 	return mapContains(m, vals, func(a, b V) bool {
-		return equal(a, b)
+		return equal(a, b, opts)
 	})
 }
 
-func MapNotContainsValues[M ~map[K]V, K comparable, V any](m M, vals []V) (s string) {
+func MapNotContainsValues[M ~map[K]V, K comparable, V any](m M, vals []V, opts cmp.Options) (s string) {
 	return mapNotContains(m, vals, func(a, b V) bool {
-		return equal(a, b)
+		return equal(a, b, opts)
 	})
 }
 
