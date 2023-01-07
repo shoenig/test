@@ -76,7 +76,7 @@ func ErrorContains(t T, err error, sub string, settings ...Setting) {
 // Eq asserts exp and val are equal using cmp.Equal.
 func Eq[A any](t T, exp, val A, settings ...Setting) {
 	t.Helper()
-	invoke(t, assertions.Eq(exp, val), settings...)
+	invoke(t, assertions.Eq(exp, val, options(settings...)...), settings...)
 }
 
 // EqOp asserts exp == val.
@@ -94,7 +94,7 @@ func EqFunc[A any](t T, exp, val A, eq func(a, b A) bool, settings ...Setting) {
 // NotEq asserts exp and val are not equal using cmp.Equal.
 func NotEq[A any](t T, exp, val A, settings ...Setting) {
 	t.Helper()
-	invoke(t, assertions.NotEq(exp, val), settings...)
+	invoke(t, assertions.NotEq(exp, val, options(settings...)...), settings...)
 }
 
 // NotEqOp asserts exp != val.
@@ -193,7 +193,7 @@ func SliceContainsEqual[E interfaces.EqualFunc[E]](t T, slice []E, item E, setti
 // SliceContains asserts item exists in slice, using cmp.Equal to compare elements.
 func SliceContains[A any](t T, slice []A, item A, settings ...Setting) {
 	t.Helper()
-	invoke(t, assertions.SliceContains(slice, item), settings...)
+	invoke(t, assertions.SliceContains(slice, item, options(settings...)...), settings...)
 }
 
 // SliceNotContains asserts item does not exist in slice, using cmp.Equal to
@@ -344,13 +344,6 @@ func InDeltaSlice[N interfaces.Number](t T, a, b []N, delta N, settings ...Setti
 	invoke(t, assertions.InDeltaSlice(a, b, delta), settings...)
 }
 
-// MapEq asserts maps exp and val contain the same key/val pairs, using
-// cmp.Equal function to compare vals.
-func MapEq[M1, M2 interfaces.Map[K, V], K comparable, V any](t T, exp M1, val M2, settings ...Setting) {
-	t.Helper()
-	invoke(t, assertions.MapEq(exp, val), settings...)
-}
-
 // MapEqFunc asserts maps exp and val contain the same key/val pairs, using eq to
 // compare vals.
 func MapEqFunc[M1, M2 interfaces.Map[K, V], K comparable, V any](t T, exp M1, val M2, eq func(V, V) bool, settings ...Setting) {
@@ -410,13 +403,13 @@ func MapNotContainsKeys[M ~map[K]V, K comparable, V any](t T, m M, keys []K, set
 // MapContainsValues asserts m contains each val in vals.
 func MapContainsValues[M ~map[K]V, K comparable, V any](t T, m M, vals []V, settings ...Setting) {
 	t.Helper()
-	invoke(t, assertions.MapContainsValues(m, vals), settings...)
+	invoke(t, assertions.MapContainsValues(m, vals, options(settings...)), settings...)
 }
 
 // MapNotContainsValues asserts m does not contain any value in vals.
 func MapNotContainsValues[M ~map[K]V, K comparable, V any](t T, m M, vals []V, settings ...Setting) {
 	t.Helper()
-	invoke(t, assertions.MapNotContainsValues(m, vals), settings...)
+	invoke(t, assertions.MapNotContainsValues(m, vals, options(settings...)), settings...)
 }
 
 // MapContainsValuesFunc asserts m contains each val in vals using the eq function.

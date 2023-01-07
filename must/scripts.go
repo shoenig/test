@@ -19,14 +19,6 @@ func run(posts ...PostScript) string {
 	return s.String()
 }
 
-func scripts(settings ...Setting) []PostScript {
-	s := new(Settings)
-	for _, setting := range settings {
-		setting(s)
-	}
-	return s.postScripts
-}
-
 // A PostScript is used to annotate a test failure with additional information.
 //
 // Can be useful in large e2e style test cases, where adding additional context

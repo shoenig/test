@@ -1,4 +1,6 @@
-// Package must provides a modern generic testing assertions library.
+// Code generated via scripts/generate.sh. DO NOT EDIT.
+
+// Package test provides a modern generic testing assertions library.
 package must
 
 import (
@@ -7,25 +9,19 @@ import (
 	"github.com/shoenig/test/internal/assertions"
 )
 
-// T is the minimal set of functions to be implemented by any testing framework
-// compatible with the must package.
-type T interface {
-	Helper()
-	Fatalf(string, ...any)
-}
-
 func passing(result string) bool {
 	return result == ""
 }
 
 func fail(t T, msg string, scripts ...PostScript) {
 	c := assertions.Caller()
-	s := c + msg + run(scripts...)
-	t.Fatalf("\n" + strings.TrimSpace(s) + "\n")
+	s := c + msg + "\n" + run(scripts...)
+	errorf(t, "\n"+strings.TrimSpace(s)+"\n")
 }
 
-func invoke(t T, result string, scripts ...PostScript) {
+func invoke(t T, result string, settings ...Setting) {
+	result = strings.TrimSpace(result)
 	if !passing(result) {
-		fail(t, result, scripts...)
+		fail(t, result, scripts(settings...)...)
 	}
 }

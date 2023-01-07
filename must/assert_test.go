@@ -1,7 +1,8 @@
+// Code generated via scripts/generate.sh. DO NOT EDIT.
+
 package must
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 )
@@ -27,24 +28,17 @@ type internalTest struct {
 	capture string
 }
 
-func (it *internalTest) PS(s string) PostScript {
-	return &testScript{
-		label:   "label: " + s,
-		content: "content: " + s,
+func (it *internalTest) TestPostScript(value string) Setting {
+	return func(s *Settings) {
+		s.postScripts = append(s.postScripts, &testScript{
+			label:   "label: " + value,
+			content: "content: " + value,
+		})
 	}
 }
 
 func (it *internalTest) Helper() {
 	it.helper = true
-}
-
-func (it *internalTest) Fatalf(s string, args ...any) {
-	if !it.trigger {
-		it.trigger = true
-	}
-	msg := strings.TrimSpace(fmt.Sprintf(s, args...))
-	it.capture = msg
-	fmt.Println(msg)
 }
 
 func (it *internalTest) assert() {
@@ -54,7 +48,6 @@ func (it *internalTest) assert() {
 	if !it.trigger {
 		it.t.Fatalf("condition expected to trigger; did not")
 	}
-
 	if !strings.Contains(it.capture, it.exp) {
 		it.t.Fatalf("expected message %q in output, got %q", it.exp, it.capture)
 	}
