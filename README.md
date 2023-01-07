@@ -124,7 +124,7 @@ the slices so that the order of elements does not matter.
 ```go
 a := []int{3, 5, 1, 6, 7}
 b := []int{1, 7, 6, 3, 5}
-Eq(t, a, b, Cmp(cmpopts.SortSlices(func(i, j int) bool {
+must.Eq(t, a, b, must.Cmp(cmpopts.SortSlices(func(i, j int) bool {
   return i < j
 })))
 ```
