@@ -115,8 +115,9 @@ make sense to fail immediately and stop the test case execution.
 The test assertions that rely on `cmp.Equal` can be customized in how objects
 are compared by [specifying custom](https://github.com/google/go-cmp/blob/master/cmp/options.go#L16)
 `cmp.Option` values. These can be configured through `test.Cmp` and `must.Cmp` helpers.
-Google provides some common custom behaviors in the [cmdopts](https://github.com/google/go-cmp/tree/master/cmp/cmpopts)
-package.
+Google provides some common custom behaviors in the [cmpopts](https://github.com/google/go-cmp/tree/master/cmp/cmpopts)
+package. The [protocmp](https://github.com/protocolbuffers/protobuf-go/tree/master/testing/protocmp)
+package is also particularly helpful when working with Protobuf types.
 
 Here is an example of comparing two slices, but using a custom Option to sort
 the slices so that the order of elements does not matter.
