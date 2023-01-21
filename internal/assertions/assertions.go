@@ -1178,6 +1178,18 @@ func Contains[C any](i C, c interfaces.ContainsFunc[C]) (s string) {
 	return
 }
 
+func ContainsSubset[C any](elements []C, container interfaces.ContainsFunc[C]) (s string) {
+	for i := 0; i < len(elements); i++ {
+		element := elements[i]
+		if !container.Contains(element) {
+			s = "expected to contain element, but does not\n"
+			s += arrow("element: %v\n", element)
+			return
+		}
+	}
+	return
+}
+
 func NotContains[C any](i C, c interfaces.ContainsFunc[C]) (s string) {
 	if c.Contains(i) {
 		s = "expected not to contain element, but it does\n"
@@ -1193,4 +1205,8 @@ func Wait(wc *wait.Constraint) (s string) {
 		// context info?
 	}
 	return
+}
+
+func arrow(msg string, args ...any) string {
+	return fmt.Sprintf("↪ "+msg, args...)
 }
