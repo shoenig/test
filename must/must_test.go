@@ -581,8 +581,8 @@ func TestSliceContainsFunc(t *testing.T) {
 		{ID: 101, Name: "Bob"},
 	}
 
-	SliceContainsFunc(tc, s, &Person{ID: 102, Name: "Carl"}, func(a, b *Person) bool {
-		return a.ID == b.ID && a.Name == b.Name
+	SliceContainsFunc(tc, s, "Carl", func(a *Person, name string) bool {
+		return a.Name == name
 	})
 }
 

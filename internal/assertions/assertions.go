@@ -64,7 +64,7 @@ func contains[C comparable](slice []C, item C) bool {
 	return found
 }
 
-func containsFunc[A any](slice []A, item A, eq func(a, b A) bool) bool {
+func containsFunc[A, B any](slice []A, item B, eq func(a A, b B) bool) bool {
 	found := false
 	for i := 0; i < len(slice); i++ {
 		if eq(slice[i], item) {
@@ -354,7 +354,7 @@ func SliceContainsOp[C comparable](slice []C, item C) (s string) {
 	return
 }
 
-func SliceContainsFunc[A any](slice []A, item A, eq func(a, b A) bool) (s string) {
+func SliceContainsFunc[A, B any](slice []A, item B, eq func(a A, b B) bool) (s string) {
 	if !containsFunc(slice, item, eq) {
 		s = "expected slice to contain missing item via 'eq' function\n"
 		s += fmt.Sprintf("↪ slice is missing %#v\n", item)
