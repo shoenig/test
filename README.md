@@ -2,10 +2,9 @@
 
 <img align="right" width="240" height="244" src="https://i.imgur.com/gmn5mIo.png">
 
-[![GoDoc](https://godoc.org/github.com/shoenig/test?status.svg)](https://godoc.org/github.com/shoenig/test)
-[![Go Report Card](https://goreportcard.com/badge/github.com/shoenig/test)](https://goreportcard.com/report/github.com/shoenig/test)
-[![CI Tests](https://github.com/shoenig/test/actions/workflows/ci.yaml/badge.svg)](https://github.com/shoenig/test/actions/workflows/ci.yaml)
-[![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
+[![Go Reference](https://pkg.go.dev/badge/github.com/shoenig/test.svg)](https://pkg.go.dev/github.com/shoenig/test)
+[![MPL License](https://img.shields.io/github/license/shoenig/test?color=g&style=flat-square)](https://github.com/shoenig/test/blob/main/LICENSE)
+[![Run CI Tests](https://github.com/shoenig/test/actions/workflows/ci.yaml/badge.svg)](https://github.com/shoenig/test/actions/workflows/ci.yaml)
 
 `test` is a generics based testing assertions library for Go.
 
