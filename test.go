@@ -179,7 +179,7 @@ func SliceContainsOp[C comparable](t T, slice []C, item C, settings ...Setting) 
 }
 
 // SliceContainsFunc asserts item exists in slice, using eq to compare elements.
-func SliceContainsFunc[A any](t T, slice []A, item A, eq func(a, b A) bool, settings ...Setting) {
+func SliceContainsFunc[A, B any](t T, slice []A, item B, eq func(a A, b B) bool, settings ...Setting) {
 	t.Helper()
 	invoke(t, assertions.SliceContainsFunc(slice, item, eq), settings...)
 }
