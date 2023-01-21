@@ -683,6 +683,13 @@ func Contains[C any](t T, element C, container interfaces.ContainsFunc[C], setti
 	invoke(t, assertions.Contains(element, container), settings...)
 }
 
+// ContainsSubset asserts each element in elements exists in container, in no particular order.
+// There may be elements in container beyond what is present in elements.
+func ContainsSubset[C any](t T, elements []C, container interfaces.ContainsFunc[C], settings ...Setting) {
+	t.Helper()
+	invoke(t, assertions.ContainsSubset(elements, container), settings...)
+}
+
 // NotContains asserts container.ContainsFunc(element) is false.
 func NotContains[C any](t T, element C, container interfaces.ContainsFunc[C], settings ...Setting) {
 	t.Helper()

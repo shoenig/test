@@ -1487,6 +1487,14 @@ func TestContains(t *testing.T) {
 	Contains[string](tc, "apple", c)
 }
 
+func TestContainsSubset(t *testing.T) {
+	tc := newCase(t, `expected to contain element, but does not`)
+	t.Cleanup(tc.assert)
+
+	c := &container[string]{contains: false}
+	ContainsSubset[string](tc, []string{"a", "b"}, c)
+}
+
 func TestNotContains(t *testing.T) {
 	tc := newCase(t, `expected not to contain element, but it does`)
 	t.Cleanup(tc.assert)
