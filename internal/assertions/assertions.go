@@ -249,6 +249,21 @@ func EqJSON(exp, val string) (s string) {
 	return
 }
 
+func ValidJSON(input string) (s string) {
+	return validJSON([]byte(input))
+}
+
+func ValidJSONBytes(input []byte) (s string) {
+	return validJSON(input)
+}
+
+func validJSON(input []byte) (s string) {
+	if !json.Valid([]byte(input)) {
+		return "expected input to be valid json\n"
+	}
+	return
+}
+
 func EqSliceFunc[A any](exp, val []A, eq func(a, b A) bool) (s string) {
 	lenA, lenB := len(exp), len(val)
 

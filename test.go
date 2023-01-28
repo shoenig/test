@@ -115,6 +115,18 @@ func EqJSON(t T, exp, val string, settings ...Setting) {
 	invoke(t, assertions.EqJSON(exp, val), settings...)
 }
 
+// ValidJSON asserts js is valid JSON.
+func ValidJSON(t T, js string, settings ...Setting) {
+	t.Helper()
+	invoke(t, assertions.ValidJSON(js), settings...)
+}
+
+// ValidJSONBytes asserts js is valid JSON.
+func ValidJSONBytes(t T, js []byte, settings ...Setting) {
+	t.Helper()
+	invoke(t, assertions.ValidJSONBytes(js))
+}
+
 // Equal asserts val.Equal(exp).
 func Equal[E interfaces.EqualFunc[E]](t T, exp, val E, settings ...Setting) {
 	t.Helper()

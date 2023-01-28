@@ -344,6 +344,20 @@ func TestEqJSON_PS(t *testing.T) {
 	EqJSON(tc, `"one"`, `"two"`, tc.TestPostScript("eq json"))
 }
 
+func TestValidJSON(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.assert)
+
+	ValidJSON(tc, `{"a":1, "b":}`)
+}
+
+func TestValidJSONBytes(t *testing.T) {
+	tc := newCapture(t)
+	t.Cleanup(tc.assert)
+
+	ValidJSONBytes(tc, []byte(`{"a":1, "b":}`))
+}
+
 func TestSliceEqFunc(t *testing.T) {
 	t.Run("length", func(t *testing.T) {
 		tc := newCase(t, `expected slices of same length`)
