@@ -389,6 +389,20 @@ func TestSliceEqFunc(t *testing.T) {
 			return a.ID == b.ID
 		})
 	})
+
+	t.Run("translate", func(t *testing.T) {
+		tc := newCase(t, `expected slice equality via 'eq' function`)
+		t.Cleanup(tc.assert)
+
+		values := []*Person{
+			{ID: 100, Name: "Alice"},
+			{ID: 101, Name: "Bob"},
+		}
+		exp := []string{"Alice", "Carl"}
+		SliceEqFunc(tc, exp, values, func(a *Person, name string) bool {
+			return a.Name == name
+		})
+	})
 }
 
 func TestSliceEqFunc_PS(t *testing.T) {

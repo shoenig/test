@@ -264,7 +264,7 @@ func validJSON(input []byte) (s string) {
 	return
 }
 
-func EqSliceFunc[A any](exp, val []A, eq func(a, b A) bool) (s string) {
+func EqSliceFunc[A, B any](exp []B, val []A, eq func(a A, b B) bool) (s string) {
 	lenA, lenB := len(exp), len(val)
 
 	if lenA != lenB {
@@ -277,7 +277,7 @@ func EqSliceFunc[A any](exp, val []A, eq func(a, b A) bool) (s string) {
 
 	miss := false
 	for i := 0; i < lenA; i++ {
-		if !eq(exp[i], val[i]) {
+		if !eq(val[i], exp[i]) {
 			miss = true
 			break
 		}

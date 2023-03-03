@@ -148,8 +148,8 @@ func Lesser[L interfaces.LessFunc[L]](t T, exp, val L, settings ...Setting) {
 	invoke(t, assertions.Lesser(exp, val), settings...)
 }
 
-// SliceEqFunc asserts elements of exp and val are the same using eq.
-func SliceEqFunc[A any](t T, exp, val []A, eq func(a, b A) bool, settings ...Setting) {
+// SliceEqFunc asserts elements of val satisfy eq for the corresponding element in exp.
+func SliceEqFunc[A, B any](t T, exp []B, val []A, eq func(expectation A, value B) bool, settings ...Setting) {
 	t.Helper()
 	invoke(t, assertions.EqSliceFunc(exp, val, eq), settings...)
 }
