@@ -303,7 +303,6 @@ func Equal[E interfaces.EqualFunc[E]](exp, val E) (s string) {
 func NotEqual[E interfaces.EqualFunc[E]](exp, val E) (s string) {
 	if val.Equal(exp) {
 		s = "expected inequality via .Equal method\n"
-		s += diff(exp, val, nil)
 	}
 	return
 }
@@ -1220,6 +1219,31 @@ func Wait(wc *wait.Constraint) (s string) {
 		s = "expected condition to pass within wait context\n"
 		s += bullet("error: %v\n", err)
 		// context info?
+	}
+	return
+}
+
+type Tweak[E interfaces.CopyEqual[E]] struct {
+	Field string
+	Apply interfaces.TweakFunc[E]
+}
+
+// StructEqual will apply each Tweak and assert E.Equal captures the modification.
+func StructEqual[E interfaces.CopyEqual[E]](original E, tweaks []Tweak[E]) (s string) {
+	for _, tweak := range tweaks {
+		if tweak.Field == "" {
+			return "Tweak.Field must be set"
+		} else if tweak.Apply == nil {
+			return "Tweak.Apply must be set"
+		}
+		clone := original.Copy()
+		if s = Equal[E](original, clone); s != "" {
+			return
+		}
+		tweak.Apply(clone)
+		if s = NotEqual[E](original, clone); s != "" {
+			return
+		}
 	}
 	return
 }

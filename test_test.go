@@ -1475,6 +1475,32 @@ func (c *container[T]) Len() int {
 	return c.length
 }
 
+func (c *container[T]) Copy() *container[T] {
+	return &container[T]{
+		contains: c.contains,
+		empty:    c.empty,
+		size:     c.size,
+		length:   c.length,
+	}
+}
+
+func (c *container[T]) Equal(o *container[T]) bool {
+	if c == nil || o == nil {
+		return c == o
+	}
+	switch {
+	case c.contains != o.contains:
+		return false
+	case c.empty != o.empty:
+		return false
+	case c.size != o.size:
+		return false
+	case c.length != o.length:
+		return false
+	}
+	return true
+}
+
 func TestEmpty(t *testing.T) {
 	tc := newCase(t, `expected to be empty, but was not`)
 	t.Cleanup(tc.assert)
@@ -1559,4 +1585,28 @@ func TestWait_TestFunc(t *testing.T) {
 		wait.TestFunc(func() (bool, error) { return false, errors.New("fail") }),
 		wait.Timeout(100*time.Millisecond),
 	))
+}
+
+func TestStructEqual(t *testing.T) {
+	tc := newCase(t, `expected inequality via .Equal method`)
+	t.Cleanup(tc.assert)
+
+	StructEqual[*container[int]](tc, &container[int]{
+		contains: true,
+		empty:    true,
+		size:     1,
+		length:   2,
+	}, []Tweak[*container[int]]{{
+		Field: "contains",
+		Apply: func(c *container[int]) { c.contains = false },
+	}, {
+		Field: "empty",
+		Apply: func(c *container[int]) { c.empty = false },
+	}, {
+		Field: "size",
+		Apply: func(c *container[int]) { c.size = 9 },
+	}, {
+		Field: "length",
+		Apply: func(c *container[int]) { c.length = 2 }, // no mod
+	}})
 }
