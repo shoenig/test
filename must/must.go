@@ -12,6 +12,7 @@ import (
 	"github.com/shoenig/test/internal/assertions"
 	"github.com/shoenig/test/internal/brokenfs"
 	"github.com/shoenig/test/internal/constraints"
+	"github.com/shoenig/test/internal/util"
 	"github.com/shoenig/test/wait"
 )
 
@@ -714,4 +715,28 @@ func NotContains[C any](t T, element C, container interfaces.ContainsFunc[C], se
 func Wait(t T, wc *wait.Constraint, settings ...Setting) {
 	t.Helper()
 	invoke(t, assertions.Wait(wc), settings...)
+}
+
+// Tweak is used to modify a struct and assert its Equal method captures the
+// modification.
+//
+// Field is the name of the struct field and is used only for error printing.
+// Apply is a function that modifies E.
+type Tweak[E interfaces.CopyEqual[E]] struct {
+	Field string
+	Apply interfaces.TweakFunc[E]
+}
+
+// StructEqual will apply each Tweak and assert E.Equal captures the modification.
+func StructEqual[E interfaces.CopyEqual[E]](t T, original E, tweaks []Tweak[E], settings ...Setting) {
+	t.Helper()
+	invoke(t, assertions.StructEqual(
+		original,
+		util.CloneSliceFunc[Tweak[E], assertions.Tweak[E]](
+			tweaks,
+			func(tweak Tweak[E]) assertions.Tweak[E] {
+				return assertions.Tweak[E]{Field: tweak.Field, Apply: tweak.Apply}
+			},
+		),
+	), settings...)
 }
