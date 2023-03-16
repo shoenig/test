@@ -1607,12 +1607,36 @@ func TestStructEqual(t *testing.T) {
 	tc := newCase(t, `expected inequality via .Equal method`)
 	t.Cleanup(tc.assert)
 
-	StructEqual[*container[int]](tc, &container[int]{
+	StructEqual(tc, &container[int]{
 		contains: true,
 		empty:    true,
 		size:     1,
 		length:   2,
 	}, []Tweak[*container[int]]{{
+		Field: "contains",
+		Apply: func(c *container[int]) { c.contains = false },
+	}, {
+		Field: "empty",
+		Apply: func(c *container[int]) { c.empty = false },
+	}, {
+		Field: "size",
+		Apply: func(c *container[int]) { c.size = 9 },
+	}, {
+		Field: "length",
+		Apply: func(c *container[int]) { c.length = 2 }, // no mod
+	}})
+}
+
+func TestStructEqual_Tweaks(t *testing.T) {
+	tc := newCase(t, `expected inequality via .Equal method`)
+	t.Cleanup(tc.assert)
+
+	StructEqual(tc, &container[int]{
+		contains: true,
+		empty:    true,
+		size:     1,
+		length:   2,
+	}, Tweaks[*container[int]]{{
 		Field: "contains",
 		Apply: func(c *container[int]) { c.contains = false },
 	}, {

@@ -727,8 +727,11 @@ type Tweak[E interfaces.CopyEqual[E]] struct {
 	Apply interfaces.TweakFunc[E]
 }
 
+// Tweaks is a slice of Tweak.
+type Tweaks[E interfaces.CopyEqual[E]] []Tweak[E]
+
 // StructEqual will apply each Tweak and assert E.Equal captures the modification.
-func StructEqual[E interfaces.CopyEqual[E]](t T, original E, tweaks []Tweak[E], settings ...Setting) {
+func StructEqual[E interfaces.CopyEqual[E]](t T, original E, tweaks Tweaks[E], settings ...Setting) {
 	t.Helper()
 	invoke(t, assertions.StructEqual(
 		original,
