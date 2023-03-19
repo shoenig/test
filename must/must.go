@@ -735,7 +735,7 @@ func StructEqual[E interfaces.CopyEqual[E]](t T, original E, tweaks Tweaks[E], s
 	t.Helper()
 	invoke(t, assertions.StructEqual(
 		original,
-		util.CloneSliceFunc[Tweak[E], assertions.Tweak[E]](
+		util.CloneSliceFunc(
 			tweaks,
 			func(tweak Tweak[E]) assertions.Tweak[E] {
 				return assertions.Tweak[E]{Field: tweak.Field, Apply: tweak.Apply}
