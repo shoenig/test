@@ -321,6 +321,12 @@ func AscendingFunc[A any](t T, slice []A, less func(A, A) bool, settings ...Sett
 	invoke(t, assertions.AscendingFunc(slice, less), settings...)
 }
 
+// AscendingCmp asserts slice[n] is less than slice[n+1] for each element using the cmp comparator.
+func AscendingCmp[A any](t T, slice []A, compare func(A, A) int, settings ...Setting) {
+	t.Helper()
+	invoke(t, assertions.AscendingCmp(slice, compare), settings...)
+}
+
 // AscendingLess asserts slice[n].Less(slice[n+1]) for each element n.
 func AscendingLess[L interfaces.LessFunc[L]](t T, slice []L, settings ...Setting) {
 	t.Helper()
@@ -333,10 +339,16 @@ func Descending[O constraints.Ordered](t T, slice []O, settings ...Setting) {
 	invoke(t, assertions.Descending(slice), settings...)
 }
 
-// DescendingFunc asserts slice[n+1] is less than slice[n] for each element n using the less comparator.
+// DescendingFunc asserts slice[n+1] is less than slice[n] for each element using the less comparator.
 func DescendingFunc[A any](t T, slice []A, less func(A, A) bool, settings ...Setting) {
 	t.Helper()
 	invoke(t, assertions.DescendingFunc(slice, less), settings...)
+}
+
+// DescendingCmp asserts slice[n+1] is ≤ slice[n] for each element.
+func DescendingCmp[A any](t T, slice []A, compare func(A, A) int, settings ...Setting) {
+	t.Helper()
+	invoke(t, assertions.DescendingCmp(slice, compare), settings...)
 }
 
 // DescendingLess asserts slice[n+1].Less(slice[n]) for each element n.
