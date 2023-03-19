@@ -884,6 +884,31 @@ func TestAscendingFunc(t *testing.T) {
 	})
 }
 
+func TestAscendingCmp(t *testing.T) {
+	tc := newCase(t, `expected compare`)
+	t.Cleanup(tc.assert)
+
+	l := []*Person{
+		{ID: 100, Name: "Alice"},
+		{ID: 200, Name: "Bob"},
+		{ID: 300, Name: "Dale"},
+		{ID: 400, Name: "Carl"},
+	}
+
+	cmp := func(p1, p2 *Person) int {
+		switch {
+		case p1.Name < p2.Name:
+			return -1
+		case p1.Name > p2.Name:
+			return 1
+		default:
+			return 0
+		}
+	}
+
+	AscendingCmp(tc, l, cmp)
+}
+
 func TestAscendingLess(t *testing.T) {
 	tc := newCase(t, `expected slice`)
 	t.Cleanup(tc.assert)
@@ -927,6 +952,30 @@ func TestDescendingFunc(t *testing.T) {
 	DescendingFunc(tc, l, func(p1, p2 *Person) bool {
 		return p1.Name < p2.Name
 	})
+}
+
+func TestDescendingCmp(t *testing.T) {
+	tc := newCase(t, `expected compare`)
+	t.Cleanup(tc.assert)
+	l := []*Person{
+		{ID: 400, Name: "Dale"},
+		{ID: 300, Name: "Bob"},
+		{ID: 200, Name: "Carl"},
+		{ID: 100, Name: "Alice"},
+	}
+
+	cmp := func(p1, p2 *Person) int {
+		switch {
+		case p1.Name < p2.Name:
+			return -1
+		case p1.Name > p2.Name:
+			return 1
+		default:
+			return 0
+		}
+	}
+
+	DescendingCmp(tc, l, cmp)
 }
 
 func TestDescendingLess(t *testing.T) {

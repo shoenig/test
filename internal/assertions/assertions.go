@@ -558,6 +558,19 @@ func AscendingFunc[A any](slice []A, less func(a, b A) bool) (s string) {
 	return
 }
 
+func AscendingCmp[A any](slice []A, compare func(a, b A) int) (s string) {
+	for i := 0; i < len(slice)-1; i++ {
+		cmp := compare(slice[i], slice[i+1])
+		if cmp > 0 {
+			s = fmt.Sprintf("expected compare(slice[%d], slice[%d]) <= 0\n", i, i+1)
+			s += bullet("slice[%d]: %v\n", i, slice[i])
+			s += bullet("slice[%d]: %v\n", i+1, slice[i+1])
+			return
+		}
+	}
+	return
+}
+
 func AscendingLess[L interfaces.LessFunc[L]](slice []L) (s string) {
 	for i := 0; i < len(slice)-1; i++ {
 		if !slice[i].Less(slice[i+1]) {
@@ -586,6 +599,19 @@ func DescendingFunc[A any](slice []A, less func(a, b A) bool) (s string) {
 	for i := 0; i < len(slice)-1; i++ {
 		if !less(slice[i+1], slice[i]) {
 			s = fmt.Sprintf("expected less(slice[%d], slice[%d])\n", i+1, i)
+			s += bullet("slice[%d]: %v\n", i, slice[i])
+			s += bullet("slice[%d]: %v\n", i+1, slice[i+1])
+			return
+		}
+	}
+	return
+}
+
+func DescendingCmp[A any](slice []A, compare func(a, b A) int) (s string) {
+	for i := 0; i < len(slice)-1; i++ {
+		cmp := compare(slice[i], slice[i+1])
+		if cmp < 0 {
+			s = fmt.Sprintf("expected compare(slice[%d], slice[%d]) >= 0\n", i, i+1)
 			s += bullet("slice[%d]: %v\n", i, slice[i])
 			s += bullet("slice[%d]: %v\n", i+1, slice[i+1])
 			return
