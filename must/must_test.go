@@ -885,7 +885,7 @@ func TestAscendingFunc(t *testing.T) {
 }
 
 func TestAscendingCmp(t *testing.T) {
-	tc := newCase(t, `expected cmp`)
+	tc := newCase(t, `expected compare`)
 	t.Cleanup(tc.assert)
 
 	l := []*Person{

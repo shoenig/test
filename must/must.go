@@ -311,13 +311,13 @@ func BetweenExclusive[O constraints.Ordered](t T, lower, val, upper O, settings 
 	invoke(t, assertions.BetweenExclusive(lower, val, upper), settings...)
 }
 
-// Ascending asserts slice[n] ≤ slice[n+1] for each element n.
+// Ascending asserts slice[n] ≤ slice[n+1] for each element.
 func Ascending[O constraints.Ordered](t T, slice []O, settings ...Setting) {
 	t.Helper()
 	invoke(t, assertions.Ascending(slice), settings...)
 }
 
-// AscendingFunc asserts slice[n] is less than slice[n+1] for each element n using the less comparator.
+// AscendingFunc asserts slice[n] is less than slice[n+1] for each element using the less comparator.
 func AscendingFunc[A any](t T, slice []A, less func(A, A) bool, settings ...Setting) {
 	t.Helper()
 	invoke(t, assertions.AscendingFunc(slice, less), settings...)
@@ -329,13 +329,13 @@ func AscendingCmp[A any](t T, slice []A, compare func(A, A) int, settings ...Set
 	invoke(t, assertions.AscendingCmp(slice, compare), settings...)
 }
 
-// AscendingLess asserts slice[n].Less(slice[n+1]) for each element n.
+// AscendingLess asserts slice[n].Less(slice[n+1]) for each element.
 func AscendingLess[L interfaces.LessFunc[L]](t T, slice []L, settings ...Setting) {
 	t.Helper()
 	invoke(t, assertions.AscendingLess(slice), settings...)
 }
 
-// Descending asserts slice[n] ≥ slice[n+1] for each element n.
+// Descending asserts slice[n] ≥ slice[n+1] for each element.
 func Descending[O constraints.Ordered](t T, slice []O, settings ...Setting) {
 	t.Helper()
 	invoke(t, assertions.Descending(slice), settings...)
@@ -353,7 +353,7 @@ func DescendingCmp[A any](t T, slice []A, compare func(A, A) int, settings ...Se
 	invoke(t, assertions.DescendingCmp(slice, compare), settings...)
 }
 
-// DescendingLess asserts slice[n+1].Less(slice[n]) for each element n.
+// DescendingLess asserts slice[n+1].Less(slice[n]) for each element.
 func DescendingLess[L interfaces.LessFunc[L]](t T, slice []L, settings ...Setting) {
 	t.Helper()
 	invoke(t, assertions.DescendingLess(slice), settings...)
