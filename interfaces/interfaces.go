@@ -6,6 +6,16 @@ import (
 	"github.com/shoenig/test/internal/constraints"
 )
 
+// MinFunc represents a type implementing the Min method.
+type MinFunc[T any] interface {
+	Min() T
+}
+
+// MaxFunc represents a type implementing the Max method.
+type MaxFunc[T any] interface {
+	Max() T
+}
+
 // EqualFunc represents a type implementing the Equal method.
 type EqualFunc[A any] interface {
 	Equal(A) bool

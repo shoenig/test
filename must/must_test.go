@@ -850,6 +850,30 @@ func TestBetweenExclusive(t *testing.T) {
 	})
 }
 
+type number int
+
+func (n number) Min() number {
+	return n
+}
+
+func (n number) Max() number {
+	return n
+}
+
+func TestMin(t *testing.T) {
+	tc := newCase(t, `expected a different value for min`)
+	t.Cleanup(tc.assert)
+
+	Min[number](tc, 42, number(100))
+}
+
+func TestMax(t *testing.T) {
+	tc := newCase(t, `expected a different value for max`)
+	t.Cleanup(tc.assert)
+
+	Max[number](tc, 71, number(100))
+}
+
 func TestAscending(t *testing.T) {
 	t.Run("numbers", func(t *testing.T) {
 		tc := newCase(t, `expected slice`)

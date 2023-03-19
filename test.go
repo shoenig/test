@@ -309,6 +309,22 @@ func BetweenExclusive[O constraints.Ordered](t T, lower, val, upper O, settings 
 	invoke(t, assertions.BetweenExclusive(lower, val, upper), settings...)
 }
 
+// Min asserts collection.Min() is equal to expect.
+//
+// The equality method may be configured with Cmp options.
+func Min[A any, C interfaces.MinFunc[A]](t T, expect A, collection C, settings ...Setting) {
+	t.Helper()
+	invoke(t, assertions.Min(expect, collection, options(settings...)...), settings...)
+}
+
+// Max asserts collection.Max() is equal to expect.
+//
+// The equality method may be configured with Cmp options.
+func Max[A any, C interfaces.MaxFunc[A]](t T, expect A, collection C, settings ...Setting) {
+	t.Helper()
+	invoke(t, assertions.Max(expect, collection, options(settings...)...), settings...)
+}
+
 // Ascending asserts slice[n] ≤ slice[n+1] for each element.
 func Ascending[O constraints.Ordered](t T, slice []O, settings ...Setting) {
 	t.Helper()
