@@ -534,6 +534,24 @@ func BetweenExclusive[O constraints.Ordered](lower, val, upper O) (s string) {
 	return
 }
 
+func Min[A any, C interfaces.MinFunc[A]](expect A, collection C, opts ...cmp.Option) (s string) {
+	min := collection.Min()
+	if !equal(expect, min, opts) {
+		s = "expected a different value for min\n"
+		s += diff(expect, min, opts)
+	}
+	return
+}
+
+func Max[A any, C interfaces.MaxFunc[A]](expect A, collection C, opts ...cmp.Option) (s string) {
+	max := collection.Max()
+	if !equal(expect, max, opts) {
+		s = "expected a different value for max\n"
+		s += diff(expect, max, opts)
+	}
+	return
+}
+
 func Ascending[O constraints.Ordered](slice []O) (s string) {
 	for i := 0; i < len(slice)-1; i++ {
 		if slice[i] > slice[i+1] {
