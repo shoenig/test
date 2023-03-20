@@ -11,9 +11,12 @@ vet:
 	@echo "--> Vet Go sources ..."
 	@go vet ./...
 
-changes:
-	@echo "--> Checking for source diffs ..."
+generate:
+	@echo "--> Go generate ..."
 	@go generate ./...
+
+changes: generate
+	@echo "--> Checking for source diffs ..."
 	@go mod tidy
 	@go fmt ./...
 	@./scripts/changes.sh
