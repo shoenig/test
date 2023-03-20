@@ -218,6 +218,13 @@ func SliceNotContains[A any](t T, slice []A, item A, settings ...Setting) {
 	invoke(t, assertions.SliceNotContains(slice, item), settings...)
 }
 
+// SliceNotContainsFunc asserts item does not exist inslice, using eq to compare
+// elements.
+func SliceNotContainsFunc[A, B any](t T, slice []A, item B, eq func(a A, b B) bool, settings ...Setting) {
+	t.Helper()
+	invoke(t, assertions.SliceNotContainsFunc(slice, item, eq), settings...)
+}
+
 // SliceContainsAll asserts slice and items contain the same elements, but in
 // no particular order. The number of elements in slice and items must be the
 // same.

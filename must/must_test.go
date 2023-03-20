@@ -651,6 +651,23 @@ func TestSliceNotContains(t *testing.T) {
 	SliceNotContains(tc, s, &Person{ID: 101, Name: "Bob"})
 }
 
+func TestSliceNotContainsFunc(t *testing.T) {
+	tc := newCase(t, `expected slice to not contain item but it does`)
+	t.Cleanup(tc.assert)
+
+	s := []*Person{
+		{ID: 100, Name: "Alice"},
+		{ID: 101, Name: "Bob"},
+		{ID: 102, Name: "Carla"},
+	}
+
+	f := func(a, b *Person) bool {
+		return a.Name == b.Name && a.ID == b.ID
+	}
+
+	SliceNotContainsFunc(tc, s, &Person{ID: 101, Name: "Bob"}, f)
+}
+
 func TestSliceContainsAll(t *testing.T) {
 	t.Run("wrong element", func(t *testing.T) {
 		tc := newCase(t, `expected slice to contain missing item`)
