@@ -406,6 +406,14 @@ func SliceNotContains[A any](slice []A, item A, opts ...cmp.Option) (s string) {
 	return
 }
 
+func SliceNotContainsFunc[A, B any](slice []A, item B, eq func(a A, b B) bool) (s string) {
+	if containsFunc(slice, item, eq) {
+		s = "expected slice to not contain item but it does\n"
+		s += bullet("unwanted item %#v\n", item)
+	}
+	return
+}
+
 func SliceContainsAll[A any](slice, items []A) (s string) {
 	if len(slice) != len(items) {
 		s = "expected slice and items to contain same number of elements\n"
