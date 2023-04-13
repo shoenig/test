@@ -5,6 +5,7 @@ package must
 import (
 	"io/fs"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -521,7 +522,9 @@ func FileNotExistsFS(t T, system fs.FS, file string, settings ...Setting) {
 // FileNotExists asserts file does not exist on the OS filesystem.
 func FileNotExists(t T, file string, settings ...Setting) {
 	t.Helper()
-	invoke(t, assertions.FileNotExistsFS(os.DirFS(brokenfs.Root), file), settings...)
+	dir := filepath.Dir(file)
+	file = filepath.Base(file)
+	invoke(t, assertions.FileNotExistsFS(os.DirFS(dir), file), settings...)
 }
 
 // DirExistsFS asserts directory exists on the fs.FS filesystem.
