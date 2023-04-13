@@ -959,9 +959,14 @@ func FileExistsFS(system fs.FS, file string) (s string) {
 
 func FileNotExistsFS(system fs.FS, file string) (s string) {
 	_, err := fs.Stat(system, file)
-	if !errors.Is(err, fs.ErrNotExist) {
+	if err == nil {
 		s = "expected file to not exist\n"
 		s += bullet("name: %s\n", file)
+		return
+	}
+	if !errors.Is(err, fs.ErrNotExist) {
+		s = "expected not existing file but got different error\n"
+		s += bullet("error: %s\n", err)
 		return
 	}
 	return
