@@ -1215,8 +1215,8 @@ func UUIDv4(id string) (s string) {
 func Length(n int, length interfaces.LengthFunc) (s string) {
 	if l := length.Len(); l != n {
 		s = "expected different length\n"
-		s += bullet("  length: %d\n")
-		s += bullet("expected: %d\n", l, n)
+		s += bullet("  length: %d\n", l)
+		s += bullet("expected: %d\n", n)
 	}
 	return
 }
