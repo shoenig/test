@@ -1176,7 +1176,7 @@ func StrNotHasSuffix(suffix, str string) (s string) {
 func RegexMatch(re *regexp.Regexp, target string) (s string) {
 	if !re.MatchString(target) {
 		s = "expected regexp match\n"
-		s += bullet("regex: %s\n", re)
+		s += bullet(" regex: %s\n", re)
 		s += bullet("string: %s\n", target)
 	}
 	return
