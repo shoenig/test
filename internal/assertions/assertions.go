@@ -152,7 +152,7 @@ func ErrorIs(err error, target error) (s string) {
 	}
 	if !errors.Is(err, target) {
 		s = "expected errors.Is match\n"
-		s += bullet("error: %v\n", err)
+		s += bullet(" error: %v\n", err)
 		s += bullet("target: %v\n", target)
 	}
 	return
