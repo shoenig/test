@@ -1215,7 +1215,7 @@ func UUIDv4(id string) (s string) {
 func Length(n int, length interfaces.LengthFunc) (s string) {
 	if l := length.Len(); l != n {
 		s = "expected different length\n"
-		s += bullet("length:   %d\n")
+		s += bullet("  length: %d\n")
 		s += bullet("expected: %d\n", l, n)
 	}
 	return
@@ -1224,7 +1224,7 @@ func Length(n int, length interfaces.LengthFunc) (s string) {
 func Size(n int, size interfaces.SizeFunc) (s string) {
 	if l := size.Size(); l != n {
 		s = "expected different size\n"
-		s += bullet("size:     %d\n", l)
+		s += bullet("    size: %d\n", l)
 		s += bullet("expected: %d\n", n)
 	}
 	return
