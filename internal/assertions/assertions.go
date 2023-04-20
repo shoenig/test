@@ -152,7 +152,7 @@ func ErrorIs(err error, target error) (s string) {
 	}
 	if !errors.Is(err, target) {
 		s = "expected errors.Is match\n"
-		s += bullet("error: %v\n", err)
+		s += bullet(" error: %v\n", err)
 		s += bullet("target: %v\n", target)
 	}
 	return
@@ -1176,7 +1176,7 @@ func StrNotHasSuffix(suffix, str string) (s string) {
 func RegexMatch(re *regexp.Regexp, target string) (s string) {
 	if !re.MatchString(target) {
 		s = "expected regexp match\n"
-		s += bullet("regex: %s\n", re)
+		s += bullet(" regex: %s\n", re)
 		s += bullet("string: %s\n", target)
 	}
 	return
@@ -1215,8 +1215,8 @@ func UUIDv4(id string) (s string) {
 func Length(n int, length interfaces.LengthFunc) (s string) {
 	if l := length.Len(); l != n {
 		s = "expected different length\n"
-		s += bullet("length:   %d\n")
-		s += bullet("expected: %d\n", l, n)
+		s += bullet("  length: %d\n", l)
+		s += bullet("expected: %d\n", n)
 	}
 	return
 }
@@ -1224,7 +1224,7 @@ func Length(n int, length interfaces.LengthFunc) (s string) {
 func Size(n int, size interfaces.SizeFunc) (s string) {
 	if l := size.Size(); l != n {
 		s = "expected different size\n"
-		s += bullet("size:     %d\n", l)
+		s += bullet("    size: %d\n", l)
 		s += bullet("expected: %d\n", n)
 	}
 	return
