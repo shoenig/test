@@ -187,18 +187,46 @@ func ExampleEq() {
 // Lesser
 
 // MapContainsKey
+func ExampleMapContainsKey() {
+	numbers := map[string]int{"one": 1, "two": 2, "three": 3}
+	MapContainsKey(t, numbers, "one")
+	// Output:
+}
 
 // MapContainsKeys
+func ExampleMapContainsKeys() {
+	numbers := map[string]int{"one": 1, "two": 2, "three": 3}
+	keys := []string{"one", "two"}
+	MapContainsKeys(t, numbers, keys)
+	// Output:
+}
 
 // MapContainsValues
+func ExampleMapContainsValues() {
+	numbers := map[string]int{"one": 1, "two": 2, "three": 3}
+	values := []int{1, 2}
+	MapContainsValues(t, numbers, values)
+	// Output:
+}
 
 // MapContainsValuesEqual
 
 // MapContainsValuesFunc
 
 // MapEmpty
+func ExampleMapEmpty() {
+	m := make(map[int]int)
+	MapEmpty(t, m)
+	// Output:
+}
 
 // MapEq
+func ExampleMapEq() {
+	m1 := map[string]int{"one": 1, "two": 2, "three": 3}
+	m2 := map[string]int{"one": 1, "two": 2, "three": 3}
+	MapEq(t, m1, m2)
+	// Output:
+}
 
 // MapEqFunc
 
@@ -303,6 +331,10 @@ func ExampleEq() {
 // StrHasSuffix
 
 // StrNotContains
+func ExampleSliceNotContains() {
+	StrNotContains(t, "public static void main", "def")
+	// Output:
+}
 
 // StrNotContainsAny
 
@@ -315,6 +347,10 @@ func ExampleEq() {
 // StructEqual
 
 // True
+func ExampleTrue() {
+	True(t, true)
+	// Output:
+}
 
 // UUIDv4
 
