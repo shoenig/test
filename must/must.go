@@ -556,6 +556,7 @@ func DirNotExistsFS(t T, system fs.FS, directory string, settings ...Setting) {
 // DirNotExists asserts directory does not exist on the OS filesystem.
 func DirNotExists(t T, directory string, settings ...Setting) {
 	t.Helper()
+	directory = strings.TrimPrefix(directory, "/")
 	invoke(t, assertions.DirNotExistsFS(os.DirFS(brokenfs.Root), directory), settings...)
 }
 
