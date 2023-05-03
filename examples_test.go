@@ -1,7 +1,10 @@
+//go:build unix
+
 package test
 
 import (
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -45,17 +48,50 @@ func (c *myContainer[T]) Empty() bool {
 	return len(c.items) == 0
 }
 
+type score int
+
+func (s score) Less(other score) bool {
+	return s < other
+}
+
 func ExampleAscending() {
 	nums := []int{1, 3, 4, 4, 9}
 	Ascending(t, nums)
 	// Output:
 }
 
-// AscendingCmp
+func ExampleAscendingCmp() {
+	labels := []string{"Fun", "great", "Happy", "joyous"}
+	AscendingCmp(t, labels, func(a, b string) int {
+		A := strings.ToLower(a)
+		B := strings.ToLower(b)
+		switch {
+		case A == B:
+			return 0
+		case A < B:
+			return -1
+		default:
+			return 1
+		}
+	})
+	// Output:
+}
 
-// AscendingFunc
+func ExampleAscendingFunc() {
+	labels := []string{"Fun", "great", "Happy", "joyous"}
+	AscendingFunc(t, labels, func(a, b string) bool {
+		A := strings.ToLower(a)
+		B := strings.ToLower(b)
+		return A < B
+	})
+	// Output:
+}
 
-// AscendingLess
+func ExampleAscendingLess() {
+	nums := []score{4, 6, 7, 9}
+	AscendingLess(t, nums)
+	// Output:
+}
 
 func ExampleBetween() {
 	lower, upper := 3, 9
@@ -109,15 +145,33 @@ func ExampleDescendingFunc() {
 	// Output:
 }
 
-// DescendingLess
+func ExampleDescendingLess() {
+	nums := []score{9, 6, 3, 1, 0}
+	DescendingLess(t, nums)
+	// Output:
+}
 
-// DirExists
+func ExampleDirExists() {
+	DirExists(t, "/tmp")
+	// Output:
+}
 
-// DirExistsFS
+func ExampleDirExistsFS() {
+	DirExistsFS(t, os.DirFS("/"), "tmp")
+	// Output:
+}
 
 // DirNotExists
+func ExampleDirNotExists() {
+	DirNotExists(t, "/does/not/exist")
+	// Output:
+}
 
 // DirNotExistsFS
+func ExampleDirNotExistsFS() {
+	DirNotExistsFS(t, os.DirFS("/"), "does/not/exist")
+	// Output:
+}
 
 func ExampleEmpty() {
 	// container implements .Empty method
