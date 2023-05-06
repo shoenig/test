@@ -5,6 +5,7 @@
 package must
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -54,6 +55,10 @@ type score int
 
 func (s score) Less(other score) bool {
 	return s < other
+}
+
+func (s score) Equal(other score) bool {
+	return s == other
 }
 
 func ExampleAscending() {
@@ -189,22 +194,78 @@ func ExampleEq() {
 }
 
 // EqError
+func ExampleEqError() {
+	err := errors.New("undefined error")
+	EqError(t, err, "undefined error")
+	// Output:
+}
 
 // EqFunc
+func ExampleEqFunc() {
+	EqFunc(t, "abcd", "dcba", func(a, b string) bool {
+		if len(a) != len(b) {
+			return false
+		}
+		l := len(a)
+		for i := 0; i < l; i++ {
+			if a[i] != b[l-1-i] {
+				return false
+			}
+		}
+		return true
+	})
+	// Output:
+}
 
 // EqJSON
+func ExampleEqJSON() {
+	a := `{"foo":"bar","numbers":[1,2,3]}`
+	b := `{"numbers":[1,2,3],"foo":"bar"}`
+	EqJSON(t, a, b)
+	// Output:
+}
 
 // EqOp
+func ExampleEqOp() {
+	EqOp(t, 123, 123)
+	// Output:
+}
 
 // Equal
+func ExampleEqual() {
+	// score implements .Equal method
+	Equal(t, score(1000), score(1000))
+	// Output:
+}
 
 // Error
+func ExampleError() {
+	Error(t, errors.New("error"))
+	// Output:
+}
 
 // ErrorContains
+func ExampleErrorContains() {
+	err := errors.New("error beer not found")
+	ErrorContains(t, err, "beer")
+	// Output:
+}
 
 // ErrorIs
+func ExampleErrorIs() {
+	e1 := errors.New("e1")
+	e2 := errors.New("e2")
+	e3 := errors.New("e3")
+	errorChain := errors.Join(e1, e2, e3)
+	ErrorIs(t, errorChain, e2)
+	// Output:
+}
 
 // False
+func ExampleFalse() {
+	False(t, 1 == int('a'))
+	// Output:
+}
 
 // FileContains
 
