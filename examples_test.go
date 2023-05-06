@@ -7,6 +7,9 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
+
+	"github.com/shoenig/test/wait"
 )
 
 var t = new(myT)
@@ -467,14 +470,58 @@ func ExampleTrue() {
 	// Output:
 }
 
-// UUIDv4
+func ExampleUUIDv4() {
+	UUIDv4(t, "60bf6bb2-dceb-c986-2d47-07ac5d14f247")
+	// Output:
+}
 
-// Unreachable
+func ExampleUnreachable() {
+	if "foo" < "bar" {
+		Unreachable(t)
+	}
+	// Output:
+}
 
-// ValidJSON
+func ExampleValidJSON() {
+	js := `{"key": ["v1", "v2"]}`
+	ValidJSON(t, js)
+	// Output:
+}
 
-// ValidJSONBytes
+func ExampleValidJSONBytes() {
+	js := []byte(`{"key": ["v1", "v2"]}`)
+	ValidJSONBytes(t, js)
+	// Output:
+}
 
-// Wait
+func ExampleWait_initial_success() {
+	Wait(t, wait.InitialSuccess(
+		wait.BoolFunc(func() bool {
+			// will be retried until returns true
+			// or timeout is exceeded
+			return true
+		}),
+		wait.Timeout(1*time.Second),
+		wait.Gap(100*time.Millisecond),
+	))
+	// Output:
+}
 
-// Zero
+func ExampleWait_continual_success() {
+	Wait(t, wait.ContinualSuccess(
+		wait.BoolFunc(func() bool {
+			// will be retried until timeout expires
+			// and will fail test if false is ever returned
+			return true
+		}),
+		wait.Timeout(1*time.Second),
+		wait.Gap(100*time.Millisecond),
+	))
+	// Output:
+}
+
+func ExampleZero() {
+	Zero(t, 0)
+	Zero(t, 0.0)
+	// Output:
+}
