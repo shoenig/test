@@ -7,7 +7,9 @@ package must
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -271,22 +273,81 @@ func ExampleFalse() {
 }
 
 // FileContains
+func ExampleFileContains() {
+	f, _ := os.CreateTemp("", "example")
+	defer f.Close()
+	f.Write([]byte("foo bar baz"))
+
+	FileContains(t, f.Name(), "bar")
+	// Output:
+}
 
 // FileContainsFS
+func ExampleFileContainsFS() {
+	f, _ := os.CreateTemp("", "example")
+	fName := filepath.Base(f.Name())
+	defer f.Close()
+	f.Write([]byte("foo bar baz"))
+
+	FileContainsFS(t, os.DirFS(os.TempDir()), fName, "bar")
+	// Output:
+}
 
 // FileExists
+func ExampleFileExists() {
+	f, _ := os.CreateTemp("", "example")
+	defer f.Close()
+
+	FileExists(t, f.Name())
+	// Output:
+}
 
 // FileExistsFS
+func ExampleFileExistsFS() {
+	f, _ := os.CreateTemp("", "example")
+	fName := filepath.Base(f.Name())
+	defer f.Close()
+
+	FileExistsFS(t, os.DirFS(os.TempDir()), fName)
+	// Output:
+}
 
 // FileMode
+func ExampleFileMode() {
+	f, _ := os.CreateTemp("", "example")
+	defer f.Close()
+
+	FileMode(t, f.Name(), fs.FileMode(0600))
+	// Output:
+}
 
 // FileModeFS
+func ExampleFileModeFS() {
+	f, _ := os.CreateTemp("", "example")
+	fName := filepath.Base(f.Name())
+	defer f.Close()
+
+	FileModeFS(t, os.DirFS(os.TempDir()), fName, fs.FileMode(0600))
+	// Output:
+}
 
 // FileNotExists
+func ExampleFileNotExists() {
+	FileNotExists(t, "/tmp/not_existing_file")
+	// Output:
+}
 
 // FileNotExistsFS
+func ExampleFileNotExistsFS() {
+	FileNotExistsFS(t, os.DirFS(os.TempDir()), "not_existing_file")
+	// Output:
+}
 
 // FilePathValid
+func ExampleFilePathValid() {
+	FilePathValid(t, "foo/bar/baz")
+	// Output:
+}
 
 // Greater
 
