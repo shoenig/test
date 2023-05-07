@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -274,60 +273,43 @@ func ExampleFalse() {
 
 // FileContains
 func ExampleFileContains() {
-	f, _ := os.CreateTemp("", "example")
-	defer f.Close()
-	f.Write([]byte("foo bar baz"))
-
-	FileContains(t, f.Name(), "bar")
+	_ = os.WriteFile("/tmp/example", []byte("foo bar baz"), fs.FileMode(0600))
+	FileContains(t, "/tmp/example", "bar")
 	// Output:
 }
 
 // FileContainsFS
 func ExampleFileContainsFS() {
-	f, _ := os.CreateTemp("", "example")
-	fName := filepath.Base(f.Name())
-	defer f.Close()
-	f.Write([]byte("foo bar baz"))
-
-	FileContainsFS(t, os.DirFS(os.TempDir()), fName, "bar")
+	_ = os.WriteFile("/tmp/example", []byte("foo bar baz"), fs.FileMode(0600))
+	FileContainsFS(t, os.DirFS("/tmp"), "example", "bar")
 	// Output:
 }
 
 // FileExists
 func ExampleFileExists() {
-	f, _ := os.CreateTemp("", "example")
-	defer f.Close()
-
-	FileExists(t, f.Name())
+	_ = os.WriteFile("/tmp/example", []byte{}, fs.FileMode(0600))
+	FileExists(t, "/tmp/example")
 	// Output:
 }
 
 // FileExistsFS
 func ExampleFileExistsFS() {
-	f, _ := os.CreateTemp("", "example")
-	fName := filepath.Base(f.Name())
-	defer f.Close()
-
-	FileExistsFS(t, os.DirFS(os.TempDir()), fName)
+	_ = os.WriteFile("/tmp/example", []byte{}, fs.FileMode(0600))
+	FileExistsFS(t, os.DirFS("/tmp"), "example")
 	// Output:
 }
 
 // FileMode
 func ExampleFileMode() {
-	f, _ := os.CreateTemp("", "example")
-	defer f.Close()
-
-	FileMode(t, f.Name(), fs.FileMode(0600))
+	_ = os.WriteFile("/tmp/example_fm", []byte{}, fs.FileMode(0600))
+	FileMode(t, "/tmp/example_fm", fs.FileMode(0600))
 	// Output:
 }
 
 // FileModeFS
 func ExampleFileModeFS() {
-	f, _ := os.CreateTemp("", "example")
-	fName := filepath.Base(f.Name())
-	defer f.Close()
-
-	FileModeFS(t, os.DirFS(os.TempDir()), fName, fs.FileMode(0600))
+	_ = os.WriteFile("/tmp/example_fm", []byte{}, fs.FileMode(0600))
+	FileModeFS(t, os.DirFS("/tmp"), "example_fm", fs.FileMode(0600))
 	// Output:
 }
 
@@ -339,7 +321,7 @@ func ExampleFileNotExists() {
 
 // FileNotExistsFS
 func ExampleFileNotExistsFS() {
-	FileNotExistsFS(t, os.DirFS(os.TempDir()), "not_existing_file")
+	FileNotExistsFS(t, os.DirFS("/tmp"), "not_existing_file")
 	// Output:
 }
 
