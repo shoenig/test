@@ -7,6 +7,7 @@ package must
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"strings"
 	"time"
@@ -271,22 +272,64 @@ func ExampleFalse() {
 }
 
 // FileContains
+func ExampleFileContains() {
+	_ = os.WriteFile("/tmp/example", []byte("foo bar baz"), fs.FileMode(0600))
+	FileContains(t, "/tmp/example", "bar")
+	// Output:
+}
 
 // FileContainsFS
+func ExampleFileContainsFS() {
+	_ = os.WriteFile("/tmp/example", []byte("foo bar baz"), fs.FileMode(0600))
+	FileContainsFS(t, os.DirFS("/tmp"), "example", "bar")
+	// Output:
+}
 
 // FileExists
+func ExampleFileExists() {
+	_ = os.WriteFile("/tmp/example", []byte{}, fs.FileMode(0600))
+	FileExists(t, "/tmp/example")
+	// Output:
+}
 
 // FileExistsFS
+func ExampleFileExistsFS() {
+	_ = os.WriteFile("/tmp/example", []byte{}, fs.FileMode(0600))
+	FileExistsFS(t, os.DirFS("/tmp"), "example")
+	// Output:
+}
 
 // FileMode
+func ExampleFileMode() {
+	_ = os.WriteFile("/tmp/example_fm", []byte{}, fs.FileMode(0600))
+	FileMode(t, "/tmp/example_fm", fs.FileMode(0600))
+	// Output:
+}
 
 // FileModeFS
+func ExampleFileModeFS() {
+	_ = os.WriteFile("/tmp/example_fm", []byte{}, fs.FileMode(0600))
+	FileModeFS(t, os.DirFS("/tmp"), "example_fm", fs.FileMode(0600))
+	// Output:
+}
 
 // FileNotExists
+func ExampleFileNotExists() {
+	FileNotExists(t, "/tmp/not_existing_file")
+	// Output:
+}
 
 // FileNotExistsFS
+func ExampleFileNotExistsFS() {
+	FileNotExistsFS(t, os.DirFS("/tmp"), "not_existing_file")
+	// Output:
+}
 
 // FilePathValid
+func ExampleFilePathValid() {
+	FilePathValid(t, "foo/bar/baz")
+	// Output:
+}
 
 // Greater
 
