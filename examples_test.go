@@ -63,6 +63,35 @@ func (s score) Equal(other score) bool {
 	return s == other
 }
 
+type employee struct {
+	first string
+	last  string
+	id    int
+}
+
+func (e *employee) Equal(o *employee) bool {
+	if e == nil || o == nil {
+		return e == o
+	}
+	switch {
+	case e.first != o.first:
+		return false
+	case e.last != o.last:
+		return false
+	case e.id != o.id:
+		return false
+	}
+	return true
+}
+
+func (e *employee) Copy() *employee {
+	return &employee{
+		first: e.first,
+		last:  e.last,
+		id:    e.id,
+	}
+}
+
 func ExampleAscending() {
 	nums := []int{1, 3, 4, 4, 9}
 	Ascending(t, nums)
@@ -485,29 +514,65 @@ func ExampleMapEq() {
 
 // StrCount
 
-// StrEqFold
+func ExampleStrEqFold() {
+	StrEqFold(t, "So MANY test Cases!", "so many test cases!")
+	// Output:
+}
 
-// StrHasPrefix
+func ExampleStrHasPrefix() {
+	StrHasPrefix(t, "hello", "hello world!")
+	// Output:
+}
 
-// StrHasSuffix
+func ExampleStrHasSuffix() {
+	StrHasSuffix(t, "world!", "hello world!")
+	// Output:
+}
 
-// StrNotContains
-func ExampleSliceNotContains() {
+func ExampleStrNotContains() {
 	StrNotContains(t, "public static void main", "def")
 	// Output:
 }
 
-// StrNotContainsAny
+func ExampleStrNotContainsAny() {
+	StrNotContainsAny(t, "The quick brown fox", "alyz")
+	// Output:
+}
 
-// StrNotContainsFold
+func ExampleStrNotContainsFold() {
+	StrNotContainsFold(t, "This is some text.", "Absent")
+	// Output:
+}
 
-// StrNotEqFold
+func ExampleStrNotEqFold() {
+	StrNotEqFold(t, "This Is SOME text.", "THIS is some TEXT!")
+	// Output:
+}
 
-// StrNotHasPrefix
+func ExampleStrNotHasPrefix() {
+	StrNotHasPrefix(t, "public static void main", "private")
+	// Output:
+}
 
-// StructEqual
+func ExampleStructEqual() {
+	original := &employee{
+		first: "mitchell",
+		last:  "hashimoto",
+		id:    1,
+	}
+	StructEqual(t, original, Tweaks[*employee]{{
+		Field: "first",
+		Apply: func(e *employee) { e.first = "modified" },
+	}, {
+		Field: "last",
+		Apply: func(e *employee) { e.last = "modified" },
+	}, {
+		Field: "id",
+		Apply: func(e *employee) { e.id = 999 },
+	}})
+	// Output:
+}
 
-// True
 func ExampleTrue() {
 	True(t, true)
 	// Output:
