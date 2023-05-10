@@ -8,7 +8,9 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"math"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -53,7 +55,11 @@ func (c *myContainer[T]) Contains(item T) bool {
 }
 
 func (c *myContainer[T]) Empty() bool {
-	return len(c.items) == 0
+	return c.Size() == 0
+}
+
+func (c *myContainer[T]) Size() int {
+	return len(c.items)
 }
 
 type score int
@@ -64,6 +70,32 @@ func (s score) Less(other score) bool {
 
 func (s score) Equal(other score) bool {
 	return s == other
+}
+
+type scores []score
+
+func (s scores) Min() score {
+	min := s[0]
+	for i := 1; i < len(s); i++ {
+		if s[i] < min {
+			min = s[i]
+		}
+	}
+	return min
+}
+
+func (s scores) Max() score {
+	max := s[0]
+	for i := 1; i < len(s); i++ {
+		if s[i] > max {
+			max = s[i]
+		}
+	}
+	return max
+}
+
+func (s scores) Len() int {
+	return len(s)
 }
 
 type employee struct {
@@ -361,23 +393,59 @@ func ExampleFilePathValid() {
 	// Output:
 }
 
-// Greater
+func ExampleGreater() {
+	Greater(t, 30, 42)
+	// Output:
+}
 
-// GreaterEq
+func ExampleGreaterEq() {
+	GreaterEq(t, 30.1, 30.3)
+	// Output:
+}
 
-// InDelta
+func ExampleInDelta() {
+	InDelta(t, 30.5, 30.54, .1)
+	// Output:
+}
 
-// InDeltaSlice
+func ExampleInDeltaSlice() {
+	nums := []int{51, 48, 55, 49, 52}
+	base := []int{52, 44, 51, 51, 47}
+	InDeltaSlice(t, nums, base, 5)
+	// Output:
+}
 
-// Len
+func ExampleLen() {
+	nums := []int{1, 3, 5, 9}
+	Len(t, 4, nums)
+	// Output:
+}
 
-// Length
+func ExampleLength() {
+	s := scores{89, 93, 91, 99, 88}
+	Length(t, 5, s)
+	// Output:
+}
 
-// Less
+func ExampleLess() {
+	// compare using < operator
+	s := score(50)
+	Less(t, 66, s)
+	// Output:
+}
 
-// LessEq
+func ExampleLessEq() {
+	s := score(50)
+	LessEq(t, 50, s)
+	// Output:
+}
 
-// Lesser
+func ExampleLesser() {
+	// compare using .Less method
+	s := score(50)
+	Lesser(t, 66, s)
+	// Output:
+}
 
 // MapContainsKey
 func ExampleMapContainsKey() {
@@ -439,61 +507,172 @@ func ExampleMapEq() {
 
 // MapNotEmpty
 
-// Max
+func ExampleMax() {
+	s := scores{89, 88, 91, 90, 87}
+	Max[score](t, 91, s)
+	// Output:
+}
 
-// Min
+func ExampleMin() {
+	s := scores{89, 88, 90, 91}
+	Min[score](t, 88, s)
+	// Output:
+}
 
-// Negative
+func ExampleNegative() {
+	Negative(t, -9)
+	// Output:
+}
 
-// Nil
+func ExampleNil() {
+	var e *employee
+	Nil(t, e)
+	// Output:
+}
 
-// NoError
+func ExampleNoError() {
+	var err error
+	NoError(t, err)
+	// Output:
+}
 
-// NonNegative
+func ExampleNonNegative() {
+	NonNegative(t, 4)
+	// Output:
+}
 
-// NonPositive
+func ExampleNonPositive() {
+	NonPositive(t, -3)
+	// Output:
+}
 
-// NonZero
+func ExampleNonZero() {
+	NonZero(t, .001)
+	// Output:
+}
 
-// NotContains
+func ExampleNotContains() {
+	c := newContainer("mage", "warrior", "priest", "paladin", "hunter")
+	NotContains[string](t, "rogue", c)
+	// Output:
+}
 
-// NotEmpty
+func ExampleNotEmpty() {
+	c := newContainer("one", "two", "three")
+	NotEmpty(t, c)
+	// Output:
+}
 
-// NotEq
+func ExampleNotEq() {
+	NotEq(t, "one", "two")
+	// Output:
+}
 
-// NotEqFunc
+func ExampleNotEqFunc() {
+	NotEqFunc(t, 4.1, 5.2, func(a, b float64) bool {
+		return math.Round(a) == math.Round(b)
+	})
+	// Output:
+}
 
-// NotEqOp
+func ExampleNotEqOp() {
+	NotEqOp(t, 1, 2)
+	// Output:
+}
 
-// NotEqual
+func ExampleNotEqual() {
+	e1 := &employee{first: "alice"}
+	e2 := &employee{first: "bob"}
+	NotEqual(t, e1, e2)
+	// Output:
+}
 
-// NotNil
+func ExampleNotNil() {
+	e := &employee{first: "bob"}
+	NotNil(t, e)
+	// Output:
+}
 
-// One
+func ExampleOne() {
+	One(t, 1)
+	// Output:
+}
 
-// Positive
+func ExamplePositive() {
+	Positive(t, 42)
+	// Output:
+}
 
-// RegexCompiles
+func ExampleRegexCompiles() {
+	RegexCompiles(t, `[a-z]{7}`)
+	// Output:
+}
 
-// RegexCompilesPOSIX
+func ExampleRegexCompilesPOSIX() {
+	RegexCompilesPOSIX(t, `[a-z]{3}`)
+	// Output:
+}
 
-// RegexMatch
+func ExampleRegexMatch() {
+	re := regexp.MustCompile(`[a-z]{6}`)
+	RegexMatch(t, re, "cookie")
+	// Output:
+}
 
-// Size
+func ExampleSize() {
+	c := newContainer("pie", "brownie", "cake", "cookie")
+	Size(t, 4, c)
+	// Output:
+}
 
-// SliceContains
+func ExampleSliceContains() {
+	drinks := []string{"ale", "lager", "cider", "wine"}
+	SliceContains(t, drinks, "cider")
+	// Output:
+}
 
-// SliceContainsAll
+func ExampleSliceContainsAll() {
+	nums := []int{2, 4, 6, 7, 8}
+	SliceContainsAll(t, nums, []int{7, 8, 2, 6, 4})
+	// Output:
+}
 
-// SliceContainsEqual
+func ExampleSliceContainsEqual() {
+	dave := &employee{first: "dave", id: 8}
+	armon := &employee{first: "armon", id: 2}
+	mitchell := &employee{first: "mitchell", id: 1}
+	employees := []*employee{dave, armon, mitchell}
+	SliceContainsEqual(t, employees, &employee{first: "dave", id: 8})
+	// Output:
+}
 
-// SliceContainsFunc
+func ExampleSliceContainsFunc() {
+	// comparing slice to element of same type
+	words := []string{"UP", "DoWn", "LefT", "RiGHT"}
+	SliceContainsFunc(t, words, "left", func(a, b string) bool {
+		return strings.EqualFold(a, b)
+	})
 
-// SliceContainsOp
+	// comparing slice to element of different type
+	nums := []string{"2", "4", "6", "8"}
+	SliceContainsFunc(t, nums, 4, func(a string, b int) bool {
+		return a == strconv.Itoa(b)
+	})
+	// Output:
+}
 
-// SliceContainsSubset
+func ExampleSliceContainsOp() {
+	nums := []int{1, 2, 3, 4, 5}
+	SliceContainsOp(t, nums, 3)
+	// Output:
+}
 
-// SliceEmpty
+func ExampleSliceContainsSubset() {
+	nums := []int{10, 20, 30, 40, 50}
+	SliceContainsSubset(t, nums, []int{40, 10, 30})
+	// Output:
+}
+
 func ExampleSliceEmpty() {
 	var ints []int
 	SliceEmpty(t, ints)
