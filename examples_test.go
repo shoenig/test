@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -491,28 +492,86 @@ func ExampleMapEq() {
 // SliceContainsSubset
 
 // SliceEmpty
+func ExampleSliceEmpty() {
+	var ints []int
+	SliceEmpty(t, ints)
+	// Output:
+}
 
-// SliceEqFunc
+func ExampleSliceEqFunc() {
+	ints := []int{2, 4, 6}
+	strings := []string{"2", "4", "6"}
+	SliceEqFunc(t, ints, strings, func(exp string, value int) bool {
+		return strconv.Itoa(value) == exp
+	})
+	// Output:
+}
 
-// SliceEqual
+func ExampleSliceEqual() {
+	// type employee implements .Equal
+	dave := &employee{first: "dave"}
+	armon := &employee{first: "armon"}
+	mitchell := &employee{first: "mitchell"}
+	s1 := []*employee{dave, armon, mitchell}
+	s2 := []*employee{dave, armon, mitchell}
+	SliceEqual(t, s1, s2)
+	// Output:
+}
 
-// SliceLen
+func ExampleSliceLen() {
+	SliceLen(t, 4, []float64{32, 1.2, 0.01, 9e4})
+	// Output:
+}
 
-// SliceNotContains
+func ExampleSliceNotContains() {
+	SliceNotContains(t, []int{1, 2, 4, 5}, 3)
+	// Output:
+}
 
-// SliceNotContainsFunc
+func ExampleSliceNotContainsFunc() {
+	// comparing slice to element of same type
+	f := func(a, b int) bool {
+		return a == b
+	}
+	SliceNotContainsFunc(t, []int{10, 20, 30}, 50, f)
 
-// SliceNotEmpty
+	// comparing slice to element of different type
+	g := func(s string, b int) bool {
+		return strconv.Itoa(b) == s
+	}
+	SliceNotContainsFunc(t, []string{"1", "2", "3"}, 5, g)
+	//Output:
+}
 
-// StrContains
+func ExampleSliceNotEmpty() {
+	SliceNotEmpty(t, []int{2, 4, 6, 8})
+	// Output:
+}
 
-// StrContainsAny
+func ExampleStrContains() {
+	StrContains(t, "Visit https://github.com today!", "https://")
+	// Output:
+}
 
-// StrContainsFields
+func ExampleStrContainsAny() {
+	StrContainsAny(t, "glyph", "aeiouy")
+	// Output:
+}
 
-// StrContainsFold
+func ExampleStrContainsFields() {
+	StrContainsFields(t, "apple banana cherry grape strawberry", []string{"banana", "grape"})
+	// Output:
+}
 
-// StrCount
+func ExampleStrContainsFold() {
+	StrContainsFold(t, "one two three", "TWO")
+	// Output:
+}
+
+func ExampleStrCount() {
+	StrCount(t, "see sally sell sea shells by the sea shore", "se", 4)
+	// Output:
+}
 
 func ExampleStrEqFold() {
 	StrEqFold(t, "So MANY test Cases!", "so many test cases!")
