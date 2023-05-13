@@ -232,13 +232,11 @@ func ExampleDirExistsFS() {
 	// Output:
 }
 
-// DirNotExists
 func ExampleDirNotExists() {
 	DirNotExists(t, "/does/not/exist")
 	// Output:
 }
 
-// DirNotExistsFS
 func ExampleDirNotExistsFS() {
 	DirNotExistsFS(t, os.DirFS("/"), "does/not/exist")
 	// Output:
@@ -257,14 +255,12 @@ func ExampleEq() {
 	// Output:
 }
 
-// EqError
 func ExampleEqError() {
 	err := errors.New("undefined error")
 	EqError(t, err, "undefined error")
 	// Output:
 }
 
-// EqFunc
 func ExampleEqFunc() {
 	EqFunc(t, "abcd", "dcba", func(a, b string) bool {
 		if len(a) != len(b) {
@@ -281,7 +277,6 @@ func ExampleEqFunc() {
 	// Output:
 }
 
-// EqJSON
 func ExampleEqJSON() {
 	a := `{"foo":"bar","numbers":[1,2,3]}`
 	b := `{"numbers":[1,2,3],"foo":"bar"}`
@@ -289,33 +284,28 @@ func ExampleEqJSON() {
 	// Output:
 }
 
-// EqOp
 func ExampleEqOp() {
 	EqOp(t, 123, 123)
 	// Output:
 }
 
-// Equal
 func ExampleEqual() {
 	// score implements .Equal method
 	Equal(t, score(1000), score(1000))
 	// Output:
 }
 
-// Error
 func ExampleError() {
 	Error(t, errors.New("error"))
 	// Output:
 }
 
-// ErrorContains
 func ExampleErrorContains() {
 	err := errors.New("error beer not found")
 	ErrorContains(t, err, "beer")
 	// Output:
 }
 
-// ErrorIs
 func ExampleErrorIs() {
 	e1 := errors.New("e1")
 	e2 := errors.New("e2")
@@ -325,67 +315,57 @@ func ExampleErrorIs() {
 	// Output:
 }
 
-// False
 func ExampleFalse() {
 	False(t, 1 == int('a'))
 	// Output:
 }
 
-// FileContains
 func ExampleFileContains() {
 	_ = os.WriteFile("/tmp/example", []byte("foo bar baz"), fs.FileMode(0600))
 	FileContains(t, "/tmp/example", "bar")
 	// Output:
 }
 
-// FileContainsFS
 func ExampleFileContainsFS() {
 	_ = os.WriteFile("/tmp/example", []byte("foo bar baz"), fs.FileMode(0600))
 	FileContainsFS(t, os.DirFS("/tmp"), "example", "bar")
 	// Output:
 }
 
-// FileExists
 func ExampleFileExists() {
 	_ = os.WriteFile("/tmp/example", []byte{}, fs.FileMode(0600))
 	FileExists(t, "/tmp/example")
 	// Output:
 }
 
-// FileExistsFS
 func ExampleFileExistsFS() {
 	_ = os.WriteFile("/tmp/example", []byte{}, fs.FileMode(0600))
 	FileExistsFS(t, os.DirFS("/tmp"), "example")
 	// Output:
 }
 
-// FileMode
 func ExampleFileMode() {
 	_ = os.WriteFile("/tmp/example_fm", []byte{}, fs.FileMode(0600))
 	FileMode(t, "/tmp/example_fm", fs.FileMode(0600))
 	// Output:
 }
 
-// FileModeFS
 func ExampleFileModeFS() {
 	_ = os.WriteFile("/tmp/example_fm", []byte{}, fs.FileMode(0600))
 	FileModeFS(t, os.DirFS("/tmp"), "example_fm", fs.FileMode(0600))
 	// Output:
 }
 
-// FileNotExists
 func ExampleFileNotExists() {
 	FileNotExists(t, "/tmp/not_existing_file")
 	// Output:
 }
 
-// FileNotExistsFS
 func ExampleFileNotExistsFS() {
 	FileNotExistsFS(t, os.DirFS("/tmp"), "not_existing_file")
 	// Output:
 }
 
-// FilePathValid
 func ExampleFilePathValid() {
 	FilePathValid(t, "foo/bar/baz")
 	// Output:
@@ -445,14 +425,12 @@ func ExampleLesser() {
 	// Output:
 }
 
-// MapContainsKey
 func ExampleMapContainsKey() {
 	numbers := map[string]int{"one": 1, "two": 2, "three": 3}
 	MapContainsKey(t, numbers, "one")
 	// Output:
 }
 
-// MapContainsKeys
 func ExampleMapContainsKeys() {
 	numbers := map[string]int{"one": 1, "two": 2, "three": 3}
 	keys := []string{"one", "two"}
@@ -460,7 +438,6 @@ func ExampleMapContainsKeys() {
 	// Output:
 }
 
-// MapContainsValues
 func ExampleMapContainsValues() {
 	numbers := map[string]int{"one": 1, "two": 2, "three": 3}
 	values := []int{1, 2}
@@ -468,18 +445,40 @@ func ExampleMapContainsValues() {
 	// Output:
 }
 
-// MapContainsValuesEqual
+func ExampleMapContainsValuesEqual() {
+	// employee implements .Equal
+	m := map[int]*employee{
+		0: {first: "armon", id: 101},
+		1: {first: "mitchell", id: 100},
+		2: {first: "dave", id: 102},
+	}
+	expect := []*employee{
+		{first: "armon", id: 101},
+		{first: "dave", id: 102},
+	}
+	MapContainsValuesEqual(t, m, expect)
+	// Output:
+}
 
-// MapContainsValuesFunc
+func ExampleMapContainsValuesFunc() {
+	m := map[int]string{
+		0: "Zero",
+		1: "ONE",
+		2: "two",
+	}
+	f := func(a, b string) bool {
+		return strings.EqualFold(a, b)
+	}
+	MapContainsValuesFunc(t, m, []string{"one", "two"}, f)
+	// Output:
+}
 
-// MapEmpty
 func ExampleMapEmpty() {
 	m := make(map[int]int)
 	MapEmpty(t, m)
 	// Output:
 }
 
-// MapEq
 func ExampleMapEq() {
 	m1 := map[string]int{"one": 1, "two": 2, "three": 3}
 	m2 := map[string]int{"one": 1, "two": 2, "three": 3}
@@ -487,23 +486,106 @@ func ExampleMapEq() {
 	// Output:
 }
 
-// MapEqFunc
+func ExampleMapEqFunc() {
+	m1 := map[int]string{
+		0: "Zero",
+		1: "one",
+		2: "TWO",
+	}
+	m2 := map[int]string{
+		0: "ZERO",
+		1: "ONE",
+		2: "TWO",
+	}
+	MapEqFunc(t, m1, m2, func(a, b string) bool {
+		return strings.EqualFold(a, b)
+	})
+	// Output:
+}
 
-// MapEqual
+func ExampleMapEqual() {
+	armon := &employee{first: "armon", id: 101}
+	mitchell := &employee{first: "mitchell", id: 100}
+	m1 := map[int]*employee{
+		0: mitchell,
+		1: armon,
+	}
+	m2 := map[int]*employee{
+		0: mitchell,
+		1: armon,
+	}
+	MapEqual(t, m1, m2)
+	// Output:
+}
 
-// MapLen
+func ExampleMapLen() {
+	m := map[int]string{
+		1: "one",
+		2: "two",
+	}
+	MapLen(t, 2, m)
+	// Output:
+}
 
-// MapNotContainsKey
+func ExampleMapNotContainsKey() {
+	m := map[string]int{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+	MapNotContainsKey(t, m, "four")
+	// Output:
+}
 
-// MapNotContainsKeys
+func ExampleMapNotContainsKeys() {
+	m := map[string]int{
+		"one": 1,
+		"two": 2,
+	}
+	MapNotContainsKeys(t, m, []string{"three", "four"})
+	// Output:
+}
 
-// MapNotContainsValues
+func ExampleMapNotContainsValues() {
+	m := map[int]string{
+		1: "one",
+		2: "two",
+	}
+	MapNotContainsValues(t, m, []string{"three", "four"})
+	// Output:
+}
 
-// MapNotContainsValuesEqual
+func ExampleMapNotContainsValuesEqual() {
+	m := map[int]*employee{
+		0: {first: "mitchell", id: 100},
+		1: {first: "armon", id: 101},
+	}
+	MapNotContainsValuesEqual(t, m, []*employee{
+		{first: "dave", id: 103},
+	})
+	// Output:
+}
 
-// MapNotContainsValuesFunc
+func ExampleMapNotContainsValuesFunc() {
+	m := map[int]string{
+		1: "One",
+		2: "TWO",
+		3: "three",
+	}
+	f := func(a, b string) bool {
+		return strings.EqualFold(a, b)
+	}
+	MapNotContainsValuesFunc(t, m, []string{"four", "five"}, f)
+	// Output:
+}
 
-// MapNotEmpty
+func ExampleMapNotEmpty() {
+	m := map[string]int{
+		"one": 1,
+	}
+	MapNotEmpty(t, m)
+	// Output:
+}
 
 func ExampleMax() {
 	s := scores{89, 88, 91, 90, 87}
