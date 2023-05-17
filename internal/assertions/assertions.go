@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/google/go-cmp/cmp"
+
 	"github.com/shoenig/test/interfaces"
 	"github.com/shoenig/test/internal/constraints"
 	"github.com/shoenig/test/wait"
@@ -414,22 +415,22 @@ func SliceNotContainsFunc[A, B any](slice []A, item B, eq func(a A, b B) bool) (
 	return
 }
 
-func SliceContainsAll[A any](slice, items []A) (s string) {
+func SliceContainsAll[A any](slice, items []A, opts ...cmp.Option) (s string) {
 	if len(slice) != len(items) {
 		s = "expected slice and items to contain same number of elements\n"
 		s += bullet("len(slice): %d\n", len(slice))
 		s += bullet("len(items): %d\n", len(items))
 		return s
 	}
-	return SliceContainsSubset(slice, items)
+	return SliceContainsSubset(slice, items, opts...)
 }
 
-func SliceContainsSubset[A any](slice, items []A) (s string) {
+func SliceContainsSubset[A any](slice, items []A, opts ...cmp.Option) (s string) {
 OUTER:
 	for _, target := range items {
 		var item A
 		for _, item = range slice {
-			if cmp.Equal(target, item) {
+			if cmp.Equal(target, item, opts...) {
 				continue OUTER
 			}
 		}

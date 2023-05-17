@@ -229,14 +229,14 @@ func SliceNotContainsFunc[A, B any](t T, slice []A, item B, eq func(a A, b B) bo
 // same.
 func SliceContainsAll[A any](t T, slice, items []A, settings ...Setting) {
 	t.Helper()
-	invoke(t, assertions.SliceContainsAll(slice, items), settings...)
+	invoke(t, assertions.SliceContainsAll(slice, items, options(settings...)...), settings...)
 }
 
 // SliceContainsSubset asserts slice contains each item in items, in no particular
 // order. There could be additional elements in slice not in items.
 func SliceContainsSubset[A any](t T, slice, items []A, settings ...Setting) {
 	t.Helper()
-	invoke(t, assertions.SliceContainsSubset(slice, items), settings...)
+	invoke(t, assertions.SliceContainsSubset(slice, items, options(settings...)...), settings...)
 }
 
 // Positive asserts n > 0.
