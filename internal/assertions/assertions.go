@@ -13,7 +13,6 @@ import (
 	"strings"
 
 	"github.com/google/go-cmp/cmp"
-
 	"github.com/shoenig/test/interfaces"
 	"github.com/shoenig/test/internal/constraints"
 	"github.com/shoenig/test/wait"
