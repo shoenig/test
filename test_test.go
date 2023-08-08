@@ -1399,6 +1399,22 @@ func TestFilePathValid(t *testing.T) {
 	FilePathValid(tc, "foo/../bar")
 }
 
+type closer struct {
+	err error
+}
+
+func (c *closer) Close() error {
+	return c.err
+}
+
+func TestClose(t *testing.T) {
+	tc := newCase(t, `calling Close failed`)
+	t.Cleanup(tc.assert)
+
+	c := &closer{err: errors.New("oops")}
+	Close(tc, c)
+}
+
 func TestStrEqFold(t *testing.T) {
 	tc := newCase(t, `expected strings to be equal ignoring case`)
 	t.Cleanup(tc.assert)
