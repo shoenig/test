@@ -3,6 +3,7 @@
 package must
 
 import (
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -597,6 +598,12 @@ func FileContains(t T, file, content string, settings ...Setting) {
 func FilePathValid(t T, path string, settings ...Setting) {
 	t.Helper()
 	invoke(t, assertions.FilePathValid(path), settings...)
+}
+
+// Close asserts c.Close does not cause an error.
+func Close(t T, c io.Closer) {
+	t.Helper()
+	invoke(t, assertions.Close(c))
 }
 
 // StrEqFold asserts exp and val are equivalent, ignoring case.

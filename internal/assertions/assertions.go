@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -1040,6 +1041,15 @@ func FileContainsFS(system fs.FS, file, content string) (s string) {
 func FilePathValid(path string) (s string) {
 	if !fs.ValidPath(path) {
 		s = "expected valid file path\n"
+	}
+	return
+}
+
+func Close(c io.Closer) (s string) {
+	err := c.Close()
+	if err != nil {
+		s = "calling Close failed\n"
+		s += bullet("error: %v\n", err)
 	}
 	return
 }
