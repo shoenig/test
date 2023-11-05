@@ -21,6 +21,8 @@ jobs:
           version: v1.54.2
           skip-cache: true
   run-changes:
+    needs:
+      - 'run-copywrite'
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -31,6 +33,10 @@ jobs:
         run: |
           make changes
   run-tests:
+    needs:
+      - 'run-copywrite'
+      - 'run-lint'
+      - 'run-changes'
     strategy:
       fail-fast: false
       matrix:
