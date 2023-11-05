@@ -1,10 +1,29 @@
 name: Run CI Tests
 on: [push]
 jobs:
-  changes:
-    runs-on: [ubuntu-22.04]
+  run-copywrite:
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-copywrite@v1.1.2
+      - name: verify copyright
+        run: |
+          copywrite headers --plan
+  run-lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-golang@v1
+        with:
+          version-file: go.mod
+      - uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.54.2
+          skip-cache: true
+  run-changes:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
       - uses: hashicorp/setup-golang@v1
         with:
           version-file: go.mod
@@ -21,14 +40,10 @@ jobs:
           - windows-2022
     runs-on: ${{matrix.os}}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: hashicorp/setup-golang@v1
         with:
           version-file: go.mod
-      - uses: golangci/golangci-lint-action@v3
-        with:
-          version: v1.50
-          skip-cache: true
       - name: Run Go Test
         run: |
           make test
