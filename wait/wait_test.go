@@ -203,7 +203,7 @@ func TestInitial_ErrorFunc(t *testing.T) {
 		{
 			name: "defaults fail",
 			opts: []Option{ErrorFunc(errFnNotNil)},
-			exp:  fmt.Errorf("%v: %w", ErrTimeoutExceeded, oops),
+			exp:  fmt.Errorf("%s: %w", ErrTimeoutExceeded.Error(), oops),
 		},
 		{
 			name: "attempts exceeded",
@@ -211,7 +211,7 @@ func TestInitial_ErrorFunc(t *testing.T) {
 				ErrorFunc(errFnNotNil),
 				Attempts(3),
 			},
-			exp: fmt.Errorf("%v: %w", ErrAttemptsExceeded, oops),
+			exp: fmt.Errorf("%s: %w", ErrAttemptsExceeded.Error(), oops),
 		},
 		{
 			name: "short timeout",
@@ -220,7 +220,7 @@ func TestInitial_ErrorFunc(t *testing.T) {
 				Attempts(1000),
 				Timeout(100 * time.Millisecond),
 			},
-			exp: fmt.Errorf("%v: %w", ErrTimeoutExceeded, oops),
+			exp: fmt.Errorf("%s: %w", ErrTimeoutExceeded.Error(), oops),
 		},
 		{
 			name: "short gap",
@@ -229,7 +229,7 @@ func TestInitial_ErrorFunc(t *testing.T) {
 				Attempts(10),
 				Gap(1 * time.Millisecond),
 			},
-			exp: fmt.Errorf("%v: %w", ErrAttemptsExceeded, oops),
+			exp: fmt.Errorf("%s: %w", ErrAttemptsExceeded.Error(), oops),
 		},
 		{
 			name: "randomly pass",
@@ -269,7 +269,7 @@ func TestContinual_TestFunc(t *testing.T) {
 		{
 			name: "defaults fail",
 			opts: []Option{TestFunc(tFnNotNil)},
-			exp:  fmt.Errorf("%v: %w", ErrConditionUnsatisfied, oops),
+			exp:  fmt.Errorf("%s: %w", ErrConditionUnsatisfied.Error(), oops),
 		},
 		{
 			name: "randomly fail",
@@ -282,7 +282,7 @@ func TestContinual_TestFunc(t *testing.T) {
 				}),
 				Gap(1 * time.Millisecond),
 			},
-			exp: fmt.Errorf("%v: %w", ErrConditionUnsatisfied, oops),
+			exp: fmt.Errorf("%s: %w", ErrConditionUnsatisfied.Error(), oops),
 		},
 	}
 
@@ -310,7 +310,7 @@ func TestInitial_TestFunc(t *testing.T) {
 		{
 			name: "defaults fail",
 			opts: []Option{TestFunc(tFnNotNil)},
-			exp:  fmt.Errorf("%v: %w", ErrTimeoutExceeded, oops),
+			exp:  fmt.Errorf("%s: %w", ErrTimeoutExceeded.Error(), oops),
 		},
 		{
 			name: "default fail without error",
@@ -319,7 +319,7 @@ func TestInitial_TestFunc(t *testing.T) {
 					return false, nil
 				}),
 			},
-			exp: fmt.Errorf("%v: %w", ErrTimeoutExceeded, ErrConditionUnsatisfied),
+			exp: fmt.Errorf("%s: %w", ErrTimeoutExceeded.Error(), ErrConditionUnsatisfied),
 		},
 		{
 			name: "attempts exceeded",
@@ -327,7 +327,7 @@ func TestInitial_TestFunc(t *testing.T) {
 				TestFunc(tFnNotNil),
 				Attempts(3),
 			},
-			exp: fmt.Errorf("%v: %w", ErrAttemptsExceeded, oops),
+			exp: fmt.Errorf("%s: %w", ErrAttemptsExceeded.Error(), oops),
 		},
 		{
 			name: "short timeout",
@@ -336,7 +336,7 @@ func TestInitial_TestFunc(t *testing.T) {
 				Attempts(1000),
 				Timeout(100 * time.Millisecond),
 			},
-			exp: fmt.Errorf("%v: %w", ErrTimeoutExceeded, oops),
+			exp: fmt.Errorf("%s: %w", ErrTimeoutExceeded.Error(), oops),
 		},
 		{
 			name: "short gap",
@@ -345,7 +345,7 @@ func TestInitial_TestFunc(t *testing.T) {
 				Attempts(10),
 				Gap(1 * time.Millisecond),
 			},
-			exp: fmt.Errorf("%v: %w", ErrAttemptsExceeded, oops),
+			exp: fmt.Errorf("%s: %w", ErrAttemptsExceeded.Error(), oops),
 		},
 		{
 			name: "randomly pass",
