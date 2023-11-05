@@ -17,24 +17,15 @@ There are four key packages,
 
 ### Changes
 
+:ballot_box_with_check: v1.7.0 marks the first stable release!
+
+ - Going forward no breaking changes will be made without a v2 major version
+
 :ballot_box_with_check: v0.6.0 adds support for custom `cmp.Option` values
 
  - Adds ability to customize cmp.Equal behavior via cmp.Option arguments
  - Adds assertions for existence of single map key
  - Fixes some error outputs
-
-:ballot_box_with_check: v0.5.0 contains new packages `wait` and `portal`
-
- - Package for waiting on conditionals
- - Package for allocating free ports
- - Additional Map assertions
- - Additional `Not*` assertion variants
-
-:ballot_box_with_check: v0.4.0 contains breaking changes
-
- - Slice functions are renamed to be more consistent and to make room for interface based variants.
- - Filesystem assertions now use OS by default, FS interface methods are renamed.
- - Comparison assertions now have the expectation parameter first.
 
 ### Requirements
 
