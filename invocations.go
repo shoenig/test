@@ -1,3 +1,6 @@
+// Copyright (c) The Test Authors
+// SPDX-License-Identifier: MPL-2.0
+
 // Package test provides a modern generic testing assertions library.
 package test
 

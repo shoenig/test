@@ -1,3 +1,6 @@
+// Copyright (c) The Test Authors
+// SPDX-License-Identifier: MPL-2.0
+
 // Package wait provides constructs for waiting on conditionals within specified constraints.
 package wait
 

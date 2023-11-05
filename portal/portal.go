@@ -1,3 +1,6 @@
+// Copyright (c) The Test Authors
+// SPDX-License-Identifier: MPL-2.0
+
 // Package portal (Port Allocator) provides a helper for reserving free TCP ports
 // across multiple processes on the same machine. This works by asking the kernel
 // for available ports in the ephemeral port range. It does so by binding to an
