@@ -295,7 +295,7 @@ func errFuncInitial(f func() error) runnable {
 			// check iterations
 			if r.attempts > r.c.iterations {
 				return &result{
-					Err: fmt.Errorf("%v: %w", ErrAttemptsExceeded, err),
+					Err: fmt.Errorf("%s: %w", ErrAttemptsExceeded.Error(), err),
 				}
 			}
 
@@ -306,7 +306,7 @@ func errFuncInitial(f func() error) runnable {
 			select {
 			case <-ctx.Done():
 				return &result{
-					Err: fmt.Errorf("%v: %w", ErrTimeoutExceeded, err),
+					Err: fmt.Errorf("%s: %w", ErrTimeoutExceeded.Error(), err),
 				}
 			case <-timer.C:
 				// continue
@@ -341,7 +341,7 @@ func testFuncContinual(f func() (bool, error)) runnable {
 			// make an attempt
 			ok, err := f()
 			if !ok {
-				return &result{Err: fmt.Errorf("%v: %w", ErrConditionUnsatisfied, err)}
+				return &result{Err: fmt.Errorf("%s: %w", ErrConditionUnsatisfied.Error(), err)}
 			}
 
 			// used another attempt
@@ -393,7 +393,7 @@ func testFuncInitial(f func() (bool, error)) runnable {
 			// check iterations
 			if r.attempts > r.c.iterations {
 				return &result{
-					Err: fmt.Errorf("%v: %w", ErrAttemptsExceeded, err),
+					Err: fmt.Errorf("%s: %w", ErrAttemptsExceeded.Error(), err),
 				}
 			}
 
@@ -404,7 +404,7 @@ func testFuncInitial(f func() (bool, error)) runnable {
 			select {
 			case <-ctx.Done():
 				return &result{
-					Err: fmt.Errorf("%v: %w", ErrTimeoutExceeded, err),
+					Err: fmt.Errorf("%s: %w", ErrTimeoutExceeded.Error(), err),
 				}
 			case <-timer.C:
 				// continue
