@@ -13,12 +13,12 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - uses: hashicorp/setup-golang@v2
+      - uses: hashicorp/setup-golang@v3
         with:
           version-file: go.mod
       - uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.54.2
+          version: v1.56.2
           skip-cache: true
   run-changes:
     needs:
@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - uses: hashicorp/setup-golang@v2
+      - uses: hashicorp/setup-golang@v3
         with:
           version-file: go.mod
       - name: Check for changes
@@ -42,12 +42,12 @@ jobs:
       matrix:
         os:
           - ubuntu-22.04
-          - macos-12
+          - macos-14
           - windows-2022
     runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v4
-      - uses: hashicorp/setup-golang@v2
+      - uses: hashicorp/setup-golang@v3
         with:
           version-file: go.mod
       - name: Run Go Test
