@@ -508,8 +508,9 @@ func FileExistsFS(t T, system fs.FS, file string, settings ...Setting) {
 // FileExists asserts file exists on the OS filesystem.
 func FileExists(t T, file string, settings ...Setting) {
 	t.Helper()
-	file = strings.TrimPrefix(file, "/")
-	invoke(t, assertions.FileExistsFS(os.DirFS(brokenfs.Root), file), settings...)
+	dir := filepath.Dir(file)
+	file = filepath.Base(file)
+	invoke(t, assertions.FileExistsFS(os.DirFS(dir), file), settings...)
 }
 
 // FileNotExistsFS asserts file does not exist on the fs.FS filesystem.
