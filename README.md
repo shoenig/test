@@ -6,7 +6,7 @@
 [![MPL License](https://img.shields.io/github/license/shoenig/test?color=g&style=flat-square)](https://github.com/shoenig/test/blob/main/LICENSE)
 [![Run CI Tests](https://github.com/shoenig/test/actions/workflows/ci.yaml/badge.svg)](https://github.com/shoenig/test/actions/workflows/ci.yaml)
 
-`test` is a generics based testing assertions library for Go.
+`test` is a modern and generics oriented testing assertions library for Go.
 
 There are four key packages,
 
