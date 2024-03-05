@@ -1295,6 +1295,66 @@ func TestMapNotContainsValuesEqual(t *testing.T) {
 	})
 }
 
+func TestMapContainsValue(t *testing.T) {
+	tc := newCase(t, `expected map to contain value`)
+	t.Cleanup(tc.assert)
+
+	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+	MapContainsValue(tc, m, 5)
+}
+
+func TestMapNotContainsValue(t *testing.T) {
+	tc := newCase(t, `expected map to not contain value`)
+	t.Cleanup(tc.assert)
+
+	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+	MapNotContainsValue(tc, m, 1)
+}
+
+func TestMapContainsValueFunc(t *testing.T) {
+	tc := newCase(t, `expected map to contain value`)
+	t.Cleanup(tc.assert)
+
+	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+	MapContainsValueFunc(tc, m, 6, func(a, b int) bool {
+		return a == b
+	})
+}
+
+func TestMapNotContainsValueFunc(t *testing.T) {
+	tc := newCase(t, `expected map to not contain value`)
+	t.Cleanup(tc.assert)
+
+	m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+	MapNotContainsValueFunc(tc, m, 1, func(a, b int) bool {
+		return a == b
+	})
+}
+
+func TestMapContainsValueEqual(t *testing.T) {
+	tc := newCase(t, `expected map to contain value`)
+	t.Cleanup(tc.assert)
+
+	m := map[int]*Person{
+		1: {ID: 100, Name: "Alice"},
+		2: {ID: 200, Name: "Bob"},
+		3: {ID: 300, Name: "Carl"},
+	}
+	MapContainsValueEqual(tc, m, &Person{ID: 201, Name: "Bob"})
+}
+
+func TestMapNotContainsValueEqual(t *testing.T) {
+	tc := newCase(t, `expected map to not contain value`)
+	t.Cleanup(tc.assert)
+
+	m := map[int]*Person{
+		1: {ID: 100, Name: "Alice"},
+		2: {ID: 200, Name: "Bob"},
+		3: {ID: 300, Name: "Carl"},
+	}
+	MapNotContainsValueEqual(tc, m, &Person{ID: 200, Name: "Daisy"})
+}
+
 func TestFileExistsFS(t *testing.T) {
 	tc := newCase(t, `expected file to exist`)
 	t.Cleanup(tc.assert)
