@@ -1437,6 +1437,44 @@ func TestFileMode(t *testing.T) {
 	FileMode(tc, "/bin/find", unexpected)
 }
 
+func TestDirModeFS(t *testing.T) {
+	needsOS(t, "linux")
+
+	t.Run("different permissions", func(t *testing.T) {
+		tc := newCase(t, `expected different file permissions`)
+		t.Cleanup(tc.assert)
+
+		var unexpected os.FileMode = 0755 // (actual 0755)
+		DirModeFS(tc, os.DirFS("/"), "bin", unexpected)
+	})
+
+	t.Run("not a dir", func(t *testing.T) {
+		tc := newCase(t, `expected to stat a directory`)
+		t.Cleanup(tc.assert)
+
+		DirModeFS(tc, os.DirFS("/bin"), "find", os.FileMode(0))
+	})
+}
+
+func TestDirMode(t *testing.T) {
+	needsOS(t, "linux")
+
+	t.Run("different permissions", func(t *testing.T) {
+		tc := newCase(t, `expected different file permissions`)
+		t.Cleanup(tc.assert)
+
+		var unexpected os.FileMode = 0755 // (actual 0755)
+		DirMode(tc, "/bin", unexpected)
+	})
+
+	t.Run("not a dir", func(t *testing.T) {
+		tc := newCase(t, `expected to stat a directory`)
+		t.Cleanup(tc.assert)
+
+		DirMode(tc, "/bin/find", os.FileMode(0))
+	})
+}
+
 func TestFileContainsFS(t *testing.T) {
 	needsOS(t, "linux")
 
