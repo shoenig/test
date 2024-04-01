@@ -8,14 +8,19 @@
 
 `test` is a modern and generics oriented testing assertions library for Go.
 
-There are four key packages,
+There are five key packages,
 
 - `must` - assertions causing test failure and halt the test case immediately
 - `test` - assertions causing test failure and allow the test case to continue
 - `wait` - utilities for waiting on conditionals in tests
+- `skip` - utilities for skipping test cases in some situations
 - `portal` - utilities for allocating free ports for network listeners in tests
 
 ### Changes
+
+:ballot_box_with_check: v1.8.0 introduces the `skip` package for skipping tests!
+
+ - New helper functions for skipping out tests based on some given criteria
 
 :ballot_box_with_check: v1.7.0 marks the first stable release!
 
@@ -153,6 +158,30 @@ must.Eq(t, exp, result, must.Func(func() string {
   // ... something interesting
   return s
 })
+```
+
+### Skip
+
+Sometimes it makes sense to just skip running a certain test case. Maybe the
+operating system is incompatible or a certain required command is not installed.
+The `skip` package provides utilities for skipping tests under some given
+conditions.
+
+
+```go
+skip.OperatingSystem(t, "windows", "plan9", "dragonfly")
+```
+
+```go
+skip.NotArchitecture(t, "amd64", "arm64")
+```
+
+```go
+skip.CommandUnavailable(t, "java")
+```
+
+```go
+skip.EnvironmentVariableSet(t, "CI")
 ```
 
 ### Wait
