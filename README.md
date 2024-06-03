@@ -18,6 +18,8 @@ There are five key packages,
 
 ### Changes
 
+- v1.8.1 adds the function type `ErrorAssertionFunc` that is useful for passing `Error` or `NoError` in table driven tests
+
 :ballot_box_with_check: v1.8.0 introduces the `skip` package for skipping tests!
 
  - New helper functions for skipping out tests based on some given criteria
