@@ -19,6 +19,8 @@ import (
 	"github.com/shoenig/test/wait"
 )
 
+type ErrorAssertionFunc func(t T, err error, settings ...Setting)
+
 // Nil asserts a is nil.
 func Nil(t T, a any, settings ...Setting) {
 	t.Helper()
