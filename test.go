@@ -19,6 +19,7 @@ import (
 	"github.com/shoenig/test/wait"
 )
 
+// ErrorAssertionFunc allows to pass Error and NoError in table driven tests
 type ErrorAssertionFunc func(t T, err error, settings ...Setting)
 
 // Nil asserts a is nil.
