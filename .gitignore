@@ -11,13 +11,13 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
+# Temporary files
+*.bak
 
 # Go work files
 go.work
 go.work.sum
 
-# macOS
+# macOS files
 .DS_Store
 
