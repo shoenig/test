@@ -334,7 +334,7 @@ func TestNotEqFunc_PS(t *testing.T) {
 }
 
 func TestEqJSON(t *testing.T) {
-	tc := newCase(t, `expected equality via json marshalling`)
+	tc := newCase(t, `expected equality via JSON marshalling`)
 	t.Cleanup(tc.assert)
 
 	EqJSON(tc, `{"a":1, "b":2}`, `{"b":2, "a":9}`)

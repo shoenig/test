@@ -30,7 +30,7 @@ There are five key packages,
 
 :ballot_box_with_check: v0.6.0 adds support for custom `cmp.Option` values
 
- - Adds ability to customize cmp.Equal behavior via cmp.Option arguments
+ - Adds ability to customize `cmp.Equal` behavior via `cmp.Option` arguments
  - Adds assertions for existence of single map key
  - Fixes some error outputs
 
@@ -66,9 +66,9 @@ way - avoiding erroneous comparisons in the first place.
 
 Generally there are 4 ways of asserting equivalence between types.
 
-#### the == operator
+#### the `==` operator
 
-Functions like `EqOp` and `ContainsOp` work on types that are `comparable`, i.e. are
+Functions like `EqOp` and `ContainsOp` work on types that are `comparable`, i.e., are
 compatible with Go's built-in `==` and `!=` operators.
 
 #### a comparator function
@@ -76,18 +76,18 @@ compatible with Go's built-in `==` and `!=` operators.
 Functions like `EqFunc` and `ContainsFunc` work on any type, as the caller passes in a
 function that takes two arguments of that type, returning a boolean indicating equivalence.
 
-#### an .Equal method
+#### an `.Equal` method
 
 Functions like `Equal` and `ContainsEqual` work on types implementing the `EqualFunc`
 generic interface (i.e. implement an `.Equal` method). The `.Equal` method is called
 to determine equivalence.
 
-#### the cmp.Equal or reflect.DeepEqual functions
+#### the `cmp.Equal` or `reflect.DeepEqual` functions
 
 Functions like `Eq` and `Contains` work on any type, using the `cmp.Equal` or `reflect.DeepEqual`
 functions to determine equivalence. Although this is the easiest / most compatible way
-to "just compare stuff", it the least deterministic way of comparing instances of a type.
-Changes to the underlying types may cause unexpected changes in their equivalence (e.g.
+to "just compare stuff", it's the least deterministic way of comparing instances of a type.
+Changes to the underlying types may cause unexpected changes in their equivalence (e.g.,
 the addition of unexported fields, function field types, etc.). Assertions that make
 use of `cmp.Equal` configured with custom `cmp.Option` values.
 
@@ -98,16 +98,16 @@ is done via the `cmp.Diff` function. For incompatible types, their `GoString` va
 printed instead.
 
 All output is directed through `t.Log` functions, and is visible only if test verbosity is
-turned on (e.g. `go test -v`).
+turned on (e.g., `go test -v`).
 
 #### fail fast vs. fail later
 
 The `test` and `must` packages are identical, except for how test cases behave when encountering
 a failure. Sometimes it is helpful for a test case to continue running even though a failure has
-occurred (e.g. contains cleanup logic not captured via a `t.Cleanup` function). Other times it
-make sense to fail immediately and stop the test case execution.
+occurred (e.g., it contains cleanup logic not captured via a `t.Cleanup` function). Other times, it
+makes sense to fail immediately and stop the test case execution.
 
-### go-cmp Options
+### `go-cmp` Options
 
 The test assertions that rely on `cmp.Equal` can be customized in how objects
 are compared by [specifying custom](https://github.com/google/go-cmp/blob/master/cmp/options.go#L16)
@@ -243,7 +243,7 @@ err := c.Run()
 ```go
 import "github.com/shoenig/test/must"
 
-// ... 
+// ...
 
 e1 := Employee{ID: 100, Name: "Alice"}
 e2 := Employee{ID: 101, Name: "Bob"}
@@ -265,7 +265,7 @@ must.Equal(t, e1, e2)
 
 ### Output
 
-The `test` and `must` package attempt to create useful, readable output when an assertions goes awry. Some random examples below.
+The `test` and `must` package attempt to create useful, readable output when an assertion goes awry. Some random examples below.
 
 ```text
 test_test.go:779: expected different file permissions

@@ -127,7 +127,7 @@ func MinimumCores(t T, num int) {
 }
 
 // MaximumCores will skip the test if the number of cores on the system
-// exceeeds the given maximum.
+// exceeds the given maximum.
 func MaximumCores(t T, num int) {
 	cpus := runtime.NumCPU()
 	if cpus > num {

@@ -233,19 +233,19 @@ func EqJSON(exp, val string) (s string) {
 	var expA, expB any
 
 	if err := json.Unmarshal([]byte(exp), &expA); err != nil {
-		s = fmt.Sprintf("failed to unmarshal first argument as json: %v\n", err)
+		s = fmt.Sprintf("failed to unmarshal first argument as JSON: %v\n", err)
 		return
 	}
 
 	if err := json.Unmarshal([]byte(val), &expB); err != nil {
-		s = fmt.Sprintf("failed to unmarshal second argument as json: %v\n", err)
+		s = fmt.Sprintf("failed to unmarshal second argument as JSON: %v\n", err)
 		return
 	}
 
 	if !reflect.DeepEqual(expA, expB) {
 		jsonA, _ := json.Marshal(expA)
 		jsonB, _ := json.Marshal(expB)
-		s = "expected equality via json marshalling\n"
+		s = "expected equality via JSON marshalling\n"
 		s += diff(string(jsonA), string(jsonB), nil)
 		return
 	}
@@ -263,7 +263,7 @@ func ValidJSONBytes(input []byte) (s string) {
 
 func validJSON(input []byte) (s string) {
 	if !json.Valid([]byte(input)) {
-		return "expected input to be valid json\n"
+		return "expected input to be valid JSON\n"
 	}
 	return
 }
