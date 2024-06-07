@@ -21,7 +21,7 @@ import (
 	"github.com/shoenig/test/wait"
 )
 
-// ErrorAssertionFunc allows to pass Error and NoError in table driven tests
+// ErrorAssertionFunc allows passing Error and NoError in table driven tests
 type ErrorAssertionFunc func(t T, err error, settings ...Setting)
 
 // Nil asserts a is nil.
@@ -226,7 +226,7 @@ func SliceNotContains[A any](t T, slice []A, item A, settings ...Setting) {
 	invoke(t, assertions.SliceNotContains(slice, item), settings...)
 }
 
-// SliceNotContainsFunc asserts item does not exist inslice, using eq to compare
+// SliceNotContainsFunc asserts item does not exist in slice, using eq to compare
 // elements.
 func SliceNotContainsFunc[A, B any](t T, slice []A, item B, eq func(a A, b B) bool, settings ...Setting) {
 	t.Helper()
@@ -417,7 +417,7 @@ func MapEqFunc[M1, M2 interfaces.Map[K, V], K comparable, V any](t T, exp M1, va
 }
 
 // MapEqual asserts maps exp and val contain the same key/val pairs, using Equal
-// method to compare vals
+// method to compare val
 func MapEqual[M interfaces.MapEqualFunc[K, V], K comparable, V interfaces.EqualFunc[V]](t T, exp, val M, settings ...Setting) {
 	t.Helper()
 	invoke(t, assertions.MapEqual(exp, val), settings...)
