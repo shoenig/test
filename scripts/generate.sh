@@ -20,6 +20,8 @@ apply test.go
 apply test_test.go
 apply examples_test.go
 
+cp -R testdata must/
+
 # rename core test files
 mv must/test.go must/must.go
 mv must/test_test.go must/must_test.go

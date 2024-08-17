@@ -4,9 +4,12 @@
 package test
 
 import (
+	"embed"
 	"errors"
+	"io/fs"
 	"math"
 	"os"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"testing"
@@ -14,6 +17,10 @@ import (
 
 	"github.com/shoenig/test/wait"
 )
+
+//go:embed testdata/dir1
+var _testdata embed.FS
+var testfs, _ = fs.Sub(_testdata, "testdata")
 
 func needsOS(t *testing.T, os string) {
 	if os != runtime.GOOS {
@@ -1357,64 +1364,66 @@ func TestFileExistsFS(t *testing.T) {
 	tc := newCase(t, `expected file to exist`)
 	t.Cleanup(tc.assert)
 
-	FileExistsFS(tc, os.DirFS("/etc"), "hosts2")
+	FileExistsFS(tc, testfs, "dir1/file2")
 }
 
 func TestFileExists(t *testing.T) {
 	tc := newCase(t, `expected file to exist`)
 	t.Cleanup(tc.assert)
 
-	FileExists(tc, "/etc/hosts2")
+	FileExists(tc, filepath.Join(t.TempDir(), "fake"))
 }
 
 func TestFileNotExistsFS(t *testing.T) {
-	needsOS(t, "linux")
-
 	tc := newCase(t, `expected file to not exist`)
 	t.Cleanup(tc.assert)
 
-	FileNotExistsFS(tc, os.DirFS("/etc"), "hosts")
+	FileNotExistsFS(tc, testfs, "dir1/file1")
+}
+
+func createTempFile(t *testing.T, name string) (path string) {
+	path = filepath.Join(t.TempDir(), name)
+	err := os.WriteFile(path, []byte{}, os.ModePerm)
+	if err != nil {
+		t.Fatal("failed to create temp file")
+	}
+	return path
 }
 
 func TestFileNotExists(t *testing.T) {
-	needsOS(t, "linux")
-
 	tc := newCase(t, `expected file to not exist`)
 	t.Cleanup(tc.assert)
 
-	FileNotExists(tc, "/etc/hosts")
+	path := createTempFile(t, "test")
+	FileNotExists(tc, path)
 }
 
 func TestDirExistsFS(t *testing.T) {
 	tc := newCase(t, `expected directory to exist`)
 	t.Cleanup(tc.assert)
 
-	DirExistsFS(tc, os.DirFS("/usr/local"), "bin2")
+	DirExistsFS(tc, testfs, "dir2")
 }
 
 func TestDirExists(t *testing.T) {
 	tc := newCase(t, `expected directory to exist`)
 	t.Cleanup(tc.assert)
 
-	DirExists(tc, "/usr/local/bin2")
+	DirExists(tc, filepath.Join(t.TempDir(), "fake"))
 }
 
 func TestDirNotExistsFS(t *testing.T) {
-	needsOS(t, "linux")
-
 	tc := newCase(t, `expected directory to not exist`)
 	t.Cleanup(tc.assert)
 
-	DirNotExistsFS(tc, os.DirFS("/usr"), "local")
+	DirNotExistsFS(tc, testfs, "dir1")
 }
 
 func TestDirNotExists(t *testing.T) {
-	needsOS(t, "linux")
-
 	tc := newCase(t, `expected directory to not exist`)
 	t.Cleanup(tc.assert)
 
-	DirNotExists(tc, "/usr/local")
+	DirNotExists(tc, t.TempDir())
 }
 
 func TestFileModeFS(t *testing.T) {
@@ -1476,21 +1485,18 @@ func TestDirMode(t *testing.T) {
 }
 
 func TestFileContainsFS(t *testing.T) {
-	needsOS(t, "linux")
-
 	tc := newCase(t, `expected file contents`)
 	t.Cleanup(tc.assert)
 
-	FileContainsFS(tc, os.DirFS("/etc"), "hosts", "127.0.0.999")
+	FileContainsFS(tc, testfs, "dir1/file1", "fake data")
 }
 
 func TestFileContains(t *testing.T) {
-	needsOS(t, "linux")
-
 	tc := newCase(t, `expected file contents`)
 	t.Cleanup(tc.assert)
 
-	FileContains(tc, "/etc/hosts", "127.0.0.999")
+	path := createTempFile(t, "test")
+	FileContains(tc, path, "fake data")
 }
 
 func TestFilePathValid(t *testing.T) {
