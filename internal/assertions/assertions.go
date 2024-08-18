@@ -983,8 +983,13 @@ func FileExistsFS(system fs.FS, file string) (s string) {
 		s += bullet("error: %s\n", err)
 		return
 	}
+	if err != nil {
+		s = "got an unexpected error\n"
+		s += bullet("name: %s\n", file)
+		s += bullet("error: %s\n", err)
+		return
+	}
 
-	// other errors - file probably exists but cannot be read
 	if info.IsDir() {
 		s = "expected file but is a directory\n"
 		s += bullet("name: %s\n", file)
@@ -1016,7 +1021,12 @@ func DirExistsFS(system fs.FS, directory string) (s string) {
 		s += bullet("error: %s\n", err)
 		return
 	}
-	// other errors - directory probably exists but cannot be read
+	if err != nil {
+		s = "got an unexpected error\n"
+		s += bullet("name: %s\n", directory)
+		s += bullet("error: %s\n", err)
+		return
+	}
 	if !info.IsDir() {
 		s = "expected directory but is a file\n"
 		s += bullet("name: %s\n", directory)
