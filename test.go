@@ -7,7 +7,6 @@ import (
 	"io"
 	"io/fs"
 	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -547,9 +546,7 @@ func FileExistsFS(t T, system fs.FS, file string, settings ...Setting) {
 // FileExists asserts file exists on the OS filesystem.
 func FileExists(t T, file string, settings ...Setting) {
 	t.Helper()
-	dir := filepath.Dir(file)
-	file = filepath.Base(file)
-	invoke(t, assertions.FileExistsFS(os.DirFS(dir), file), settings...)
+	invoke(t, assertions.FileExists(file), settings...)
 }
 
 // FileNotExistsFS asserts file does not exist on the fs.FS filesystem.
@@ -564,9 +561,7 @@ func FileNotExistsFS(t T, system fs.FS, file string, settings ...Setting) {
 // FileNotExists asserts file does not exist on the OS filesystem.
 func FileNotExists(t T, file string, settings ...Setting) {
 	t.Helper()
-	dir := filepath.Dir(file)
-	file = filepath.Base(file)
-	invoke(t, assertions.FileNotExistsFS(os.DirFS(dir), file), settings...)
+	invoke(t, assertions.FileNotExists(file), settings...)
 }
 
 // DirExistsFS asserts directory exists on the fs.FS filesystem.
@@ -582,8 +577,7 @@ func DirExistsFS(t T, system fs.FS, directory string, settings ...Setting) {
 // DirExists asserts directory exists on the OS filesystem.
 func DirExists(t T, directory string, settings ...Setting) {
 	t.Helper()
-	directory = strings.TrimPrefix(directory, "/")
-	invoke(t, assertions.DirExistsFS(os.DirFS(brokenfs.Root), directory), settings...)
+	invoke(t, assertions.DirExists(directory), settings...)
 }
 
 // DirNotExistsFS asserts directory does not exist on the fs.FS filesystem.
@@ -598,8 +592,7 @@ func DirNotExistsFS(t T, system fs.FS, directory string, settings ...Setting) {
 // DirNotExists asserts directory does not exist on the OS filesystem.
 func DirNotExists(t T, directory string, settings ...Setting) {
 	t.Helper()
-	directory = strings.TrimPrefix(directory, "/")
-	invoke(t, assertions.DirNotExistsFS(os.DirFS(brokenfs.Root), directory), settings...)
+	invoke(t, assertions.DirNotExists(directory), settings...)
 }
 
 // FileModeFS asserts the file or directory at path on fs.FS has exactly the given permission bits.
@@ -647,8 +640,7 @@ func FileContainsFS(t T, system fs.FS, file, content string, settings ...Setting
 // FileContains asserts the file on the OS filesystem contains content as a substring.
 func FileContains(t T, file, content string, settings ...Setting) {
 	t.Helper()
-	file = strings.TrimPrefix(file, "/")
-	invoke(t, assertions.FileContainsFS(os.DirFS(brokenfs.Root), file, content), settings...)
+	invoke(t, assertions.FileContains(file, content), settings...)
 }
 
 // FilePathValid asserts path is a valid file path.
