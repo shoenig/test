@@ -56,6 +56,15 @@ func (it *internalTest) assert() {
 	}
 }
 
+func (it *internalTest) assertNot() {
+	if !it.helper {
+		it.t.Fatal("should be marked as helper")
+	}
+	if it.trigger {
+		it.t.Fatalf("condition expected not to trigger; it did\ngot message %q in output", it.capture)
+	}
+}
+
 func (it *internalTest) post() {
 	if !strings.Contains(it.capture, "PostScript |") {
 		it.t.Fatal("expected post-script output")

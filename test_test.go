@@ -1360,70 +1360,133 @@ func TestMapNotContainsValueEqual(t *testing.T) {
 	MapNotContainsValueEqual(tc, m, &Person{ID: 200, Name: "Daisy"})
 }
 
-func TestFileExistsFS(t *testing.T) {
-	tc := newCase(t, `expected file to exist`)
-	t.Cleanup(tc.assert)
-
-	FileExistsFS(tc, testfs, "dir1/file2")
-}
-
-func TestFileExists(t *testing.T) {
-	tc := newCase(t, `expected file to exist`)
-	t.Cleanup(tc.assert)
-
-	FileExists(tc, filepath.Join(t.TempDir(), "fake"))
-}
-
-func TestFileNotExistsFS(t *testing.T) {
-	tc := newCase(t, `expected file to not exist`)
-	t.Cleanup(tc.assert)
-
-	FileNotExistsFS(tc, testfs, "dir1/file1")
-}
-
-func createTempFile(t *testing.T, name string) (path string) {
+func writeTempFile(t *testing.T, name, data string) (path string) {
 	path = filepath.Join(t.TempDir(), name)
-	err := os.WriteFile(path, []byte{}, os.ModePerm)
+	err := os.WriteFile(path, []byte(data), os.ModePerm)
 	if err != nil {
 		t.Fatal("failed to create temp file")
 	}
 	return path
 }
 
-func TestFileNotExists(t *testing.T) {
-	tc := newCase(t, `expected file to not exist`)
-	t.Cleanup(tc.assert)
+func TestFileExistsFS(t *testing.T) {
+	t.Run("file does not exist", func(t *testing.T) {
+		tc := newCase(t, `expected file to exist`)
+		t.Cleanup(tc.assert)
 
-	path := createTempFile(t, "test")
-	FileNotExists(tc, path)
+		FileExistsFS(tc, testfs, "dir1/file2")
+	})
+	t.Run("file exists", func(t *testing.T) {
+		tc := newCase(t, "")
+		t.Cleanup(tc.assertNot)
+
+		FileExistsFS(tc, testfs, "dir1/file1")
+	})
+}
+
+func TestFileExists(t *testing.T) {
+	t.Run("file does not exist", func(t *testing.T) {
+		tc := newCase(t, `expected file to exist`)
+		t.Cleanup(tc.assert)
+
+		FileExists(tc, filepath.Join(t.TempDir(), "fake"))
+	})
+	t.Run("file exists", func(t *testing.T) {
+		tc := newCase(t, "")
+		t.Cleanup(tc.assertNot)
+
+		FileExists(tc, writeTempFile(t, "real", ""))
+	})
+}
+
+func TestFileNotExistsFS(t *testing.T) {
+	t.Run("file exists", func(t *testing.T) {
+		tc := newCase(t, `expected file to not exist`)
+		t.Cleanup(tc.assert)
+
+		FileNotExistsFS(tc, testfs, "dir1/file1")
+	})
+	t.Run("file does not exist", func(t *testing.T) {
+		tc := newCase(t, "")
+		t.Cleanup(tc.assertNot)
+
+		FileNotExistsFS(tc, testfs, "dir1/file2")
+	})
+}
+
+func TestFileNotExists(t *testing.T) {
+	t.Run("file exists", func(t *testing.T) {
+		tc := newCase(t, `expected file to not exist`)
+		t.Cleanup(tc.assert)
+
+		FileNotExists(tc, writeTempFile(t, "real", ""))
+	})
+	t.Run("file does not exist", func(t *testing.T) {
+		tc := newCase(t, "")
+		t.Cleanup(tc.assertNot)
+
+		FileNotExists(tc, filepath.Join(t.TempDir(), "fake"))
+	})
 }
 
 func TestDirExistsFS(t *testing.T) {
-	tc := newCase(t, `expected directory to exist`)
-	t.Cleanup(tc.assert)
+	t.Run("dir does not exist", func(t *testing.T) {
+		tc := newCase(t, `expected directory to exist`)
+		t.Cleanup(tc.assert)
 
-	DirExistsFS(tc, testfs, "dir2")
+		DirExistsFS(tc, testfs, "dir2")
+	})
+	t.Run("dir exists", func(t *testing.T) {
+		tc := newCase(t, "")
+		t.Cleanup(tc.assertNot)
+
+		DirExistsFS(tc, testfs, "dir1")
+	})
 }
 
 func TestDirExists(t *testing.T) {
-	tc := newCase(t, `expected directory to exist`)
-	t.Cleanup(tc.assert)
+	t.Run("dir does not exist", func(t *testing.T) {
+		tc := newCase(t, `expected directory to exist`)
+		t.Cleanup(tc.assert)
 
-	DirExists(tc, filepath.Join(t.TempDir(), "fake"))
+		DirExists(tc, filepath.Join(t.TempDir(), "fake"))
+	})
+	t.Run("dir exists", func(t *testing.T) {
+		tc := newCase(t, "")
+		t.Cleanup(tc.assertNot)
+
+		DirExists(tc, t.TempDir())
+	})
 }
 
 func TestDirNotExistsFS(t *testing.T) {
-	tc := newCase(t, `expected directory to not exist`)
-	t.Cleanup(tc.assert)
+	t.Run("dir exists", func(t *testing.T) {
+		tc := newCase(t, `expected directory to not exist`)
+		t.Cleanup(tc.assert)
 
-	DirNotExistsFS(tc, testfs, "dir1")
+		DirNotExistsFS(tc, testfs, "dir1")
+	})
+	t.Run("dir does not exist", func(t *testing.T) {
+		tc := newCase(t, "")
+		t.Cleanup(tc.assertNot)
+
+		DirNotExistsFS(tc, testfs, "dir2")
+	})
 }
 
 func TestDirNotExists(t *testing.T) {
-	tc := newCase(t, `expected directory to not exist`)
-	t.Cleanup(tc.assert)
+	t.Run("dir exists", func(t *testing.T) {
+		tc := newCase(t, `expected directory to not exist`)
+		t.Cleanup(tc.assert)
 
-	DirNotExists(tc, t.TempDir())
+		DirNotExists(tc, t.TempDir())
+	})
+	t.Run("dir does not exist", func(t *testing.T) {
+		tc := newCase(t, "")
+		t.Cleanup(tc.assertNot)
+
+		DirNotExists(tc, filepath.Join(t.TempDir(), "fake"))
+	})
 }
 
 func TestFileModeFS(t *testing.T) {
@@ -1485,18 +1548,33 @@ func TestDirMode(t *testing.T) {
 }
 
 func TestFileContainsFS(t *testing.T) {
-	tc := newCase(t, `expected file contents`)
-	t.Cleanup(tc.assert)
+	t.Run("file does not contain data", func(t *testing.T) {
+		tc := newCase(t, `expected file contents`)
+		t.Cleanup(tc.assert)
 
-	FileContainsFS(tc, testfs, "dir1/file1", "fake data")
+		FileContainsFS(tc, testfs, "dir1/file1", "fake")
+	})
+	t.Run("file contains data", func(t *testing.T) {
+		tc := newCase(t, "")
+		t.Cleanup(tc.assertNot)
+
+		FileContainsFS(tc, testfs, "dir1/file1", "real")
+	})
 }
 
 func TestFileContains(t *testing.T) {
-	tc := newCase(t, `expected file contents`)
-	t.Cleanup(tc.assert)
+	t.Run("file does not contain data", func(t *testing.T) {
+		tc := newCase(t, `expected file contents`)
+		t.Cleanup(tc.assert)
 
-	path := createTempFile(t, "test")
-	FileContains(tc, path, "fake data")
+		FileContains(tc, writeTempFile(t, "test", "real data"), "fake")
+	})
+	t.Run("file contains data", func(t *testing.T) {
+		tc := newCase(t, "")
+		t.Cleanup(tc.assertNot)
+
+		FileContains(tc, writeTempFile(t, "test", "real data"), "real")
+	})
 }
 
 func TestFilePathValid(t *testing.T) {
