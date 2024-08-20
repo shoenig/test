@@ -6,13 +6,11 @@ package test
 import (
 	"io"
 	"io/fs"
-	"os"
 	"regexp"
 	"strings"
 
 	"github.com/shoenig/test/interfaces"
 	"github.com/shoenig/test/internal/assertions"
-	"github.com/shoenig/test/internal/brokenfs"
 	"github.com/shoenig/test/internal/constraints"
 	"github.com/shoenig/test/internal/util"
 	"github.com/shoenig/test/wait"
@@ -607,8 +605,7 @@ func FileModeFS(t T, system fs.FS, path string, permissions fs.FileMode, setting
 // FileMode asserts the file or directory at path on the OS filesystem has exactly the given permission bits.
 func FileMode(t T, path string, permissions fs.FileMode, settings ...Setting) {
 	t.Helper()
-	path = strings.TrimPrefix(path, "/")
-	invoke(t, assertions.FileModeFS(os.DirFS(brokenfs.Root), path, permissions), settings...)
+	invoke(t, assertions.FileMode(path, permissions), settings...)
 }
 
 // DirModeFS asserts the directory at path on fs.FS has exactly the given permission bits.
@@ -623,8 +620,7 @@ func DirModeFS(t T, system fs.FS, path string, permissions fs.FileMode, settings
 // DirMode asserts the directory at path on the OS filesystem has exactly the given permission bits.
 func DirMode(t T, path string, permissions fs.FileMode, settings ...Setting) {
 	t.Helper()
-	path = strings.TrimPrefix(path, "/")
-	invoke(t, assertions.DirModeFS(os.DirFS(brokenfs.Root), path, permissions), settings...)
+	invoke(t, assertions.DirMode(path, permissions), settings...)
 }
 
 // FileContainsFS asserts the file on fs.FS contains content as a substring.

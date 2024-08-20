@@ -11,8 +11,8 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"runtime"
 	"testing"
+	"testing/fstest"
 	"time"
 
 	"github.com/shoenig/test/wait"
@@ -21,12 +21,6 @@ import (
 //go:embed testdata/dir1
 var _testdata embed.FS
 var testfs, _ = fs.Sub(_testdata, "testdata")
-
-func needsOS(t *testing.T, os string) {
-	if os != runtime.GOOS {
-		t.Skip("not supported on this OS")
-	}
-}
 
 func TestNil(t *testing.T) {
 	tc := newCase(t, `expected to be nil; is not nil`)
@@ -1490,60 +1484,159 @@ func TestDirNotExists(t *testing.T) {
 }
 
 func TestFileModeFS(t *testing.T) {
-	needsOS(t, "linux")
+	t.Run("same permissions", func(t *testing.T) {
+		tc := newCase(t, "")
+		t.Cleanup(tc.assertNot)
 
-	tc := newCase(t, `expected different file permissions`)
-	t.Cleanup(tc.assert)
+		const name = "file1"
+		const perm = 0555 | fs.ModeDir
+		system := fstest.MapFS{
+			name: &fstest.MapFile{
+				Mode: perm,
+			},
+		}
+		FileModeFS(tc, system, name, perm)
+	})
+	t.Run("different permissions", func(t *testing.T) {
+		tc := newCase(t, `expected different file permissions`)
+		t.Cleanup(tc.assert)
 
-	var unexpected os.FileMode = 0673 // (actual 0655)
-	FileModeFS(tc, os.DirFS("/bin"), "find", unexpected)
+		const name = "file1"
+		system := fstest.MapFS{
+			name: &fstest.MapFile{
+				Mode: 0655,
+			},
+		}
+		FileModeFS(tc, system, name, 0673)
+	})
+}
+
+func createFileWithPerm(t *testing.T, perm fs.FileMode) (path string) {
+	t.Helper()
+	f, err := os.CreateTemp(t.TempDir(), "")
+	if err != nil {
+		t.Fatal("failed to created temp file")
+	}
+	f.Close()
+	err = os.Chmod(f.Name(), perm)
+	if err != nil {
+		t.Fatal("failed to set file permissions")
+	}
+	t.Log("created temp file", f.Name())
+	return f.Name()
+}
+
+func createDirWithPerm(t *testing.T, perm fs.FileMode) (path string) {
+	t.Helper()
+	path, err := os.MkdirTemp(t.TempDir(), "")
+	if err != nil {
+		t.Fatal("failed to created temp dir")
+	}
+	err = os.Chmod(path, perm)
+	if err != nil {
+		t.Fatal("failed to set file permissions")
+	}
+	t.Log("created temp dir", path)
+	return path
 }
 
 func TestFileMode(t *testing.T) {
-	needsOS(t, "linux")
-
-	tc := newCase(t, `expected different file permissions`)
-	t.Cleanup(tc.assert)
-
-	var unexpected os.FileMode = 0673 // (actual 0655)
-	FileMode(tc, "/bin/find", unexpected)
-}
-
-func TestDirModeFS(t *testing.T) {
-	needsOS(t, "linux")
+	// Windows does not use Unix permissions. File permissions set on Windows
+	// with os.Chmod end up as something equivalent to -r--r--r-- or -rw-rw-rw-.
 
 	t.Run("different permissions", func(t *testing.T) {
 		tc := newCase(t, `expected different file permissions`)
 		t.Cleanup(tc.assert)
 
-		var unexpected os.FileMode = 0755 // (actual 0755)
-		DirModeFS(tc, os.DirFS("/"), "bin", unexpected)
+		path := createFileWithPerm(t, 0666)
+		FileMode(tc, path, 0755)
+	})
+
+	t.Run("same permissions", func(t *testing.T) {
+		tc := newCase(t, "")
+		t.Cleanup(tc.assertNot)
+
+		const perm fs.FileMode = 0666
+		path := createFileWithPerm(t, perm)
+		FileMode(tc, path, perm)
+	})
+}
+
+func TestDirModeFS(t *testing.T) {
+	t.Run("different permissions", func(t *testing.T) {
+		tc := newCase(t, `expected different file permissions`)
+		t.Cleanup(tc.assert)
+
+		const name = "dir1"
+		system := fstest.MapFS{
+			name: &fstest.MapFile{
+				Mode: 0555 | fs.ModeDir,
+			},
+		}
+
+		var unexpected os.FileMode = 0755 | fs.ModeDir
+		DirModeFS(tc, system, name, unexpected)
+	})
+
+	t.Run("same permissions", func(t *testing.T) {
+		tc := newCase(t, `expected different file permissions`)
+		t.Cleanup(tc.assertNot)
+
+		const name = "dir1"
+		const perm = 0555 | fs.ModeDir
+		system := fstest.MapFS{
+			name: &fstest.MapFile{
+				Mode: perm,
+			},
+		}
+
+		DirModeFS(tc, system, name, perm)
 	})
 
 	t.Run("not a dir", func(t *testing.T) {
 		tc := newCase(t, `expected to stat a directory`)
 		t.Cleanup(tc.assert)
 
-		DirModeFS(tc, os.DirFS("/bin"), "find", os.FileMode(0))
+		const name = "file1"
+		const perm = 0555
+		system := fstest.MapFS{
+			name: &fstest.MapFile{
+				Mode: perm,
+			},
+		}
+
+		DirModeFS(tc, system, name, perm)
 	})
 }
 
 func TestDirMode(t *testing.T) {
-	needsOS(t, "linux")
+	// Windows does not use Unix permissions. Dir permissions set on Windows
+	// with os.Chmod end up as something equivalent to dr-xr-xr-x or drwxrwxrwx.
 
 	t.Run("different permissions", func(t *testing.T) {
 		tc := newCase(t, `expected different file permissions`)
 		t.Cleanup(tc.assert)
 
-		var unexpected os.FileMode = 0755 // (actual 0755)
-		DirMode(tc, "/bin", unexpected)
+		path := createDirWithPerm(t, 0777)
+		DirMode(tc, path, 0755)
+	})
+
+	t.Run("same permissions", func(t *testing.T) {
+		tc := newCase(t, "")
+		t.Cleanup(tc.assertNot)
+
+		const perm fs.FileMode = 0777
+		path := createDirWithPerm(t, perm)
+		DirMode(tc, path, perm|fs.ModeDir)
 	})
 
 	t.Run("not a dir", func(t *testing.T) {
 		tc := newCase(t, `expected to stat a directory`)
 		t.Cleanup(tc.assert)
 
-		DirMode(tc, "/bin/find", os.FileMode(0))
+		const perm fs.FileMode = 0777
+		path := createFileWithPerm(t, perm)
+		DirMode(tc, path, perm)
 	})
 }
 
