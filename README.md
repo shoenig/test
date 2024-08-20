@@ -18,6 +18,10 @@ There are five key packages,
 
 ### Changes
 
+:ballot_box_with_check: v1.10.0 adds a `util` package for helpers that return values
+
+ - Adds ability to create and automatically clean up temporary files
+
 :ballot_box_with_check: v1.9.0 substantially improves filesystem tests
 
  - Greater compatibility with Windows
