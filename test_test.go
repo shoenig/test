@@ -15,6 +15,7 @@ import (
 	"testing/fstest"
 	"time"
 
+	"github.com/shoenig/test/util"
 	"github.com/shoenig/test/wait"
 )
 
@@ -1354,15 +1355,6 @@ func TestMapNotContainsValueEqual(t *testing.T) {
 	MapNotContainsValueEqual(tc, m, &Person{ID: 200, Name: "Daisy"})
 }
 
-func writeTempFile(t *testing.T, name, data string) (path string) {
-	path = filepath.Join(t.TempDir(), name)
-	err := os.WriteFile(path, []byte(data), os.ModePerm)
-	if err != nil {
-		t.Fatal("failed to create temp file")
-	}
-	return path
-}
-
 func TestFileExistsFS(t *testing.T) {
 	t.Run("file does not exist", func(t *testing.T) {
 		tc := newCase(t, `expected file to exist`)
@@ -1389,7 +1381,7 @@ func TestFileExists(t *testing.T) {
 		tc := newCase(t, "")
 		t.Cleanup(tc.assertNot)
 
-		FileExists(tc, writeTempFile(t, "real", ""))
+		FileExists(tc, util.TempFile(t, util.Pattern("real")))
 	})
 }
 
@@ -1413,7 +1405,7 @@ func TestFileNotExists(t *testing.T) {
 		tc := newCase(t, `expected file to not exist`)
 		t.Cleanup(tc.assert)
 
-		FileNotExists(tc, writeTempFile(t, "real", ""))
+		FileNotExists(tc, util.TempFile(t, util.Pattern("real")))
 	})
 	t.Run("file does not exist", func(t *testing.T) {
 		tc := newCase(t, "")
@@ -1511,21 +1503,6 @@ func TestFileModeFS(t *testing.T) {
 	})
 }
 
-func createFileWithPerm(t *testing.T, perm fs.FileMode) (path string) {
-	t.Helper()
-	f, err := os.CreateTemp(t.TempDir(), "")
-	if err != nil {
-		t.Fatal("failed to created temp file")
-	}
-	f.Close()
-	err = os.Chmod(f.Name(), perm)
-	if err != nil {
-		t.Fatal("failed to set file permissions")
-	}
-	t.Log("created temp file", f.Name())
-	return f.Name()
-}
-
 func createDirWithPerm(t *testing.T, perm fs.FileMode) (path string) {
 	t.Helper()
 	path, err := os.MkdirTemp(t.TempDir(), "")
@@ -1548,7 +1525,7 @@ func TestFileMode(t *testing.T) {
 		tc := newCase(t, `expected different file permissions`)
 		t.Cleanup(tc.assert)
 
-		path := createFileWithPerm(t, 0666)
+		path := util.TempFile(t, util.Mode(0666))
 		FileMode(tc, path, 0755)
 	})
 
@@ -1557,7 +1534,7 @@ func TestFileMode(t *testing.T) {
 		t.Cleanup(tc.assertNot)
 
 		const perm fs.FileMode = 0666
-		path := createFileWithPerm(t, perm)
+		path := util.TempFile(t, util.Mode(perm))
 		FileMode(tc, path, perm)
 	})
 }
@@ -1635,7 +1612,7 @@ func TestDirMode(t *testing.T) {
 		t.Cleanup(tc.assert)
 
 		const perm fs.FileMode = 0777
-		path := createFileWithPerm(t, perm)
+		path := util.TempFile(t, util.Mode(perm))
 		DirMode(tc, path, perm)
 	})
 }
@@ -1660,13 +1637,15 @@ func TestFileContains(t *testing.T) {
 		tc := newCase(t, `expected file contents`)
 		t.Cleanup(tc.assert)
 
-		FileContains(tc, writeTempFile(t, "test", "real data"), "fake")
+		path := util.TempFile(t, util.Pattern("test"), util.StringData("real data"))
+		FileContains(tc, path, "fake")
 	})
 	t.Run("file contains data", func(t *testing.T) {
 		tc := newCase(t, "")
 		t.Cleanup(tc.assertNot)
 
-		FileContains(tc, writeTempFile(t, "test", "real data"), "real")
+		path := util.TempFile(t, util.Pattern("test"), util.StringData("real data"))
+		FileContains(tc, path, "real")
 	})
 }
 
