@@ -14,5 +14,5 @@ func (it *internalTest) Errorf(s string, args ...any) {
 	}
 	msg := strings.TrimSpace(fmt.Sprintf(s, args...))
 	it.capture = msg
-	fmt.Println(msg)
+	it.t.Log(msg)
 }
