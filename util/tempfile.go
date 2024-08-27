@@ -86,7 +86,8 @@ func TempFile(t T, settings ...TempFileSetting) (path string) {
 	}
 
 	var err error
-	crash := func() {
+	crash := func(t T) 
+		t.Helper()
 		t.Fatalf("%s: %v", "TempFile", err)
 	}
 	file, err := os.CreateTemp(*allSettings.path, allSettings.namePattern)
