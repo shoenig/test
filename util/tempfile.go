@@ -86,13 +86,13 @@ func TempFile(t T, settings ...TempFileSetting) (path string) {
 	}
 
 	var err error
-	crash := func(t T) 
+	crash := func(t T) {
 		t.Helper()
 		t.Fatalf("%s: %v", "TempFile", err)
 	}
 	file, err := os.CreateTemp(*allSettings.path, allSettings.namePattern)
 	if err != nil {
-		crash()
+		crash(t)
 	}
 	path = file.Name()
 	t.Cleanup(func() {
@@ -104,15 +104,15 @@ func TempFile(t T, settings ...TempFileSetting) (path string) {
 	_, err = file.Write(allSettings.data)
 	if err != nil {
 		file.Close()
-		crash()
+		crash(t)
 	}
 	err = file.Close()
 	if err != nil {
-		crash()
+		crash(t)
 	}
 	err = os.Chmod(path, *allSettings.mode)
 	if err != nil {
-		crash()
+		crash(t)
 	}
 	return file.Name()
 }
