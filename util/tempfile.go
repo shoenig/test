@@ -20,7 +20,7 @@ type TempFileSettings struct {
 	data        []byte
 	mode        *fs.FileMode
 	namePattern string
-	path        *string
+	dir         *string
 }
 
 type TempFileSetting func(s *TempFileSettings)
@@ -55,12 +55,14 @@ func ByteData(data []byte) TempFileSetting {
 	}
 }
 
-// Path specifies a directory path to contain the temporary file.
+// Dir specifies a directory path to contain the temporary file.
+// If dir is the empty string, the file will be created in the
+// default directory for temporary files, as returned by os.TempDir.
 // A temporary file created in a custom directory will still be deleted
 // after the test runs, though the directory may not.
-func Path(path string) TempFileSetting {
+func Dir(dir string) TempFileSetting {
 	return func(s *TempFileSettings) {
-		s.path = &path
+		s.dir = &dir
 	}
 }
 
@@ -80,9 +82,9 @@ func TempFile(t T, settings ...TempFileSetting) (path string) {
 		allSettings.mode = new(fs.FileMode)
 		*allSettings.mode = 0600
 	}
-	if allSettings.path == nil {
-		allSettings.path = new(string)
-		*allSettings.path = t.TempDir()
+	if allSettings.dir == nil {
+		allSettings.dir = new(string)
+		*allSettings.dir = t.TempDir()
 	}
 
 	var err error
@@ -90,7 +92,7 @@ func TempFile(t T, settings ...TempFileSetting) (path string) {
 		t.Helper()
 		t.Fatalf("%s: %v", "TempFile", err)
 	}
-	file, err := os.CreateTemp(*allSettings.path, allSettings.namePattern)
+	file, err := os.CreateTemp(*allSettings.dir, allSettings.namePattern)
 	if err != nil {
 		crash(t)
 	}

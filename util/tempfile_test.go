@@ -108,17 +108,17 @@ func TestTempFile(t *testing.T) {
 	})
 
 	t.Run("file is deleted after test", func(t *testing.T) {
-		dirpath := t.TempDir()
+		dir := t.TempDir()
 		var path string
 
 		t.Run("uses custom path", func(t *testing.T) {
-			path = util.TempFile(t, util.Path(dirpath))
-			entries, err := os.ReadDir(dirpath)
+			path = util.TempFile(t, util.Dir(dir))
+			entries, err := os.ReadDir(dir)
 			if err != nil {
 				t.Fatalf("failed to read directory: %v", err)
 			}
 			if len(entries) == 0 || entries[0].Name() != filepath.Base(path) {
-				t.Fatalf("did not find temporary file in %s", dirpath)
+				t.Fatalf("did not find temporary file in %s", dir)
 			}
 		})
 
