@@ -10,7 +10,6 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"slices"
 	"strings"
 	"testing"
 
@@ -179,9 +178,12 @@ func TestTempFile(t *testing.T) {
 			if err != nil {
 				t.Fatalf("failed to read directory: %v", err)
 			}
-			found := slices.ContainsFunc(entries, func(entry fs.DirEntry) bool {
-				return entry.Name() == filepath.Base(newPath)
-			})
+			var found bool
+			for _, entry := range entries {
+				if entry.Name() == filepath.Base(newPath) {
+					found = true
+				}
+			}
 			if !found {
 				t.Fatalf("did not find temporary file in %s", dir)
 			}
