@@ -122,14 +122,12 @@ func TestTempFile(t *testing.T) {
 			}
 		})
 
+		if path == "" {
+			t.Fatal("expected non-empty path")
+		}
 		_, err := os.Stat(path)
 		if err == nil {
-			t.Errorf("expected temp file not to exist: %s", path)
-			err := os.Remove(path)
-			if err != nil {
-				t.Errorf("failed to clean up temp file: %s", path)
-			}
-			t.FailNow()
+			t.Fatalf("expected temp file not to exist: %s", path)
 		}
 	})
 }
