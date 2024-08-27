@@ -117,7 +117,7 @@ func TestTempFile(t *testing.T) {
 			if err != nil {
 				t.Fatalf("failed to read directory: %v", err)
 			}
-			if entries[0].Name() != filepath.Base(path) {
+			if len(entries) == 0 || entries[0].Name() != filepath.Base(path) {
 				t.Fatalf("did not find temporary file in %s", dirpath)
 			}
 		})
