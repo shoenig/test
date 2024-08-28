@@ -75,7 +75,7 @@ func Dir(dir string) TempFileSetting {
 // after the test is completed.
 func TempFile(t T, settings ...TempFileSetting) (path string) {
 	t.Helper()
-	path, err := tempFile(t.Helper, t.TempDir, settings...)
+	path, err := tempFile(t, settings...)
 	t.Cleanup(func() {
 		err := os.Remove(path)
 		if err != nil {
@@ -88,10 +88,15 @@ func TempFile(t T, settings ...TempFileSetting) (path string) {
 	return path
 }
 
+type tempFileT interface {
+	Helper()
+	TempDir() string
+}
+
 // tempFile returns errors instead of relying upon T to stop execution, for ease
 // of testing TempFile.
-func tempFile(helper func(), tempDir func() string, settings ...TempFileSetting) (path string, err error) {
-	helper()
+func tempFile(t tempFileT, settings ...TempFileSetting) (path string, err error) {
+	t.Helper()
 	var allSettings TempFileSettings
 	for _, setting := range settings {
 		setting(&allSettings)
@@ -102,7 +107,7 @@ func tempFile(helper func(), tempDir func() string, settings ...TempFileSetting)
 	}
 	if allSettings.dir == nil {
 		allSettings.dir = new(string)
-		*allSettings.dir = tempDir()
+		*allSettings.dir = t.TempDir()
 	}
 
 	file, err := os.CreateTemp(*allSettings.dir, allSettings.namePattern)
