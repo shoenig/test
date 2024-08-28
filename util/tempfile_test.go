@@ -182,6 +182,7 @@ func TestTempFile(t *testing.T) {
 			for _, entry := range entries {
 				if entry.Name() == filepath.Base(newPath) {
 					found = true
+					break
 				}
 			}
 			if !found {
