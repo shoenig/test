@@ -26,7 +26,7 @@ type helperTracker struct {
 }
 
 func (t *helperTracker) TempDir() string {
-	t.t.Helper()
+	t.Helper()
 	return t.t.TempDir()
 }
 
@@ -36,17 +36,17 @@ func (t *helperTracker) Helper() {
 }
 
 func (t *helperTracker) Errorf(s string, args ...any) {
-	t.t.Helper()
+	t.Helper()
 	t.t.Errorf(s, args)
 }
 
 func (t *helperTracker) Fatalf(s string, args ...any) {
-	t.t.Helper()
+	t.Helper()
 	t.t.Fatalf(s, args...)
 }
 
 func (t *helperTracker) Cleanup(f func()) {
-	t.t.Helper()
+	t.Helper()
 	t.t.Cleanup(f)
 }
 
@@ -61,7 +61,7 @@ type failureTracker struct {
 }
 
 func (t *failureTracker) TempDir() string {
-	t.t.Helper()
+	t.Helper()
 	return t.t.TempDir()
 }
 
@@ -70,24 +70,24 @@ func (t *failureTracker) Helper() {
 }
 
 func (t *failureTracker) Errorf(s string, args ...any) {
-	t.t.Helper()
+	t.Helper()
 	t.failed = true
 	fmt.Fprintf(&t.log, s+"\n", args...)
 }
 
 func (t *failureTracker) Fatalf(s string, args ...any) {
-	t.t.Helper()
+	t.Helper()
 	t.failed = true
 	fmt.Fprintf(&t.log, s+"\n", args...)
 }
 
 func (t *failureTracker) Cleanup(f func()) {
-	t.t.Helper()
+	t.Helper()
 	t.t.Cleanup(f)
 }
 
 func (t *failureTracker) AssertFailedWith(msg string) {
-	t.t.Helper()
+	t.Helper()
 	if !t.failed {
 		t.t.Fatalf("expected test to fail with message %q", msg)
 	}
