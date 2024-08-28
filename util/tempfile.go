@@ -5,7 +5,6 @@ package util
 
 import (
 	"errors"
-	"fmt"
 	"io/fs"
 	"os"
 )
@@ -84,7 +83,7 @@ func TempFile(t T, settings ...TempFileSetting) (path string) {
 		}
 	})
 	if err != nil {
-		t.Fatalf("%v", err)
+		t.Fatalf("TempFile: %v", err)
 	}
 	return path
 }
@@ -106,29 +105,26 @@ func tempFile(helper func(), tempDir func() string, settings ...TempFileSetting)
 		*allSettings.dir = tempDir()
 	}
 
-	wrap := func(err error) error {
-		return fmt.Errorf("TempFile: %w", err)
-	}
 	file, err := os.CreateTemp(*allSettings.dir, allSettings.namePattern)
 	if errors.Is(err, fs.ErrNotExist) {
-		return "", fmt.Errorf("TempFile: directory does not exist")
+		return "", errors.New("directory does not exist")
 	}
 	if err != nil {
-		return "", wrap(err)
+		return "", err
 	}
 	path = file.Name()
 	_, err = file.Write(allSettings.data)
 	if err != nil {
 		file.Close()
-		return path, wrap(err)
+		return path, err
 	}
 	err = file.Close()
 	if err != nil {
-		return path, wrap(err)
+		return path, err
 	}
 	err = os.Chmod(path, *allSettings.mode)
 	if err != nil {
-		return path, wrap(err)
+		return path, err
 	}
 	return file.Name(), nil
 }
