@@ -163,6 +163,12 @@ func SliceEqual[E interfaces.EqualFunc[E]](t T, exp, val []E, settings ...Settin
 	invoke(t, assertions.SliceEqual(exp, val), settings...)
 }
 
+// SliceEqOp asserts exp[n] == val[n] for each element n.
+func SliceEqOp[A comparable, S ~[]A](t T, exp, val S, settings ...Setting) {
+	t.Helper()
+	invoke(t, assertions.SliceEqOp(exp, val), settings...)
+}
+
 // SliceEmpty asserts slice is empty.
 func SliceEmpty[A any](t T, slice []A, settings ...Setting) {
 	t.Helper()
