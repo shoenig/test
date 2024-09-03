@@ -17,10 +17,10 @@ There are five key packages,
 - `portal` - utilities for allocating free ports for network listeners in tests
 
 ### Changes
-
 :ballot_box_with_check: v1.10.0 adds a `util` package for helpers that return values
 
  - Adds ability to create and automatically clean up temporary files
+ - Adds `SliceEqOp` and `MapEqOp` helpers
 
 :ballot_box_with_check: v1.9.0 substantially improves filesystem tests
 
