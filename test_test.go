@@ -1189,6 +1189,58 @@ func TestMapEqual(t *testing.T) {
 	})
 }
 
+func TestMapEqOp(t *testing.T) {
+	t.Run("different values", func(t *testing.T) {
+		tc := newCase(t, `expected maps of same values via ==`)
+		t.Cleanup(tc.assert)
+
+		a := map[int]string{
+			0: "zero",
+			1: "one",
+		}
+
+		b := map[int]string{
+			0: "zero",
+			1: "eins",
+		}
+
+		MapEqOp(tc, a, b)
+	})
+	t.Run("different lengths", func(t *testing.T) {
+		tc := newCase(t, `expected maps of same length`)
+		t.Cleanup(tc.assert)
+
+		a := map[int]string{
+			0: "zero",
+			1: "one",
+		}
+
+		b := map[int]string{
+			0: "zero",
+			1: "one",
+			2: "two",
+		}
+
+		MapEqOp(tc, a, b)
+	})
+	t.Run("different keys", func(t *testing.T) {
+		tc := newCase(t, `expected maps of same keys`)
+		t.Cleanup(tc.assert)
+
+		a := map[int]string{
+			0: "zero",
+			1: "one",
+		}
+
+		b := map[int]string{
+			0: "zero",
+			2: "one",
+		}
+
+		MapEqOp(tc, a, b)
+	})
+}
+
 func TestMapLen(t *testing.T) {
 	tc := newCase(t, `expected map to be different length`)
 	t.Cleanup(tc.assert)

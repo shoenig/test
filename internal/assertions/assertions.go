@@ -813,6 +813,34 @@ func MapEqual[M interfaces.MapEqualFunc[K, V], K comparable, V interfaces.EqualF
 	return
 }
 
+func MapEqOp[M interfaces.Map[K, V], K, V comparable](exp, val M) (s string) {
+	lenA, lenB := len(exp), len(val)
+
+	if lenA != lenB {
+		s = "expected maps of same length\n"
+		s += bullet("len(exp): %d\n", lenA)
+		s += bullet("len(val): %d\n", lenB)
+		return
+	}
+
+	for key, valA := range exp {
+		valB, exists := val[key]
+		if !exists {
+			s = "expected maps of same keys\n"
+			s += diff(exp, val, nil)
+			return
+		}
+
+		if valA != valB {
+			s = "expected maps of same values via ==\n"
+			s += diff(exp, val, nil)
+			return
+		}
+	}
+
+	return
+}
+
 func MapLen[M ~map[K]V, K comparable, V any](n int, m M) (s string) {
 	if l := len(m); l != n {
 		s = "expected map to be different length\n"

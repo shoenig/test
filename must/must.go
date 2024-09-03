@@ -426,6 +426,13 @@ func MapEqual[M interfaces.MapEqualFunc[K, V], K comparable, V interfaces.EqualF
 	invoke(t, assertions.MapEqual(exp, val), settings...)
 }
 
+// MapEqOp asserts maps exp and val contain the same key/val pairs, using == to
+// compare vals.
+func MapEqOp[M interfaces.Map[K, V], K, V comparable](t T, exp M, val M, settings ...Setting) {
+	t.Helper()
+	invoke(t, assertions.MapEqOp(exp, val), settings...)
+}
+
 // MapLen asserts map is of size n.
 func MapLen[M ~map[K]V, K comparable, V any](t T, n int, m M, settings ...Setting) {
 	t.Helper()
