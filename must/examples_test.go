@@ -523,6 +523,19 @@ func ExampleMapEqual() {
 	// Output:
 }
 
+func ExampleMapEqOp() {
+	m1 := map[int]string{
+		1: "one",
+		2: "two",
+	}
+	m2 := map[int]string{
+		1: "one",
+		2: "two",
+	}
+	MapEqOp(t, m1, m2)
+	// Output:
+}
+
 func ExampleMapLen() {
 	m := map[int]string{
 		1: "one",
