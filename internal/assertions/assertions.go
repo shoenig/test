@@ -332,6 +332,27 @@ func SliceEqual[E interfaces.EqualFunc[E]](exp, val []E) (s string) {
 	return
 }
 
+func SliceEqOp[A comparable, S ~[]A](exp, val S) (s string) {
+	lenA, lenB := len(exp), len(val)
+
+	if lenA != lenB {
+		s = "expected slices of same length\n"
+		s += bullet("len(exp): %d\n", lenA)
+		s += bullet("len(val): %d\n", lenB)
+		s += diff(exp, val, nil)
+		return
+	}
+
+	for i := 0; i < lenA; i++ {
+		if exp[i] != val[i] {
+			s += "expected slice equality via ==\n"
+			s += diff(exp[i], val[i], nil)
+			return
+		}
+	}
+	return
+}
+
 func Lesser[L interfaces.LessFunc[L]](exp, val L) (s string) {
 	if !val.Less(exp) {
 		s = "expected val to be less via .Less method\n"

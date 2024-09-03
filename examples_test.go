@@ -782,6 +782,13 @@ func ExampleSliceEqual() {
 	// Output:
 }
 
+func ExampleSliceEqOp() {
+	s1 := []int{1, 3, 3, 7}
+	s2 := []int{1, 3, 3, 7}
+	SliceEqOp(t, s1, s2)
+	// Output:
+}
+
 func ExampleSliceLen() {
 	SliceLen(t, 4, []float64{32, 1.2, 0.01, 9e4})
 	// Output:

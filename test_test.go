@@ -511,6 +511,26 @@ func TestSliceEqual(t *testing.T) {
 	})
 }
 
+func TestSliceEqOp(t *testing.T) {
+	t.Run("length", func(t *testing.T) {
+		tc := newCase(t, `expected slices of same length`)
+		t.Cleanup(tc.assert)
+
+		a := []int{1, 2, 3}
+		b := []int{1, 2, 3, 4}
+		SliceEqOp(tc, a, b)
+	})
+
+	t.Run("elements", func(t *testing.T) {
+		tc := newCase(t, `expected slice equality via ==`)
+		t.Cleanup(tc.assert)
+
+		a := []int{1, 2, 3}
+		b := []int{1, 2, 4}
+		SliceEqOp(tc, a, b)
+	})
+}
+
 func TestLesser(t *testing.T) {
 	tc := newCase(t, `expected val to be less via .Less method`)
 	t.Cleanup(tc.assert)
