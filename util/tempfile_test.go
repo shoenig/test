@@ -122,7 +122,7 @@ func TestTempFile(t *testing.T) {
 		path := util.TempFile(t,
 			util.Mode(expectedMode),
 			util.Pattern(pattern),
-			util.StringData(expectedData))
+			util.String(expectedData))
 
 		t.Run("Mode sets a custom file mode", func(t *testing.T) {
 			info, err := os.Stat(path)
@@ -150,9 +150,9 @@ func TestTempFile(t *testing.T) {
 		})
 	})
 
-	t.Run("ByteData sets binary data", func(t *testing.T) {
+	t.Run("Bytes sets binary data", func(t *testing.T) {
 		expectedData := []byte("important data")
-		path := util.TempFile(t, util.ByteData(expectedData))
+		path := util.TempFile(t, util.Bytes(expectedData))
 		actualData, err := os.ReadFile(path)
 		if err != nil {
 			t.Fatalf("failed to read temp file: %v", err)

@@ -1639,14 +1639,14 @@ func TestFileContains(t *testing.T) {
 		tc := newCase(t, `expected file contents`)
 		t.Cleanup(tc.assert)
 
-		path := util.TempFile(t, util.Pattern("test"), util.StringData("real data"))
+		path := util.TempFile(t, util.Pattern("test"), util.String("real data"))
 		FileContains(tc, path, "fake")
 	})
 	t.Run("file contains data", func(t *testing.T) {
 		tc := newCase(t, "")
 		t.Cleanup(tc.assertNot)
 
-		path := util.TempFile(t, util.Pattern("test"), util.StringData("real data"))
+		path := util.TempFile(t, util.Pattern("test"), util.String("real data"))
 		FileContains(tc, path, "real")
 	})
 }

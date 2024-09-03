@@ -1,6 +1,7 @@
 // Copyright (c) The Test Authors
 // SPDX-License-Identifier: MPL-2.0
 
+// Package util provides utility functions for writing concise test cases.
 package util
 
 import (
@@ -42,15 +43,15 @@ func Mode(mode fs.FileMode) TempFileSetting {
 	}
 }
 
-// StringData writes data to the temporary file.
-func StringData(data string) TempFileSetting {
+// String writes data to the temporary file.
+func String(data string) TempFileSetting {
 	return func(s *TempFileSettings) {
 		s.data = []byte(data)
 	}
 }
 
-// ByteData writes data to the temporary file.
-func ByteData(data []byte) TempFileSetting {
+// Bytes writes data to the temporary file.
+func Bytes(data []byte) TempFileSetting {
 	return func(s *TempFileSettings) {
 		s.data = data
 	}
