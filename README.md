@@ -14,6 +14,7 @@ There are five key packages,
 - `test` - assertions causing test failure and allow the test case to continue
 - `wait` - utilities for waiting on conditionals in tests
 - `skip` - utilities for skipping test cases in some situations
+- `util` - utilities for writing concise tests, e.g. managing temp files
 - `portal` - utilities for allocating free ports for network listeners in tests
 
 ### Changes
@@ -192,6 +193,21 @@ skip.CommandUnavailable(t, "java")
 ```go
 skip.EnvironmentVariableSet(t, "CI")
 ```
+
+### Util
+
+How often have you written a helper method for writing a temporary file in unit
+tests? With the `util` package, that boilerplate is resolved once and for all.
+
+```go
+path := util.TempFile(t,
+  util.Mode(0o644),
+  util.String("some content!"),
+)
+```
+
+The file referenced by `path` will be cleaned up automatically at the end of
+the test run, similar to `t.TempDir()`.
 
 ### Wait
 
