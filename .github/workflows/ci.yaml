@@ -1,7 +1,15 @@
 name: Run CI Tests
-on: [push, pull_request]
+on:
+  pull_request:
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+    push:
+      branches:
+        - 'main'
 jobs:
   run-copywrite:
+    timeout-minutes: 5
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -10,6 +18,7 @@ jobs:
         run: |
           copywrite headers --plan
   run-lint:
+    timeout-minutes: 5
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -18,9 +27,9 @@ jobs:
           version-file: go.mod
       - uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.60.1
-          skip-cache: true
+          version: v1.60.3
   run-changes:
+    timeout-minutes: 5
     needs:
       - 'run-copywrite'
     runs-on: ubuntu-24.04
@@ -33,6 +42,7 @@ jobs:
         run: |
           make changes
   run-tests:
+    timeout-minutes: 5
     needs:
       - 'run-copywrite'
       - 'run-lint'
