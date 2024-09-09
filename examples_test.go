@@ -303,22 +303,20 @@ func ExampleErrorContains() {
 
 func ExampleErrorIs() {
 	e1 := errors.New("e1")
-	e2 := errors.New("e2")
-	e3 := errors.New("e3")
-	errorChain := fmt.Errorf("%w%w%w", e1, e2, e3)
-	ErrorIs(t, errorChain, e2)
+	e2 := fmt.Errorf("e2: %w", e1)
+	e3 := fmt.Errorf("e3: %w", e2)
+	ErrorIs(t, e3, e1)
 	// Output:
 }
 
 func ExampleErrorAs() {
-	e1 := errors.New("e1")
-	e2 := FakeError("foo")
-	e3 := errors.New("e3")
-	errorChain := fmt.Errorf("%w%w%w", e1, e2, e3)
+	e1 := FakeError("e1")
+	e2 := fmt.Errorf("e2: %w", e1)
+	e3 := fmt.Errorf("e3: %w", e2)
 	var target FakeError
-	ErrorAs(t, errorChain, &target)
+	ErrorAs(t, e3, &target)
 	fmt.Println(target.Error())
-	// Output: foo
+	// Output: e1
 }
 
 func ExampleFalse() {
