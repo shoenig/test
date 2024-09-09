@@ -320,6 +320,17 @@ func ExampleErrorIs() {
 	// Output:
 }
 
+func ExampleErrorAs() {
+	e1 := errors.New("e1")
+	e2 := FakeError("foo")
+	e3 := errors.New("e3")
+	errorChain := errors.Join(e1, e2, e3)
+	var target FakeError
+	ErrorAs(t, errorChain, &target)
+	fmt.Println(target.Error())
+	// Output: foo
+}
+
 func ExampleFalse() {
 	False(t, 1 == int('a'))
 	// Output:

@@ -165,6 +165,38 @@ func TestErrorIs_nil(t *testing.T) {
 	ErrorIs(tc, nil, err)
 }
 
+type FakeError string
+
+func (e FakeError) Error() string {
+	return string(e)
+}
+
+func TestErrorAs(t *testing.T) {
+	tc := newCase(t, `expected errors.As match`)
+	t.Cleanup(tc.assert)
+
+	var target FakeError
+	e := errors.New("foo")
+	ErrorAs(tc, e, &target)
+}
+
+func TestErrorAs_nilErr(t *testing.T) {
+	tc := newCase(t, `expected error; got nil`)
+	t.Cleanup(tc.assert)
+
+	var target FakeError
+	ErrorAs(tc, nil, &target)
+}
+
+func TestErrorAs_nilTarget(t *testing.T) {
+	tc := newCase(t, `expected target not to be nil`)
+	t.Cleanup(tc.assert)
+
+	var target *FakeError
+	e := errors.New("foo")
+	ErrorAs(tc, e, target)
+}
+
 func TestNoError(t *testing.T) {
 	tc := newCase(t, `expected nil error`)
 	t.Cleanup(tc.assert)

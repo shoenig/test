@@ -67,6 +67,13 @@ func ErrorIs(t T, err error, target error, settings ...Setting) {
 	invoke(t, assertions.ErrorIs(err, target), settings...)
 }
 
+// ErrorAs asserts err's tree contains an error that matches target.
+// If so, it sets target to the error value.
+func ErrorAs[E error, Target *E](t T, err error, target Target, settings ...Setting) {
+	t.Helper()
+	invoke(t, assertions.ErrorAs(err, target), settings...)
+}
+
 // NoError asserts err is a nil error.
 func NoError(t T, err error, settings ...Setting) {
 	t.Helper()
