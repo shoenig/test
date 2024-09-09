@@ -20,6 +20,8 @@ There are five key packages,
 ### Changes
 :ballot_box_with_check: v1.11.0 adds an ErrorAs helper
 
+ - FS examples are more reliable
+
 :ballot_box_with_check: v1.10.0 adds a `util` package for helpers that return values
 
  - Adds ability to create and automatically clean up temporary files

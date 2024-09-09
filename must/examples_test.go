@@ -16,6 +16,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"testing/fstest"
 	"time"
 
 	"github.com/shoenig/test/wait"
@@ -233,7 +234,10 @@ func ExampleDirExists() {
 }
 
 func ExampleDirExistsFS() {
-	DirExistsFS(t, os.DirFS("/"), "tmp")
+	fsys := fstest.MapFS{
+		"foo": &fstest.MapFile{Mode: fs.ModeDir},
+	}
+	DirExistsFS(t, fsys, "foo")
 	// Output:
 }
 
@@ -243,7 +247,8 @@ func ExampleDirNotExists() {
 }
 
 func ExampleDirNotExistsFS() {
-	DirNotExistsFS(t, os.DirFS("/"), "does/not/exist")
+	fsys := fstest.MapFS{}
+	DirNotExistsFS(t, fsys, "does/not/exist")
 	// Output:
 }
 
@@ -343,8 +348,12 @@ func ExampleFileContains() {
 }
 
 func ExampleFileContainsFS() {
-	_ = os.WriteFile("/tmp/example", []byte("foo bar baz"), fs.FileMode(0600))
-	FileContainsFS(t, os.DirFS("/tmp"), "example", "bar")
+	fsys := fstest.MapFS{
+		"example": &fstest.MapFile{
+			Data: []byte("foo bar baz"),
+		},
+	}
+	FileContainsFS(t, fsys, "example", "bar")
 	// Output:
 }
 
@@ -355,8 +364,10 @@ func ExampleFileExists() {
 }
 
 func ExampleFileExistsFS() {
-	_ = os.WriteFile("/tmp/example", []byte{}, fs.FileMode(0600))
-	FileExistsFS(t, os.DirFS("/tmp"), "example")
+	fsys := fstest.MapFS{
+		"example": &fstest.MapFile{},
+	}
+	FileExistsFS(t, fsys, "example")
 	// Output:
 }
 
@@ -367,8 +378,10 @@ func ExampleFileMode() {
 }
 
 func ExampleFileModeFS() {
-	_ = os.WriteFile("/tmp/example_fm", []byte{}, fs.FileMode(0600))
-	FileModeFS(t, os.DirFS("/tmp"), "example_fm", fs.FileMode(0600))
+	fsys := fstest.MapFS{
+		"example": &fstest.MapFile{Mode: 0600},
+	}
+	FileModeFS(t, fsys, "example", fs.FileMode(0600))
 	// Output:
 }
 
@@ -378,7 +391,8 @@ func ExampleFileNotExists() {
 }
 
 func ExampleFileNotExistsFS() {
-	FileNotExistsFS(t, os.DirFS("/tmp"), "not_existing_file")
+	fsys := fstest.MapFS{}
+	FileNotExistsFS(t, fsys, "not_existing_file")
 	// Output:
 }
 
