@@ -307,7 +307,7 @@ func ExampleErrorIs() {
 	e1 := errors.New("e1")
 	e2 := errors.New("e2")
 	e3 := errors.New("e3")
-	errorChain := errors.Join(e1, e2, e3)
+	errorChain := fmt.Errorf("%w%w%w", e1, e2, e3)
 	ErrorIs(t, errorChain, e2)
 	// Output:
 }
@@ -316,7 +316,7 @@ func ExampleErrorAs() {
 	e1 := errors.New("e1")
 	e2 := FakeError("foo")
 	e3 := errors.New("e3")
-	errorChain := errors.Join(e1, e2, e3)
+	errorChain := fmt.Errorf("%w%w%w", e1, e2, e3)
 	var target FakeError
 	ErrorAs(t, errorChain, &target)
 	fmt.Println(target.Error())
