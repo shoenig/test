@@ -105,7 +105,7 @@ func TestUnreachable_PS(t *testing.T) {
 }
 
 func TestError(t *testing.T) {
-	tc := newCase(t, `expected non-nil error; is nil`)
+	tc := newCase(t, `expected non-nil error; got nil`)
 	t.Cleanup(tc.assert)
 
 	Error(tc, nil)
@@ -133,7 +133,7 @@ func TestEqError_PS(t *testing.T) {
 }
 
 func TestEqError_nil(t *testing.T) {
-	tc := newCase(t, `expected error; got nil`)
+	tc := newCase(t, `expected non-nil error; got nil`)
 	t.Cleanup(tc.assert)
 
 	EqError(tc, nil, "blah")
@@ -158,7 +158,7 @@ func TestErrorIs_PS(t *testing.T) {
 }
 
 func TestErrorIs_nil(t *testing.T) {
-	tc := newCase(t, `expected error; got nil`)
+	tc := newCase(t, `expected non-nil error; got nil`)
 	t.Cleanup(tc.assert)
 
 	err := errors.New("oops")
@@ -181,7 +181,7 @@ func TestErrorAs(t *testing.T) {
 }
 
 func TestErrorAs_nilErr(t *testing.T) {
-	tc := newCase(t, `expected error; got nil`)
+	tc := newCase(t, `expected non-nil error; got nil`)
 	t.Cleanup(tc.assert)
 
 	var target FakeError
@@ -189,7 +189,7 @@ func TestErrorAs_nilErr(t *testing.T) {
 }
 
 func TestErrorAs_nilTarget(t *testing.T) {
-	tc := newCase(t, `expected target not to be nil`)
+	tc := newCase(t, `expected non-nil target; got nil`)
 	t.Cleanup(tc.assert)
 
 	var target *FakeError

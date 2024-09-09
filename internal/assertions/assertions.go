@@ -130,14 +130,14 @@ func Unreachable() (s string) {
 
 func Error(err error) (s string) {
 	if err == nil {
-		s = "expected non-nil error; is nil\n"
+		s = "expected non-nil error; got nil\n"
 	}
 	return
 }
 
 func EqError(err error, msg string) (s string) {
 	if err == nil {
-		s = "expected error; got nil\n"
+		s = "expected non-nil error; got nil\n"
 		return
 	}
 	e := err.Error()
@@ -151,30 +151,30 @@ func EqError(err error, msg string) (s string) {
 
 func ErrorIs(err error, target error) (s string) {
 	if err == nil {
-		s = "expected error; got nil\n"
+		s = "expected non-nil error; got nil\n"
 		return
 	}
 	if !errors.Is(err, target) {
 		s = "expected errors.Is match\n"
-		s += bullet(" error: %v\n", err)
 		s += bullet("target: %v\n", target)
+		s += bullet("   got: %v\n", err)
 	}
 	return
 }
 
 func ErrorAs[E error, Target *E](err error, target Target) (s string) {
 	if err == nil {
-		s = "expected error; got nil\n"
+		s = "expected non-nil error; got nil\n"
 		return
 	}
 	if target == nil {
-		s = "expected target not to be nil"
+		s = "expected non-nil target; got nil\n"
 		return
 	}
 	if !errors.As(err, target) {
 		s = "expected errors.As match\n"
-		s += bullet(" error: %v\n", err)
 		s += bullet("target: %v\n", target)
+		s += bullet("   got: %v\n", err)
 	}
 	return
 }
@@ -189,7 +189,7 @@ func NoError(err error) (s string) {
 
 func ErrorContains(err error, sub string) (s string) {
 	if err == nil {
-		s = "expected non-nil error\n"
+		s = "expected non-nil error; got nil\n"
 		return
 	}
 	actual := err.Error()
