@@ -21,6 +21,7 @@ There are five key packages,
 :ballot_box_with_check: v1.11.0 adds an ErrorAs helper
 
  - FS examples are more reliable
+ - Examples run on non-Unix OS when possible
 
 :ballot_box_with_check: v1.10.0 adds a `util` package for helpers that return values
 

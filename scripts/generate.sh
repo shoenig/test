@@ -19,6 +19,7 @@ apply scripts_test.go
 apply test.go
 apply test_test.go
 apply examples_test.go
+apply examples_unix_test.go
 
 cp -R testdata must/
 

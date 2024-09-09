@@ -3,8 +3,6 @@
 // Copyright (c) The Test Authors
 // SPDX-License-Identifier: MPL-2.0
 
-//go:build unix
-
 package must
 
 import (
@@ -12,7 +10,6 @@ import (
 	"fmt"
 	"io/fs"
 	"math"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -228,21 +225,11 @@ func ExampleDescendingLess() {
 	// Output:
 }
 
-func ExampleDirExists() {
-	DirExists(t, "/tmp")
-	// Output:
-}
-
 func ExampleDirExistsFS() {
 	fsys := fstest.MapFS{
 		"foo": &fstest.MapFile{Mode: fs.ModeDir},
 	}
 	DirExistsFS(t, fsys, "foo")
-	// Output:
-}
-
-func ExampleDirNotExists() {
-	DirNotExists(t, "/does/not/exist")
 	// Output:
 }
 
@@ -341,12 +328,6 @@ func ExampleFalse() {
 	// Output:
 }
 
-func ExampleFileContains() {
-	_ = os.WriteFile("/tmp/example", []byte("foo bar baz"), fs.FileMode(0600))
-	FileContains(t, "/tmp/example", "bar")
-	// Output:
-}
-
 func ExampleFileContainsFS() {
 	fsys := fstest.MapFS{
 		"example": &fstest.MapFile{
@@ -354,12 +335,6 @@ func ExampleFileContainsFS() {
 		},
 	}
 	FileContainsFS(t, fsys, "example", "bar")
-	// Output:
-}
-
-func ExampleFileExists() {
-	_ = os.WriteFile("/tmp/example", []byte{}, fs.FileMode(0600))
-	FileExists(t, "/tmp/example")
 	// Output:
 }
 
@@ -371,22 +346,11 @@ func ExampleFileExistsFS() {
 	// Output:
 }
 
-func ExampleFileMode() {
-	_ = os.WriteFile("/tmp/example_fm", []byte{}, fs.FileMode(0600))
-	FileMode(t, "/tmp/example_fm", fs.FileMode(0600))
-	// Output:
-}
-
 func ExampleFileModeFS() {
 	fsys := fstest.MapFS{
 		"example": &fstest.MapFile{Mode: 0600},
 	}
 	FileModeFS(t, fsys, "example", fs.FileMode(0600))
-	// Output:
-}
-
-func ExampleFileNotExists() {
-	FileNotExists(t, "/tmp/not_existing_file")
 	// Output:
 }
 
