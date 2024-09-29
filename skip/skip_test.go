@@ -61,7 +61,7 @@ func TestSkip_CommandUnavailable(t *testing.T) {
 }
 
 func TestSkip_MinimumCores(t *testing.T) {
-	MinimumCores(t, 200)
+	MinimumCores(t, 2048)
 	t.Fatal("expected to skip test")
 }
 
