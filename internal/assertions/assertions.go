@@ -470,6 +470,36 @@ func SliceNotContainsFunc[A, B any](slice []A, item B, eq func(a A, b B) bool) (
 	return
 }
 
+func SliceContainsAllOp[C comparable](slice, items []C) (s string) {
+	if len(slice) != len(items) {
+		s = "expected slice and items to contain same number of elements\n"
+		s += bullet("len(slice): %d\n", len(slice))
+		s += bullet("len(items): %d\n", len(items))
+		return s
+	}
+	return SliceContainsSubsetOp(slice, items)
+}
+
+func SliceContainsAllFunc[A, B any](slice []A, items []B, eq func(a A, b B) bool) (s string) {
+	if len(slice) != len(items) {
+		s = "expected slice and items to contain same number of elements\n"
+		s += bullet("len(slice): %d\n", len(slice))
+		s += bullet("len(items): %d\n", len(items))
+		return s
+	}
+	return SliceContainsSubsetFunc(slice, items, eq)
+}
+
+func SliceContainsAllEqual[E interfaces.EqualFunc[E]](slice, items []E) (s string) {
+	if len(slice) != len(items) {
+		s = "expected slice and items to contain same number of elements\n"
+		s += bullet("len(slice): %d\n", len(slice))
+		s += bullet("len(items): %d\n", len(items))
+		return s
+	}
+	return SliceContainsSubsetEqual(slice, items)
+}
+
 func SliceContainsAll[A any](slice, items []A, opts ...cmp.Option) (s string) {
 	if len(slice) != len(items) {
 		s = "expected slice and items to contain same number of elements\n"
