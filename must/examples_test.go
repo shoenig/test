@@ -758,6 +758,40 @@ func ExampleSliceContainsSubset() {
 	// Output:
 }
 
+func ExampleSliceContainsSubsetEqual() {
+	dave := &employee{first: "dave", id: 8}
+	armon := &employee{first: "armon", id: 2}
+	mitchell := &employee{first: "mitchell", id: 1}
+	employees := []*employee{dave, armon, mitchell}
+	subset := []*employee{mitchell, dave}
+	SliceContainsSubset(t, employees, subset)
+	// Output:
+}
+
+func ExampleSliceContainsSubsetFunc() {
+	// comparing slice to element of same type
+	words := []string{"UP", "DoWn", "LefT", "RiGHT"}
+	wordsSubset := []string{"left", "down"}
+	SliceContainsSubsetFunc(t, words, wordsSubset, func(a, b string) bool {
+		return strings.EqualFold(a, b)
+	})
+
+	// comparing slice to element of different type
+	nums := []string{"2", "4", "6", "8"}
+	numsSubset := []int{4, 6}
+	SliceContainsSubsetFunc(t, nums, numsSubset, func(a string, b int) bool {
+		return a == strconv.Itoa(b)
+	})
+	// Output:
+}
+
+func ExampleSliceContainsSubsetOp() {
+	nums := []int{1, 2, 3, 4, 5}
+	subset := []int{5, 4, 3}
+	SliceContainsSubsetOp(t, nums, subset)
+	// Output:
+}
+
 func ExampleSliceEmpty() {
 	var ints []int
 	SliceEmpty(t, ints)
