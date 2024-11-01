@@ -762,7 +762,7 @@ func ExampleSliceContainsSubsetEqual() {
 	mitchell := &employee{first: "mitchell", id: 1}
 	employees := []*employee{dave, armon, mitchell}
 	subset := []*employee{mitchell, dave}
-	SliceContainsSubset(t, employees, subset)
+	SliceContainsSubsetEqual(t, employees, subset)
 	// Output:
 }
 
