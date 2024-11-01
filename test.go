@@ -241,9 +241,33 @@ func SliceNotContainsFunc[A, B any](t T, slice []A, item B, eq func(a A, b B) bo
 	invoke(t, assertions.SliceNotContainsFunc(slice, item, eq), settings...)
 }
 
+// SliceContainsAllOp asserts slice and items contain the same elements, but in
+// no particular order, using the == operator. The number of elements
+// in slice and items must be the same.
+func SliceContainsAllOp[C comparable](t T, slice, items []C, settings ...Setting) {
+	t.Helper()
+	invoke(t, assertions.SliceContainsAllOp(slice, items), settings...)
+}
+
+// SliceContainsAllFunc asserts slice and items contain the same elements, but in
+// no particular order, using eq to compare elements. The number of elements
+// in slice and items must be the same.
+func SliceContainsAllFunc[A, B any](t T, slice []A, items []B, eq func(a A, b B) bool, settings ...Setting) {
+	t.Helper()
+	invoke(t, assertions.SliceContainsAllFunc(slice, items, eq), settings...)
+}
+
+// SliceContainsAllEqual asserts slice and items contain the same elements, but in
+// no particular order, using Equal to compare elements. The number of elements
+// in slice and items must be the same.
+func SliceContainsAllEqual[E interfaces.EqualFunc[E]](t T, slice, items []E, settings ...Setting) {
+	t.Helper()
+	invoke(t, assertions.SliceContainsAllEqual(slice, items), settings...)
+}
+
 // SliceContainsAll asserts slice and items contain the same elements, but in
-// no particular order. The number of elements in slice and items must be the
-// same.
+// no particular order, using cmp.Equal to compare elements. The number of elements
+// in slice and items must be the same.
 func SliceContainsAll[A any](t T, slice, items []A, settings ...Setting) {
 	t.Helper()
 	invoke(t, assertions.SliceContainsAll(slice, items, options(settings...)...), settings...)

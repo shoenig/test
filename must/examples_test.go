@@ -722,6 +722,42 @@ func ExampleSliceContainsAll() {
 	// Output:
 }
 
+func ExampleSliceContainsAllEqual() {
+	dave := &employee{first: "dave", id: 8}
+	armon := &employee{first: "armon", id: 2}
+	mitchell := &employee{first: "mitchell", id: 1}
+	SliceContainsAllEqual(t,
+		[]*employee{dave, armon, mitchell},
+		[]*employee{mitchell, dave, armon})
+	// Output:
+}
+
+func ExampleSliceContainsAllFunc() {
+	// comparing slice to element of same type
+	SliceContainsAllFunc(t,
+		[]string{"UP", "DoWn", "LefT", "RiGHT"},
+		[]string{"left", "down", "up", "right"},
+		func(a, b string) bool {
+			return strings.EqualFold(a, b)
+		})
+
+	// comparing slice to element of different type
+	SliceContainsAllFunc(t,
+		[]string{"2", "4", "6", "8"},
+		[]int{2, 6, 4, 8},
+		func(a string, b int) bool {
+			return a == strconv.Itoa(b)
+		})
+	// Output:
+}
+
+func ExampleSliceContainsAllOp() {
+	SliceContainsAllOp(t,
+		[]int{1, 2, 3, 4, 5},
+		[]int{5, 4, 3, 2, 1})
+	// Output:
+}
+
 func ExampleSliceContainsEqual() {
 	dave := &employee{first: "dave", id: 8}
 	armon := &employee{first: "armon", id: 2}
@@ -764,7 +800,7 @@ func ExampleSliceContainsSubsetEqual() {
 	mitchell := &employee{first: "mitchell", id: 1}
 	employees := []*employee{dave, armon, mitchell}
 	subset := []*employee{mitchell, dave}
-	SliceContainsSubset(t, employees, subset)
+	SliceContainsSubsetEqual(t, employees, subset)
 	// Output:
 }
 

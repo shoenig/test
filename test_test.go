@@ -436,9 +436,7 @@ func TestSliceEqFunc(t *testing.T) {
 			{ID: 101, Name: "Bob"},
 		}
 		exp := []string{"Alice", "Carl"}
-		SliceEqFunc(tc, exp, values, func(a *Person, name string) bool {
-			return a.Name == name
-		})
+		SliceEqFunc(tc, exp, values, (*Person).NameEquals)
 	})
 }
 
@@ -465,6 +463,10 @@ func (p *Person) Equal(o *Person) bool {
 
 func (p *Person) Less(o *Person) bool {
 	return p.ID < o.ID
+}
+
+func (p *Person) NameEquals(name string) bool {
+	return p.Name == name
 }
 
 func TestEqual(t *testing.T) {
@@ -664,9 +666,7 @@ func TestSliceContainsFunc(t *testing.T) {
 		{ID: 101, Name: "Bob"},
 	}
 
-	SliceContainsFunc(tc, s, "Carl", func(a *Person, name string) bool {
-		return a.Name == name
-	})
+	SliceContainsFunc(tc, s, "Carl", (*Person).NameEquals)
 }
 
 func TestSliceContainsEqual(t *testing.T) {
@@ -721,6 +721,93 @@ func TestSliceNotContainsFunc(t *testing.T) {
 	}
 
 	SliceNotContainsFunc(tc, s, &Person{ID: 101, Name: "Bob"}, f)
+}
+
+func TestSliceContainsAllOp(t *testing.T) {
+	t.Run("wrong element", func(t *testing.T) {
+		tc := newCase(t, `expected slice to contain missing item via == operator`)
+		s := []int{1, 2, 3, 4}
+		SliceContainsAllOp(tc, s, []int{4, 3, 5, 1})
+		t.Cleanup(tc.assert)
+	})
+
+	t.Run("too large", func(t *testing.T) {
+		tc := newCase(t, `expected slice and items to contain same number of elements`)
+		s := []int{1, 2, 3, 4}
+		SliceContainsAllOp(tc, s, []int{1, 2, 3})
+		t.Cleanup(tc.assert)
+	})
+
+	t.Run("too small", func(t *testing.T) {
+		tc := newCase(t, `expected slice and items to contain same number of elements`)
+		s := []int{1, 2, 3, 4}
+		SliceContainsAllOp(tc, s, []int{1, 2, 3, 4, 5})
+		t.Cleanup(tc.assert)
+	})
+}
+
+func TestSliceContainsAllFunc(t *testing.T) {
+	t.Run("wrong element", func(t *testing.T) {
+		tc := newCase(t, `expected slice to contain missing item via 'eq' function`)
+		s := []*Person{
+			{ID: 100, Name: "Alice"},
+			{ID: 101, Name: "Bob"},
+		}
+		SliceContainsAllFunc(tc, s, []string{"Bob", "Eve"}, (*Person).NameEquals)
+		t.Cleanup(tc.assert)
+	})
+
+	t.Run("too large", func(t *testing.T) {
+		tc := newCase(t, `expected slice and items to contain same number of elements`)
+		s := []*Person{
+			{ID: 100, Name: "Alice"},
+			{ID: 101, Name: "Bob"},
+			{ID: 102, Name: "Carl"},
+		}
+		SliceContainsAllFunc(tc, s, []string{"Alice", "Bob"}, (*Person).NameEquals)
+		t.Cleanup(tc.assert)
+	})
+
+	t.Run("too small", func(t *testing.T) {
+		tc := newCase(t, `expected slice and items to contain same number of elements`)
+		s := []*Person{
+			{ID: 101, Name: "Bob"},
+		}
+		SliceContainsAllFunc(tc, s, []string{"Bob", "Alice"}, (*Person).NameEquals)
+		t.Cleanup(tc.assert)
+	})
+}
+
+func TestSliceContainsAllEqual(t *testing.T) {
+	t.Run("wrong element", func(t *testing.T) {
+		tc := newCase(t, `expected slice to contain missing item via .Equal method`)
+		s := []*Person{
+			{ID: 100, Name: "Alice"},
+			{ID: 101, Name: "Bob"},
+		}
+		SliceContainsAllEqual(tc, s, []*Person{{ID: 101, Name: "Bob"}, {ID: 105, Name: "Eve"}})
+		t.Cleanup(tc.assert)
+	})
+
+	t.Run("too large", func(t *testing.T) {
+		tc := newCase(t, `expected slice and items to contain same number of elements`)
+		s := []*Person{
+			{ID: 100, Name: "Alice"},
+			{ID: 101, Name: "Bob"},
+			{ID: 102, Name: "Carl"},
+		}
+		SliceContainsAllEqual(tc, s, []*Person{{ID: 101, Name: "Bob"}, {ID: 100, Name: "Alice"}})
+		t.Cleanup(tc.assert)
+	})
+
+	t.Run("too small", func(t *testing.T) {
+		tc := newCase(t, `expected slice and items to contain same number of elements`)
+		s := []*Person{
+			{ID: 101, Name: "Bob"},
+		}
+		SliceContainsAllEqual(tc, s, []*Person{{ID: 101, Name: "Bob"}, {ID: 100, Name: "Alice"}})
+		t.Cleanup(tc.assert)
+	})
 }
 
 func TestSliceContainsAll(t *testing.T) {
@@ -778,11 +865,7 @@ func TestSliceContainsSubsetFunc(t *testing.T) {
 		{ID: 103, Name: "Carl"},
 		{ID: 104, Name: "Dora"},
 	}
-	eq := func(a *Person, name string) bool {
-		return a.Name == name
-	}
-
-	SliceContainsSubsetFunc(tc, s, []string{"Bob", "Eve"}, eq)
+	SliceContainsSubsetFunc(tc, s, []string{"Bob", "Eve"}, (*Person).NameEquals)
 }
 
 func TestSliceContainsSubsetEqual(t *testing.T) {
