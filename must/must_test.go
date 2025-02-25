@@ -165,6 +165,10 @@ func TestErrorIs_nil(t *testing.T) {
 	ErrorIs(tc, nil, err)
 }
 
+func TestErrorIs_nil_nil(t *testing.T) {
+	ErrorIs(t, nil, nil)
+}
+
 type FakeError string
 
 func (e FakeError) Error() string {
