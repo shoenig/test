@@ -992,6 +992,16 @@ func ExampleUnreachable() {
 	// Output:
 }
 
+func ExamplePanic() {
+	Panic(t, func() { panic("hi mom") })
+	// Output:
+}
+
+func ExampleNotPanic() {
+	NotPanic(t, func() {})
+	// Output:
+}
+
 func ExampleValidJSON() {
 	js := `{"key": ["v1", "v2"]}`
 	ValidJSON(t, js)
