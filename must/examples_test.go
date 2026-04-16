@@ -316,7 +316,7 @@ func ExampleErrorAs() {
 	e2 := fmt.Errorf("e2: %w", e1)
 	e3 := fmt.Errorf("e3: %w", e2)
 	var target FakeError
-	ErrorAs(t, e3, &target)
+	ErrorAs[FakeError](t, e3, &target)
 	fmt.Println(target.Error())
 	// Output: e1
 }

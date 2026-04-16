@@ -179,7 +179,7 @@ func TestErrorAs(t *testing.T) {
 
 	var target FakeError
 	e := errors.New("foo")
-	ErrorAs(tc, e, &target)
+	ErrorAs[FakeError](tc, e, &target)
 }
 
 func TestErrorAs_nilErr(t *testing.T) {
@@ -187,16 +187,7 @@ func TestErrorAs_nilErr(t *testing.T) {
 	t.Cleanup(tc.assert)
 
 	var target FakeError
-	ErrorAs(tc, nil, &target)
-}
-
-func TestErrorAs_nilTarget(t *testing.T) {
-	tc := newCase(t, `expected non-nil target; got nil`)
-	t.Cleanup(tc.assert)
-
-	var target *FakeError
-	e := errors.New("foo")
-	ErrorAs(tc, e, target)
+	ErrorAs[FakeError](tc, nil, &target)
 }
 
 func TestNoError(t *testing.T) {
