@@ -723,6 +723,7 @@ func TestSliceNotContainsFunc(t *testing.T) {
 func TestSliceContainsAllOp(t *testing.T) {
 	t.Run("wrong element", func(t *testing.T) {
 		tc := newCase(t, `expected slice to contain missing item via == operator`)
+		tc.exp = "missing 5"
 		s := []int{1, 2, 3, 4}
 		SliceContainsAllOp(tc, s, []int{4, 3, 5, 1})
 		t.Cleanup(tc.assert)
@@ -746,6 +747,7 @@ func TestSliceContainsAllOp(t *testing.T) {
 func TestSliceContainsAllFunc(t *testing.T) {
 	t.Run("wrong element", func(t *testing.T) {
 		tc := newCase(t, `expected slice to contain missing item via 'eq' function`)
+		tc.exp = "Eve"
 		s := []*Person{
 			{ID: 100, Name: "Alice"},
 			{ID: 101, Name: "Bob"},
@@ -778,6 +780,7 @@ func TestSliceContainsAllFunc(t *testing.T) {
 func TestSliceContainsAllEqual(t *testing.T) {
 	t.Run("wrong element", func(t *testing.T) {
 		tc := newCase(t, `expected slice to contain missing item via .Equal method`)
+		tc.exp = "Eve"
 		s := []*Person{
 			{ID: 100, Name: "Alice"},
 			{ID: 101, Name: "Bob"},
@@ -810,6 +813,7 @@ func TestSliceContainsAllEqual(t *testing.T) {
 func TestSliceContainsAll(t *testing.T) {
 	t.Run("wrong element", func(t *testing.T) {
 		tc := newCase(t, `expected slice to contain missing item`)
+		tc.exp = "Eve"
 		s := []*Person{
 			{ID: 100, Name: "Alice"},
 			{ID: 101, Name: "Bob"},
@@ -842,11 +846,13 @@ func TestSliceContainsAll(t *testing.T) {
 func TestSliceContainsSubsetOp(t *testing.T) {
 	t.Run("numbers", func(t *testing.T) {
 		tc := newCase(t, `expected slice to contain missing item via == operator`)
+		tc.exp = "missing 6"
 		t.Cleanup(tc.assert)
 		SliceContainsSubsetOp(tc, []int{1, 2, 3, 4, 5}, []int{2, 3, 6})
 	})
 	t.Run("strings", func(t *testing.T) {
 		tc := newCase(t, `expected slice to contain missing item via == operator`)
+		tc.exp = "missing \"d\""
 		t.Cleanup(tc.assert)
 		SliceContainsSubsetOp(tc, []string{"a", "b", "c"}, []string{"c", "d"})
 	})
@@ -854,6 +860,7 @@ func TestSliceContainsSubsetOp(t *testing.T) {
 
 func TestSliceContainsSubsetFunc(t *testing.T) {
 	tc := newCase(t, `expected slice to contain missing item via 'eq' function`)
+	tc.exp = "Eve"
 	t.Cleanup(tc.assert)
 
 	s := []*Person{
@@ -867,6 +874,7 @@ func TestSliceContainsSubsetFunc(t *testing.T) {
 
 func TestSliceContainsSubsetEqual(t *testing.T) {
 	tc := newCase(t, `expected slice to contain missing item via .Equal method`)
+	tc.exp = "Eve"
 	t.Cleanup(tc.assert)
 
 	s := []*Person{
@@ -881,6 +889,7 @@ func TestSliceContainsSubsetEqual(t *testing.T) {
 
 func TestSliceContainsSubset(t *testing.T) {
 	tc := newCase(t, `expected slice to contain missing item`)
+	tc.exp = "Eve"
 	t.Cleanup(tc.assert)
 
 	s := []*Person{

@@ -536,7 +536,7 @@ OUTER:
 			}
 		}
 		s = "expected slice to contain missing item via == operator\n"
-		s += bullet("slice is missing %#v\n", item)
+		s += bullet("slice is missing %#v\n", target)
 		return
 	}
 	return
@@ -570,7 +570,7 @@ OUTER:
 			}
 		}
 		s = "expected slice to contain missing item\n"
-		s += bullet("slice is missing %#v\n", item)
+		s += bullet("slice is missing %#v\n", target)
 		return
 	}
 	return
