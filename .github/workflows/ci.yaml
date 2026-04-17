@@ -12,30 +12,29 @@ jobs:
     timeout-minutes: 5
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: hashicorp/setup-golang@v3
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
         with:
-          version-file: go.mod
-      - uses: golangci/golangci-lint-action@v3
+          cache: true
+          go-version-file: go.mod
+      - uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.60.3
+          version: v1.64.8
   run-changes:
     timeout-minutes: 5
-    needs:
-      - 'run-copywrite'
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: hashicorp/setup-golang@v3
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
         with:
-          version-file: go.mod
+          cache: true
+          go-version-file: go.mod
       - name: Check for changes
         run: |
           make changes
   run-tests:
     timeout-minutes: 5
     needs:
-      - 'run-copywrite'
       - 'run-lint'
       - 'run-changes'
     strategy:
@@ -43,14 +42,15 @@ jobs:
       matrix:
         os:
           - ubuntu-24.04
-          - macos-14
+          - macos-26
           - windows-2022
     runs-on: ${{matrix.os}}
     steps:
-      - uses: actions/checkout@v4
-      - uses: hashicorp/setup-golang@v3
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
         with:
-          version-file: go.mod
+          cache: true
+          go-version-file: go.mod
       - name: Run Go Test
         run: |
           make test
