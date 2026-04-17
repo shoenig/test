@@ -196,13 +196,9 @@ func ErrorIs(err error, target error) (s string) {
 	return
 }
 
-func ErrorAs[E error, Target *E](err error, target Target) (s string) {
+func ErrorAs[E error, Target any](err error, target Target) (s string) {
 	if err == nil {
 		s = "expected non-nil error; got nil\n"
-		return
-	}
-	if target == nil {
-		s = "expected non-nil target; got nil\n"
 		return
 	}
 	if !errors.As(err, target) {
