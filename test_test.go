@@ -949,6 +949,57 @@ func TestOne(t *testing.T) {
 	One(tc, 1.1)
 }
 
+func TestZeroValue(t *testing.T) {
+	t.Run("basic types", func(t *testing.T) {
+		tc := newCase(t, `expected zero via cmp.Equal function`)
+		t.Cleanup(tc.assert)
+
+		ZeroValue(tc, 42)
+		ZeroValue(tc, "hello")
+		ZeroValue(tc, true)
+	})
+
+	t.Run("with IsZero method", func(t *testing.T) {
+		tc := newCase(t, `expected zero via IsZero method`)
+		t.Cleanup(tc.assert)
+
+		ZeroValue(tc, time.Now())
+	})
+
+	t.Run("slice", func(t *testing.T) {
+		tc := newCase(t, `expected zero via cmp.Equal function`)
+		t.Cleanup(tc.assert)
+
+		ZeroValue(tc, []int{1, 2, 3})
+	})
+}
+
+func TestNotZeroValue(t *testing.T) {
+	t.Run("basic types", func(t *testing.T) {
+		tc := newCase(t, `expected non-zero via cmp.Equal function`)
+		t.Cleanup(tc.assert)
+
+		NotZeroValue(tc, 0)
+		NotZeroValue(tc, "")
+		NotZeroValue(tc, false)
+	})
+
+	t.Run("with IsZero method", func(t *testing.T) {
+		tc := newCase(t, `expected non-zero via IsZero method`)
+		t.Cleanup(tc.assert)
+
+		NotZeroValue(tc, time.Time{})
+	})
+
+	t.Run("slice", func(t *testing.T) {
+		tc := newCase(t, `expected non-zero via cmp.Equal function`)
+		t.Cleanup(tc.assert)
+
+		var empty []int
+		NotZeroValue(tc, empty)
+	})
+}
+
 func TestLess(t *testing.T) {
 	t.Run("integers", func(t *testing.T) {
 		tc := newCase(t, `expected 7 < 5`)

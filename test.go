@@ -359,6 +359,22 @@ func One[N interfaces.Number](t T, n N, settings ...Setting) {
 	invoke(t, assertions.One(n), settings...)
 }
 
+// ZeroValue asserts v is the zero value for its type.
+// If v implements IsZero() bool, that method is used.
+// Otherwise, cmp.Equal is used to compare against the zero value.
+func ZeroValue[A any](t T, v A, settings ...Setting) {
+	t.Helper()
+	invoke(t, assertions.ZeroValue(v, options(settings...)...), settings...)
+}
+
+// NotZeroValue asserts v is not the zero value for its type.
+// If v implements IsZero() bool, that method is used.
+// Otherwise, cmp.Equal is used to compare against the zero value.
+func NotZeroValue[A any](t T, v A, settings ...Setting) {
+	t.Helper()
+	invoke(t, assertions.NotZeroValue(v, options(settings...)...), settings...)
+}
+
 // Less asserts val < exp.
 func Less[O constraints.Ordered](t T, exp, val O, settings ...Setting) {
 	t.Helper()
