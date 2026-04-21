@@ -683,6 +683,26 @@ func ExampleOne() {
 	// Output:
 }
 
+func ExampleZeroValue() {
+	ZeroValue(t, 0)
+	ZeroValue(t, "")
+	ZeroValue(t, false)
+	ZeroValue(t, struct{}{})
+	ZeroValue(t, time.Time{})
+	ZeroValue(t, time.Time{}.Local())
+	// Output:
+}
+
+func ExampleNotZeroValue() {
+	NotZeroValue(t, 42)
+	NotZeroValue(t, "hello")
+	NotZeroValue(t, true)
+	NotZeroValue(t, struct{ a int }{a: 1})
+	NotZeroValue(t, time.Now())
+	NotZeroValue(t, time.Time{} != time.Time{}.Local())
+	// Output:
+}
+
 func ExamplePositive() {
 	Positive(t, 42)
 	// Output:

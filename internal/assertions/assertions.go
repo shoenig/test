@@ -624,6 +624,40 @@ func NonZero[N interfaces.Number](value N) (s string) {
 	return
 }
 
+func ZeroValue[T any](v T, opts ...cmp.Option) (s string) {
+	var zero T
+	z, ok := any(v).(interface{ IsZero() bool })
+	if ok {
+		if !z.IsZero() {
+			s = "expected zero via IsZero method\n"
+			s += diff(zero, v, opts)
+		}
+		return
+	}
+
+	if !equal(zero, v, opts) {
+		s = "expected zero via cmp.Equal function\n"
+		s += diff(zero, v, opts)
+	}
+	return
+}
+
+func NotZeroValue[T any](v T, opts ...cmp.Option) (s string) {
+	var zero T
+	z, ok := any(v).(interface{ IsZero() bool })
+	if ok {
+		if z.IsZero() {
+			s = "expected non-zero via IsZero method\n"
+		}
+		return
+	}
+
+	if equal(zero, v, opts) {
+		s = "expected non-zero via cmp.Equal function\n"
+	}
+	return
+}
+
 func One[N interfaces.Number](value N) (s string) {
 	if value != 1 {
 		s = "expected value of 1\n"
